@@ -121,7 +121,7 @@ export default function CityPage() {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [formattedCityName, userCity, setUserCity])
+  }, [formattedCityName, userCity])
   
   const isMobile = windowWidth < 640
   
