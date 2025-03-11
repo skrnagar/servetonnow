@@ -49,11 +49,10 @@ export default function Header() {
             <Image
               src="/serveto_logo_main.png"
               alt="Serveto Logo"
-              width={40}
-              height={40}
-              className="h-10 w-auto"
+              width={50}
+              height={50}
+              className="h-8 w-auto"
             />
-            <span className="text-2xl font-bold text-primary">Serveto</span>
           </Link>
 
           {/* Location selector */}
