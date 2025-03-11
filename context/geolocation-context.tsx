@@ -116,10 +116,17 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     const autoDetectLocation = async () => {
       try {
         // Try IP geolocation first as it's less intrusive
-        const response = await fetch("/api/geocode/ip")
+        const response = await fetch("/api/geocode/ip", {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        })
 
         if (!response.ok) {
-          throw new Error("Failed to get location from IP")
+          console.warn("IP geolocation API returned an error response:", response.status)
+          // Instead of throwing, we'll just log the issue and continue
+          return
         }
 
         const data = await response.json()
@@ -129,6 +136,8 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           if (data.latitude && data.longitude) {
             setUserLocation({ lat: data.latitude, lng: data.longitude })
           }
+        } else {
+          console.warn("IP geolocation API returned no city data")
         }
       } catch (err) {
         console.error("Auto IP location detection error:", err)
