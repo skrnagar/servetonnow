@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, X, MapPin, Search, User, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -45,6 +46,13 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
+            <Image
+              src="/serveto_logo_main.png"
+              alt="Serveto Logo"
+              width={40}
+              height={40}
+              className="h-10 w-auto"
+            />
             <span className="text-2xl font-bold text-primary">Serveto</span>
           </Link>
 

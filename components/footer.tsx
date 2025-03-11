@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from "lucide-react"
 
 export default function Footer() {
@@ -9,6 +10,13 @@ export default function Footer() {
           {/* Logo and description */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center space-x-2">
+              <Image
+                src="/serveto_logo_main.png"
+                alt="Serveto Logo"
+                width={40}
+                height={40}
+                className="h-10 w-auto"
+              />
               <span className="text-2xl font-bold text-primary">Serveto</span>
             </Link>
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-md">
