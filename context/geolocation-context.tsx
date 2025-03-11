@@ -123,12 +123,6 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           },
         })
 
-        if (!response.ok) {
-          console.warn("IP geolocation API returned an error response:", response.status)
-          // Instead of throwing, we'll just log the issue and continue
-          return
-        }
-
         const data = await response.json()
 
         if (data.city) {
@@ -136,12 +130,21 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           if (data.latitude && data.longitude) {
             setUserLocation({ lat: data.latitude, lng: data.longitude })
           }
+          
+          // If this was a fallback city, log it but still use the data
+          if (data.fallback) {
+            console.info("Using fallback city data:", data.city)
+          }
         } else {
           console.warn("IP geolocation API returned no city data")
+          // Set a default city if none was returned
+          setUserCity("Indore")
         }
       } catch (err) {
         console.error("Auto IP location detection error:", err)
         // We don't show an error toast here as it's just an auto-detection
+        // But we do set a default city
+        setUserCity("Indore")
       }
     }
 

@@ -3,6 +3,9 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
+    // Default fallback city in case all geolocation services fail
+    const fallbackCity = "Indore";
+    
     // First try ipapi.co
     try {
       const response = await fetch("https://ipapi.co/json/", {
@@ -69,16 +72,20 @@ export async function GET() {
       console.error("ipinfo.io error:", ipInfoError)
     }
 
-    // If all APIs fail, return a friendly error
-    return NextResponse.json(
-      { error: "Unable to determine location from IP", fallback: true },
-      { status: 404 }
-    )
+    // If all APIs fail, return a fallback city
+    return NextResponse.json({
+      city: fallbackCity,
+      fallback: true,
+      message: "Using fallback city due to inability to determine location from IP"
+    })
   } catch (error) {
     console.error("IP geolocation error:", error)
-    return NextResponse.json(
-      { error: "Failed to get location from IP", details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    )
+    // Even on complete failure, return a fallback city instead of an error
+    return NextResponse.json({
+      city: "Indore",
+      fallback: true,
+      error: "Failed to get location from IP",
+      message: "Using fallback city due to API failure"
+    })
   }
 }

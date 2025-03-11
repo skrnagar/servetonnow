@@ -1,260 +1,357 @@
+
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { ChevronRight, Calendar, Clock, MapPin, Upload, Info } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useGeolocation } from "@/context/geolocation-context"
+import { Calendar } from "@/components/ui/calendar"
+import { useToast } from "@/components/ui/use-toast"
+import { useIsMobile } from "@/hooks/use-mobile"
 
-
-// Sample service categories - Corrected to be consistent with the original code's structure
 const categories = [
-  { value: "cleaning", label: "Cleaning" },
-  { value: "plumbing", label: "Plumbing" },
-  { value: "electrical", label: "Electrical" },
-  { value: "moving", label: "Moving" },
-  { value: "handyman", label: "Handyman" },
-  { value: "landscaping", label: "Landscaping" },
-  { value: "painting", label: "Painting" },
-  { value: "other", label: "Other" },
-];
+  "Cleaning",
+  "Plumbing",
+  "Electrical",
+  "Carpentry",
+  "Painting",
+  "Appliance Repair",
+  "Gardening",
+  "HVAC",
+  "Moving",
+  "Other"
+]
 
 export default function PostTaskPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { userCity } = useGeolocation()
-
-  // Get category from URL if present
-  const categoryParam = searchParams.get("category")
-
-  const [formData, setFormData] = useState({
+  const { toast } = useToast()
+  const isMobile = useIsMobile()
+  
+  const [activeTab, setActiveTab] = useState("details")
+  const [taskDetails, setTaskDetails] = useState({
     title: "",
     description: "",
-    category: categoryParam || "",
+    category: "",
+    address: "",
+    city: userCity || "",
     budget: "",
-    location: userCity || "",
-    date: "",
-    time: "",
-    urgency: "normal",
+    date: new Date(),
+    images: []
   })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    setTaskDetails(prev => ({ ...prev, [name]: value }))
   }
-
-  const handleRadioChange = (value: string) => {
-    setFormData({ ...formData, urgency: value })
+  
+  const handleSelectChange = (name: string, value: string) => {
+    setTaskDetails(prev => ({ ...prev, [name]: value }))
   }
-
+  
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      setTaskDetails(prev => ({ ...prev, date }))
+    }
+  }
+  
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // This is a placeholder for image upload functionality
+    toast({
+      title: "Image upload",
+      description: "Image upload functionality would be implemented here"
+    })
+  }
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Submit the task data to backend
-    console.log("Form submitted:", formData)
-
-    // Navigate to success page
-    router.push("/task-posted")
+    // Validate form
+    if (!taskDetails.title || !taskDetails.description || !taskDetails.category) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      })
+      return
+    }
+    
+    // Submit form logic would go here
+    toast({
+      title: "Task Posted Successfully!",
+      description: "Professionals will start bidding on your task soon."
+    })
+    
+    // Redirect to task details page
+    // router.push("/tasks/task-id")
   }
-
+  
+  const nextStep = () => {
+    if (activeTab === "details") {
+      if (!taskDetails.title || !taskDetails.description || !taskDetails.category) {
+        toast({
+          title: "Missing information",
+          description: "Please fill in all required fields in this step",
+          variant: "destructive"
+        })
+        return
+      }
+      setActiveTab("location")
+    } else if (activeTab === "location") {
+      if (!taskDetails.address || !taskDetails.city) {
+        toast({
+          title: "Missing information",
+          description: "Please fill in your address and city",
+          variant: "destructive"
+        })
+        return
+      }
+      setActiveTab("budget")
+    }
+  }
+  
+  const prevStep = () => {
+    if (activeTab === "location") {
+      setActiveTab("details")
+    } else if (activeTab === "budget") {
+      setActiveTab("location")
+    }
+  }
+  
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <Link href="/" className="hover:text-primary transition-colors">
-          Home
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <span>Post a Task</span>
-      </div>
-
-      <div className="max-w-3xl mx-auto">
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Post a Task</h1>
-        <p className="text-muted-foreground mb-8">
-          Describe your task and get quotes from professional service providers
+        <p className="text-gray-600 dark:text-gray-300">
+          Describe your task in detail to receive bids from our qualified professionals.
         </p>
-
-        <form onSubmit={handleSubmit}>
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Task Details</CardTitle>
-              <CardDescription>Let us know what you need help with</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="title">Task Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="E.g., Fix a leaking pipe in kitchen sink"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="description">Task Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Provide details about your task"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 min-h-[120px]"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1">
-                  {categories.map((category) => (
-                    <Button
-                      key={category.value}
-                      type="button"
-                      variant={formData.category === category.value ? "default" : "outline"}
-                      className="justify-start"
-                      onClick={() => setFormData({ ...formData, category: category.value })}
-                    >
-                      {category.label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="budget">Budget (optional)</Label>
-                <Input
-                  id="budget"
-                  name="budget"
-                  type="number"
-                  placeholder="₹"
-                  value={formData.budget}
-                  onChange={handleChange}
-                  className="mt-1"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Location & Timing</CardTitle>
-              <CardDescription>When and where do you need this task done?</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="location" className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" /> Location
-                </Label>
-                <Input
-                  id="location"
-                  name="location"
-                  placeholder="Enter your address"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="date" className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" /> Date
-                  </Label>
-                  <Input
-                    id="date"
-                    name="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    required
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="time" className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" /> Time
-                  </Label>
-                  <Input
-                    id="time"
-                    name="time"
-                    type="time"
-                    value={formData.time}
-                    onChange={handleChange}
-                    required
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label className="mb-2 block">How urgent is this task?</Label>
-                <RadioGroup
-                  defaultValue={formData.urgency}
-                  onValueChange={handleRadioChange}
-                  className="flex flex-col space-y-1"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="flexible" id="flexible" />
-                    <Label htmlFor="flexible" className="font-normal">
-                      Flexible - Any time in the next few weeks
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="normal" id="normal" />
-                    <Label htmlFor="normal" className="font-normal">
-                      Normal - Within the next week
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="urgent" id="urgent" />
-                    <Label htmlFor="urgent" className="font-normal">
-                      Urgent - As soon as possible
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Add Files (optional)</CardTitle>
-              <CardDescription>Upload photos or documents related to your task</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed rounded-lg p-6 text-center">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-2">
-                  Drag and drop files or click to browse
-                </p>
-                <Input id="file-upload" type="file" className="hidden" multiple />
-                <Label htmlFor="file-upload" className="cursor-pointer">
-                  <Button type="button" variant="outline">
-                    Select Files
-                  </Button>
-                </Label>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-end">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              Cancel
-            </Button>
-            <Button type="submit">Post Task</Button>
+      </div>
+      
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="px-6 pt-6">
+            <TabsList className="grid grid-cols-3 w-full">
+              <TabsTrigger value="details">Task Details</TabsTrigger>
+              <TabsTrigger value="location">Location</TabsTrigger>
+              <TabsTrigger value="budget">Budget & Date</TabsTrigger>
+            </TabsList>
           </div>
-        </form>
+          
+          <form onSubmit={handleSubmit}>
+            {/* Task Details Tab */}
+            <TabsContent value="details" className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium mb-1">
+                    Task Title <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="title"
+                    name="title"
+                    placeholder="E.g., Fix leaking bathroom sink"
+                    value={taskDetails.title}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium mb-1">
+                    Category <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    value={taskDetails.category}
+                    onValueChange={(value) => handleSelectChange("category", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium mb-1">
+                    Description <span className="text-red-500">*</span>
+                  </label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    placeholder="Provide details about your task..."
+                    rows={5}
+                    value={taskDetails.description}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Photos (Optional)
+                  </label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md">
+                    <div className="space-y-1 text-center">
+                      <svg
+                        className="mx-auto h-12 w-12 text-gray-400"
+                        stroke="currentColor"
+                        fill="none"
+                        viewBox="0 0 48 48"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                        <label
+                          htmlFor="file-upload"
+                          className="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none"
+                        >
+                          <span>Upload files</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            className="sr-only"
+                            multiple
+                            onChange={handleImageUpload}
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex justify-end">
+                <Button type="button" onClick={nextStep}>
+                  Next: Location
+                </Button>
+              </div>
+            </TabsContent>
+            
+            {/* Location Tab */}
+            <TabsContent value="location" className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium mb-1">
+                    Address <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="address"
+                    name="address"
+                    placeholder="Enter your address"
+                    value={taskDetails.address}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium mb-1">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="city"
+                    name="city"
+                    placeholder="Enter your city"
+                    value={taskDetails.city}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="mt-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Your exact address will only be shared with the professional you hire.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={prevStep}
+                >
+                  Back
+                </Button>
+                <Button type="button" onClick={nextStep}>
+                  Next: Budget & Date
+                </Button>
+              </div>
+            </TabsContent>
+            
+            {/* Budget & Date Tab */}
+            <TabsContent value="budget" className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="budget" className="block text-sm font-medium mb-1">
+                    Budget (₹) <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="budget"
+                    name="budget"
+                    type="number"
+                    placeholder="Enter your budget"
+                    value={taskDetails.budget}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Date <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border rounded-md p-4">
+                    <Calendar
+                      mode="single"
+                      selected={taskDetails.date}
+                      onSelect={handleDateChange}
+                      className="mx-auto"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={prevStep}
+                >
+                  Back
+                </Button>
+                <Button type="submit">
+                  Post Task
+                </Button>
+              </div>
+            </TabsContent>
+          </form>
+        </Tabs>
       </div>
     </div>
   )
