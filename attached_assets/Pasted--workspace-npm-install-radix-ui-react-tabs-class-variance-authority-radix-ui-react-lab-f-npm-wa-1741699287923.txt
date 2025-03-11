@@ -1,0 +1,86 @@
+~/workspace$ npm install @radix-ui/react-tabs class-variance-authority @radix-ui/react-lab -f
+npm warn using --force Recommended protections disabled.
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-day-picker@8.10.1
+npm warn Found: date-fns@4.1.0
+npm warn node_modules/date-fns
+npm warn   date-fns@"4.1.0" from the root project
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer date-fns@"^2.28.0 || ^3.0.0" from react-day-picker@8.10.1
+npm warn node_modules/react-day-picker
+npm warn   react-day-picker@"8.10.1" from the root project
+npm warn
+npm warn Conflicting peer dependency: date-fns@3.6.0
+npm warn node_modules/date-fns
+npm warn   peer date-fns@"^2.28.0 || ^3.0.0" from react-day-picker@8.10.1
+npm warn   node_modules/react-day-picker
+npm warn     react-day-picker@"8.10.1" from the root project
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: react-day-picker@8.10.1
+npm warn Found: react@19.0.0
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @floating-ui/react-dom@2.1.2
+npm warn   node_modules/@floating-ui/react-dom
+npm warn     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.2
+npm warn     node_modules/@radix-ui/react-popper
+npm warn   71 more (@radix-ui/react-accordion, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.10.1
+npm warn node_modules/react-day-picker
+npm warn   react-day-picker@"8.10.1" from the root project
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.10.1
+npm warn   node_modules/react-day-picker
+npm warn     react-day-picker@"8.10.1" from the root project
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: vaul@0.9.9
+npm warn Found: react@19.0.0
+npm warn node_modules/react
+npm warn   peer react@">=16.8.0" from @floating-ui/react-dom@2.1.2
+npm warn   node_modules/@floating-ui/react-dom
+npm warn     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.2
+npm warn     node_modules/@radix-ui/react-popper
+npm warn   71 more (@radix-ui/react-accordion, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+npm warn node_modules/vaul
+npm warn   vaul@"^0.9.6" from the root project
+npm warn
+npm warn Conflicting peer dependency: react@18.3.1
+npm warn node_modules/react
+npm warn   peer react@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+npm warn   node_modules/vaul
+npm warn     vaul@"^0.9.6" from the root project
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: vaul@0.9.9
+npm warn Found: react-dom@19.0.0
+npm warn node_modules/react-dom
+npm warn   peer react-dom@">=16.8.0" from @floating-ui/react-dom@2.1.2
+npm warn   node_modules/@floating-ui/react-dom
+npm warn     @floating-ui/react-dom@"^2.0.0" from @radix-ui/react-popper@1.2.2
+npm warn     node_modules/@radix-ui/react-popper
+npm warn   47 more (@radix-ui/react-accordion, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer react-dom@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+npm warn node_modules/vaul
+npm warn   vaul@"^0.9.6" from the root project
+npm warn
+npm warn Conflicting peer dependency: react-dom@18.3.1
+npm warn node_modules/react-dom
+npm warn   peer react-dom@"^16.8 || ^17.0 || ^18.0" from vaul@0.9.9
+npm warn   node_modules/vaul
+npm warn     vaul@"^0.9.6" from the root project
+npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@radix-ui%2freact-lab - Not found
+npm error 404
+npm error 404  '@radix-ui/react-lab@*' is not in this registry.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-03-11T13_21_06_398Z-debug-0.log
