@@ -91,7 +91,7 @@ const recentTasks = [
 
 export default function CityPage() {
   const params = useParams()
-  const { userCity, setUserCity } = useGeolocation()
+  const { userCity } = useGeolocation()
   const [isGridView, setIsGridView] = useState(true)
   const [windowWidth, setWindowWidth] = useState(0)
   
@@ -100,10 +100,8 @@ export default function CityPage() {
   const formattedCityName = cityName.charAt(0).toUpperCase() + cityName.slice(1)
   
   useEffect(() => {
-    // Set the user's selected city in context
-    if (formattedCityName && formattedCityName !== userCity) {
-      setUserCity(formattedCityName);
-    }
+    // We don't need to set the city here as we're getting it from the URL
+    // The userCity from context is only used for comparison
     
     // Set initial window width
     setWindowWidth(window.innerWidth)
