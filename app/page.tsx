@@ -21,7 +21,17 @@ export default function HomePage() {
   }, [userCity, router])
 
   const handleLocationDetection = async () => {
-    await detectLocation()
+    // Show loading state
+    const result = await detectLocation()
+    // If we didn't get redirected, show a toast
+    if (!result && !userCity) {
+      const { toast } = await import("@/components/ui/use-toast")
+      toast({
+        title: "Location not found",
+        description: "Please select a city manually from the list below.",
+        variant: "destructive",
+      })
+    }
   }
 
   return (

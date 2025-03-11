@@ -136,17 +136,32 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
               className="pl-10 pr-4 py-2"
               value={searchQuery}
               onChange={handleSearchChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && suggestions.length > 0) {
+                  handleSelectSuggestion(suggestions[0]);
+                }
+              }}
             />
           </div>
-          <Button
-            variant="outline"
-            className="w-full mt-3 flex items-center justify-center gap-2"
-            onClick={handleDetectLocation}
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
-            {isLoading ? "Detecting..." : "Use current location"}
-          </Button>
+          <div className="flex gap-2 mt-3">
+            <Button
+              variant="outline"
+              className="flex-1 flex items-center justify-center gap-2"
+              onClick={handleDetectLocation}
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
+              {isLoading ? "Detecting..." : "Use current location"}
+            </Button>
+            <Button
+              variant="secondary"
+              className="flex items-center justify-center gap-2"
+              onClick={() => window.open("https://maps.olakrutrim.com", "_blank")}
+            >
+              <MapPin className="h-4 w-4" />
+              Open Map
+            </Button>
+          </div>
         </div>
 
         {/* Search results */}

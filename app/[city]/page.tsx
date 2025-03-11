@@ -502,3 +502,652 @@ export default function CityPage({ params }: CityPageProps) {
   )
 }
 
+"use client"
+
+import React, { useEffect, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { useParams } from "next/navigation"
+import { MapPin, Search, ArrowRight, Star, Clock, Filter } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useIsMobile } from "@/hooks/use-mobile"
+
+// Sample categories data
+const categories = [
+  {
+    id: "cleaning",
+    name: "Home Cleaning",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "home-cleaning", name: "Full Home Deep Cleaning", price: "₹999" },
+      { id: "bathroom-cleaning", name: "Bathroom Cleaning", price: "₹499" },
+      { id: "kitchen-cleaning", name: "Kitchen Deep Cleaning", price: "₹699" },
+      { id: "sofa-cleaning", name: "Sofa Cleaning", price: "₹599" },
+    ],
+  },
+  {
+    id: "plumbing",
+    name: "Plumbing",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "leakages", name: "Leakage Repair", price: "₹299" },
+      { id: "tap-repair", name: "Tap Repair/Replace", price: "₹199" },
+      { id: "basin-repair", name: "Basin/Sink Repair", price: "₹399" },
+      { id: "toilet-repair", name: "Toilet Repair", price: "₹499" },
+    ],
+  },
+  {
+    id: "electrical",
+    name: "Electrical",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "fan-repair", name: "Fan Repair", price: "₹249" },
+      { id: "switch-repair", name: "Switch/Socket Repair", price: "₹149" },
+      { id: "light-repair", name: "Light Installation", price: "₹199" },
+      { id: "wiring", name: "Wiring Work", price: "₹599" },
+    ],
+  },
+  {
+    id: "appliance-repair",
+    name: "Appliance Repair",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "ac-repair", name: "AC Service & Repair", price: "₹799" },
+      { id: "fridge-repair", name: "Refrigerator Repair", price: "₹699" },
+      { id: "washing-repair", name: "Washing Machine Repair", price: "₹599" },
+      { id: "microwave-repair", name: "Microwave Repair", price: "₹499" },
+    ],
+  },
+  {
+    id: "pest-control",
+    name: "Pest Control",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "general-pest", name: "General Pest Control", price: "₹999" },
+      { id: "cockroach", name: "Cockroach Treatment", price: "₹699" },
+      { id: "mosquito", name: "Mosquito Treatment", price: "₹599" },
+      { id: "bed-bugs", name: "Bed Bugs Treatment", price: "₹1299" },
+    ],
+  },
+  {
+    id: "painting",
+    name: "Home Painting",
+    icon: "/placeholder.svg?height=80&width=80",
+    subCategories: [
+      { id: "full-house", name: "Full House Painting", price: "₹8999" },
+      { id: "wall-painting", name: "Single Wall Painting", price: "₹2999" },
+      { id: "touch-up", name: "Touch-up Painting", price: "₹1999" },
+      { id: "texture-painting", name: "Texture Painting", price: "₹5999" },
+    ],
+  },
+]
+
+// Sample vendors data
+const vendors = [
+  {
+    id: "vendor1",
+    name: "CleanMasters Pro",
+    rating: 4.8,
+    reviews: 125,
+    image: "/placeholder.svg?height=100&width=100",
+    services: ["Home Cleaning", "Office Cleaning"],
+    response: "5 mins",
+  },
+  {
+    id: "vendor2",
+    name: "Quick Plumbing",
+    rating: 4.6,
+    reviews: 87,
+    image: "/placeholder.svg?height=100&width=100",
+    services: ["Plumbing", "Bathroom Fitting"],
+    response: "10 mins",
+  },
+  {
+    id: "vendor3",
+    name: "Electric Solutions",
+    rating: 4.7,
+    reviews: 104,
+    image: "/placeholder.svg?height=100&width=100",
+    services: ["Electrical", "Wiring"],
+    response: "15 mins",
+  },
+  {
+    id: "vendor4",
+    name: "Appliance Masters",
+    rating: 4.5,
+    reviews: 76,
+    image: "/placeholder.svg?height=100&width=100",
+    services: ["Appliance Repair", "AC Service"],
+    response: "20 mins",
+  },
+]
+
+export default function CityPage() {
+  const { city } = useParams()
+  const cityName = typeof city === "string" ? city.charAt(0).toUpperCase() + city.slice(1) : "Your City"
+  const isMobile = useIsMobile()
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* City hero section */}
+      <section className="bg-gradient-to-r from-primary/10 to-primary/5 py-8 md:py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center mb-4">
+            <MapPin className="h-5 w-5 text-primary mr-2" />
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Home Services in {cityName}
+            </h1>
+          </div>
+          <div className="relative max-w-2xl">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+            <Input 
+              type="search" 
+              placeholder="Search for services in your area" 
+              className="pl-10 pr-4 py-6 bg-white dark:bg-gray-800"
+            />
+            <Button className="absolute right-1 top-1 px-4">Search</Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking models tabs */}
+      <section className="py-6 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <Tabs defaultValue="direct" className="w-full">
+            <TabsList className="w-full grid grid-cols-3 mb-8">
+              <TabsTrigger value="direct" className="text-sm md:text-base">Direct Booking</TabsTrigger>
+              <TabsTrigger value="compare" className="text-sm md:text-base">Compare Vendors</TabsTrigger>
+              <TabsTrigger value="bidding" className="text-sm md:text-base">Task Bidding</TabsTrigger>
+            </TabsList>
+
+            {/* Direct booking content */}
+            <TabsContent value="direct" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                {/* Categories sidebar for desktop */}
+                {!isMobile && (
+                  <div className="col-span-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 self-start">
+                    <h3 className="font-medium mb-4">Service Categories</h3>
+                    <div className="space-y-2">
+                      {categories.map((category) => (
+                        <button
+                          key={category.id}
+                          className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+                            activeCategory === category.id
+                              ? "bg-primary text-white"
+                              : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                          }`}
+                          onClick={() => setActiveCategory(category.id)}
+                        >
+                          {category.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Categories horizontal scroll for mobile */}
+                {isMobile && (
+                  <div className="col-span-1 md:hidden mb-4">
+                    <div className="flex space-x-3 overflow-x-auto pb-2 hide-scrollbar">
+                      {categories.map((category) => (
+                        <button
+                          key={category.id}
+                          className={`flex-shrink-0 px-4 py-2 rounded-full border transition-colors ${
+                            activeCategory === category.id
+                              ? "bg-primary text-white border-primary"
+                              : "hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700"
+                          }`}
+                          onClick={() => setActiveCategory(category.id)}
+                        >
+                          {category.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Services listing */}
+                <div className="col-span-1 md:col-span-4">
+                  {!activeCategory ? (
+                    // No category selected - show all categories
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {categories.map((category) => (
+                        <div 
+                          key={category.id}
+                          className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => setActiveCategory(category.id)}
+                        >
+                          <div className="flex items-center p-4">
+                            <div className="flex-shrink-0 mr-4">
+                              <Image 
+                                src={category.icon} 
+                                alt={category.name}
+                                width={50}
+                                height={50}
+                                className="rounded-full"
+                              />
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{category.name}</h3>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {category.subCategories.length} services
+                              </p>
+                            </div>
+                            <ArrowRight className="ml-auto h-5 w-5 text-gray-400" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Category selected - show subcategories for that category
+                    <>
+                      {isMobile && (
+                        <Button 
+                          variant="ghost" 
+                          className="mb-4"
+                          onClick={() => setActiveCategory(null)}
+                        >
+                          ← Back to all categories
+                        </Button>
+                      )}
+                      
+                      <h2 className="text-xl font-semibold mb-4">
+                        {categories.find(c => c.id === activeCategory)?.name}
+                      </h2>
+                      
+                      <div className="grid grid-cols-1 gap-4">
+                        {categories
+                          .find(c => c.id === activeCategory)
+                          ?.subCategories.map((subcat) => (
+                            <div key={subcat.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <h3 className="font-medium">{subcat.name}</h3>
+                                  <p className="text-primary font-semibold mt-1">{subcat.price}</p>
+                                </div>
+                                <Link href={`/${city}/${activeCategory}/${subcat.id}`}>
+                                  <Button size="sm">Book Now</Button>
+                                </Link>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Compare vendors content */}
+            <TabsContent value="compare" className="mt-0">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Top Vendors in {cityName}</h2>
+                  <Button variant="outline" size="sm" className="flex items-center gap-1">
+                    <Filter className="h-4 w-4" /> Filter
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {vendors.map((vendor) => (
+                    <div key={vendor.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="p-4">
+                        <div className="flex items-center mb-4">
+                          <Image 
+                            src={vendor.image} 
+                            alt={vendor.name}
+                            width={60}
+                            height={60}
+                            className="rounded-full"
+                          />
+                          <div className="ml-3">
+                            <h3 className="font-medium">{vendor.name}</h3>
+                            <div className="flex items-center text-sm">
+                              <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                              <span>{vendor.rating}</span>
+                              <span className="mx-1">•</span>
+                              <span>{vendor.reviews} reviews</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <div className="text-sm text-gray-500 mb-1">Services:</div>
+                          <div className="flex flex-wrap gap-1">
+                            {vendor.services.map((service, idx) => (
+                              <span key={idx} className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                                {service}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center text-sm text-gray-500">
+                            <Clock className="h-4 w-4 mr-1" />
+                            <span>Responds in {vendor.response}</span>
+                          </div>
+                          <Link href={`/vendors/${vendor.id}`}>
+                            <Button size="sm" variant="outline">View Profile</Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Task bidding content */}
+            <TabsContent value="bidding" className="mt-0">
+              <div className="text-center max-w-2xl mx-auto py-8">
+                <h2 className="text-2xl font-bold mb-4">Post a Task for Bidding</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  Describe your task in detail, set your budget, and receive competitive bids from qualified professionals in {cityName}.
+                </p>
+                <div className="space-y-4">
+                  <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 text-left">
+                    <h3 className="text-lg font-medium mb-4">How Task Bidding Works</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-start">
+                        <div className="bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-4">
+                          <span className="text-primary font-medium">1</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Describe Your Task</h4>
+                          <p className="text-sm text-gray-500">Provide details about what you need, when, and your budget</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <div className="bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-4">
+                          <span className="text-primary font-medium">2</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Get Matched with Providers</h4>
+                          <p className="text-sm text-gray-500">We'll notify the right professionals for your task</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <div className="bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-4">
+                          <span className="text-primary font-medium">3</span>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Compare Bids & Hire</h4>
+                          <p className="text-sm text-gray-500">Review prices, profiles, and reviews before selecting</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Link href="/post-task">
+                    <Button className="w-full py-6" size="lg">Post a Task Now</Button>
+                  </Link>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </section>
+
+      {/* Emergency services section */}
+      <section className="py-8 bg-red-50 dark:bg-red-900/20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="mb-4 md:mb-0">
+              <h2 className="text-xl font-bold text-red-700 dark:text-red-400">Emergency Services</h2>
+              <p className="text-gray-600 dark:text-gray-300">Quick help for urgent problems in {cityName}</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Link href={`/${city}/emergency/plumbing`}>
+                <Button variant="destructive" className="w-full">
+                  Plumbing Emergency
+                </Button>
+              </Link>
+              <Link href={`/${city}/emergency/electrical`}>
+                <Button variant="destructive" className="w-full">
+                  Electrical Emergency
+                </Button>
+              </Link>
+              <Link href={`/${city}/emergency/locksmith`}>
+                <Button variant="destructive" className="w-full">
+                  Locksmith (24/7)
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular services section */}
+      <section className="py-12 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-6">Popular in {cityName}</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Service Card 1 */}
+            <div className="service-card bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="relative h-48">
+                <Image src="/placeholder.svg?height=400&width=600" alt="Home Cleaning" fill className="object-cover" />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">AC Service & Repair</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Professional AC maintenance and repair
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-medium">Starting ₹499</span>
+                  <Link href={`/${city}/appliance-repair/ac-repair`}>
+                    <Button size="sm">Book Now</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Service Card 2 */}
+            <div className="service-card bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="relative h-48">
+                <Image src="/placeholder.svg?height=400&width=600" alt="Salon Services" fill className="object-cover" />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">Salon at Home</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Professional beauty services at your doorstep
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-medium">Starting ₹299</span>
+                  <Link href={`/${city}/salon-spa/home-salon`}>
+                    <Button size="sm">Book Now</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Service Card 3 */}
+            <div className="service-card bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="relative h-48">
+                <Image src="/placeholder.svg?height=400&width=600" alt="Pest Control" fill className="object-cover" />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">Pest Control</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Complete pest treatment and prevention
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-medium">Starting ₹999</span>
+                  <Link href={`/${city}/pest-control/general-pest`}>
+                    <Button size="sm">Book Now</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Service Card 4 */}
+            <div className="service-card bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div className="relative h-48">
+                <Image src="/placeholder.svg?height=400&width=600" alt="Home Cleaning" fill className="object-cover" />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">Deep Cleaning</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+                  Professional home deep cleaning services
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-medium">Starting ₹1499</span>
+                  <Link href={`/${city}/cleaning/home-cleaning`}>
+                    <Button size="sm">Book Now</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Subscription section */}
+      <section className="py-12 bg-gray-50 dark:bg-gray-800">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold mb-2">Save with Subscriptions</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Subscribe to regular services and save up to 25% on every booking in {cityName}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Basic plan */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+              <div className="text-center mb-6">
+                <h3 className="font-bold text-lg">Basic Plan</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">₹999</span>
+                  <span className="text-gray-500">/month</span>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">Billed monthly</p>
+              </div>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Monthly home cleaning</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>10% off on all services</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Priority scheduling</span>
+                </li>
+              </ul>
+              
+              <Button className="w-full">Subscribe Now</Button>
+            </div>
+            
+            {/* Premium plan */}
+            <div className="bg-primary text-white rounded-lg shadow-md p-6 border border-primary">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-secondary text-secondary-foreground text-xs font-bold py-1 px-3 rounded-full">
+                POPULAR
+              </div>
+              <div className="text-center mb-6 relative">
+                <h3 className="font-bold text-lg">Premium Plan</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">₹1999</span>
+                  <span className="text-gray-200">/month</span>
+                </div>
+                <p className="text-sm text-gray-200 mt-2">Billed monthly</p>
+              </div>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Bi-weekly home cleaning</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>15% off on all services</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Quarterly AC servicing</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Priority scheduling & support</span>
+                </li>
+              </ul>
+              
+              <Button variant="secondary" className="w-full">Subscribe Now</Button>
+            </div>
+            
+            {/* Family plan */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+              <div className="text-center mb-6">
+                <h3 className="font-bold text-lg">Family Plan</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">₹3999</span>
+                  <span className="text-gray-500">/month</span>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">Billed monthly</p>
+              </div>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Weekly home cleaning</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>25% off on all services</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Monthly pest control</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Quarterly AC & appliance maintenance</span>
+                </li>
+                <li className="flex items-start">
+                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>24/7 emergency support</span>
+                </li>
+              </ul>
+              
+              <Button className="w-full">Subscribe Now</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}

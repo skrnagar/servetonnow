@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
     const response = await fetch(`https://maps.olakrutrim.com/v1/geocode/search?q=${encodeURIComponent(query)}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OLAKRUTRIM_API_KEY}`,
+        Authorization: `Bearer ${process.env.OLAKRUTRIM_API_KEY || "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"}`,
       },
     })
 
@@ -44,4 +45,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Failed to search locations" }, { status: 500 })
   }
 }
-

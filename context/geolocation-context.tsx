@@ -24,68 +24,77 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const { toast } = useToast()
   const router = useRouter()
 
-  const detectLocation = async () => {
+  const detectLocation = async (): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
 
     try {
       // First try browser geolocation
       if (navigator.geolocation) {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
+            })
           })
-        })
 
-        const { latitude, longitude } = position.coords
-        setUserLocation({ lat: latitude, lng: longitude })
+          const { latitude, longitude } = position.coords
+          setUserLocation({ lat: latitude, lng: longitude })
 
-        // Reverse geocode to get city using Olakrutrim API
-        const response = await fetch(`/api/geocode/reverse?lat=${latitude}&lng=${longitude}`)
+          // Reverse geocode to get city using Olakrutrim API
+          const response = await fetch(`/api/geocode/reverse?lat=${latitude}&lng=${longitude}`)
 
-        if (!response.ok) {
-          throw new Error("Failed to get location information")
-        }
-
-        const data = await response.json()
-
-        if (data.city) {
-          setUserCity(data.city)
-
-          // Check if we should redirect to city page
-          const currentPath = window.location.pathname
-          if (currentPath === "/" || currentPath === "/home") {
-            router.push(`/${data.city.toLowerCase()}`)
+          if (!response.ok) {
+            throw new Error("Failed to get location information")
           }
-        } else {
-          throw new Error("City not found")
+
+          const data = await response.json()
+
+          if (data.city) {
+            setUserCity(data.city)
+
+            // Check if we should redirect to city page
+            const currentPath = window.location.pathname
+            if (currentPath === "/" || currentPath === "/home") {
+              router.push(`/${data.city.toLowerCase()}`)
+              return true
+            }
+            return true
+          } else {
+            throw new Error("City not found from coordinates")
+          }
+        } catch (geoError) {
+          console.warn("Browser geolocation failed:", geoError)
+          // Fall through to IP geolocation
         }
+      }
+      
+      // Fallback to IP geolocation
+      const response = await fetch("/api/geocode/ip")
+
+      if (!response.ok) {
+        throw new Error("Failed to get location from IP")
+      }
+
+      const data = await response.json()
+
+      if (data.city) {
+        setUserCity(data.city)
+        if (data.latitude && data.longitude) {
+          setUserLocation({ lat: data.latitude, lng: data.longitude })
+        }
+
+        // Check if we should redirect to city page
+        const currentPath = window.location.pathname
+        if (currentPath === "/" || currentPath === "/home") {
+          router.push(`/${data.city.toLowerCase()}`)
+          return true
+        }
+        return true
       } else {
-        // Fallback to IP geolocation
-        const response = await fetch("/api/geocode/ip")
-
-        if (!response.ok) {
-          throw new Error("Failed to get location from IP")
-        }
-
-        const data = await response.json()
-
-        if (data.city) {
-          setUserCity(data.city)
-          if (data.latitude && data.longitude) {
-            setUserLocation({ lat: data.latitude, lng: data.longitude })
-          }
-
-          // Check if we should redirect to city page
-          const currentPath = window.location.pathname
-          if (currentPath === "/" || currentPath === "/home") {
-            router.push(`/${data.city.toLowerCase()}`)
-          }
-        } else {
-          throw new Error("City not found from IP")
-        }
+        throw new Error("City not found from IP")
       }
     } catch (err) {
       console.error("Location detection error:", err)
@@ -95,6 +104,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         description: "We couldn't detect your location. Please select a city manually.",
         variant: "destructive",
       })
+      return false
     } finally {
       setIsLoading(false)
     }
