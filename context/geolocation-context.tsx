@@ -70,7 +70,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           // Fall through to IP geolocation
         }
       }
-      
+
       // Fallback to IP geolocation
       const response = await fetch("/api/geocode/ip")
 
@@ -130,11 +130,13 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           if (data.latitude && data.longitude) {
             setUserLocation({ lat: data.latitude, lng: data.longitude })
           }
-          
+
           // If this was a fallback city, log it but still use the data
           if (data.fallback) {
             console.info("Using fallback city data:", data.city)
           }
+
+          console.log("Location detected:", data.city, data.region, data.country)
         } else {
           console.warn("IP geolocation API returned no city data")
           // Set a default city if none was returned
@@ -173,4 +175,3 @@ export const useGeolocation = () => {
   }
   return context
 }
-

@@ -1,91 +1,56 @@
-
 import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    // Default fallback city in case all geolocation services fail
-    const fallbackCity = "Indore";
-    
-    // First try ipapi.co
-    try {
-      const response = await fetch("https://ipapi.co/json/", {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; Replit/1.0)",
-        },
-        cache: "no-store",
-      })
+    // Get client IP
+    // In production, you'd typically get this from request headers
+    // For testing, we'll use a fallback approach
+    let ip = '106.219.84.80' // Default for testing
 
-      if (response.ok) {
-        const data = await response.json()
-        
-        if (data.city) {
-          return NextResponse.json({
-            ip: data.ip,
-            city: data.city,
-            region: data.region,
-            country: data.country_name,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            postal: data.postal,
-            timezone: data.timezone,
-          })
-        }
-      }
-    } catch (ipApiError) {
-      console.error("ipapi.co error:", ipApiError)
+    // Get API key from environment variables
+    const apiKey = process.env.IP2LOCATION_API_KEY
+
+    if (!apiKey) {
+      console.error("IP2LOCATION_API_KEY is not set")
+      return NextResponse.json(
+        { city: "Indore", fallback: true, message: "Using fallback location because API key is missing" },
+        { status: 200 }
+      )
     }
 
-    // Fallback to ipinfo.io (free tier: 50,000 requests per month)
-    try {
-      const response = await fetch("https://ipinfo.io/json", {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; Replit/1.0)",
-        },
-        cache: "no-store",
-      })
+    // Make API request to IP2Location
+    const url = `https://api.ip2location.io/?key=${apiKey}&ip=${ip}`
+    console.log("Fetching IP location from:", url)
 
-      if (response.ok) {
-        const data = await response.json()
-        
-        // Parse coordinates from the loc field (format: "latitude,longitude")
-        let latitude = null
-        let longitude = null
-        
-        if (data.loc) {
-          const [lat, lng] = data.loc.split(",")
-          latitude = parseFloat(lat)
-          longitude = parseFloat(lng)
-        }
-        
-        return NextResponse.json({
-          ip: data.ip,
-          city: data.city,
-          region: data.region,
-          country: data.country,
-          latitude,
-          longitude,
-          postal: data.postal,
-          timezone: data.timezone,
-        })
-      }
-    } catch (ipInfoError) {
-      console.error("ipinfo.io error:", ipInfoError)
-    }
-
-    // If all APIs fail, return a fallback city
-    return NextResponse.json({
-      city: fallbackCity,
-      fallback: true,
-      message: "Using fallback city due to inability to determine location from IP"
+    const response = await fetch(url, { 
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
     })
+
+    if (!response.ok) {
+      throw new Error(`IP2Location API returned ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log("IP2Location API response:", data)
+
+    // Format the response
+    return NextResponse.json({
+      city: data.city_name,
+      region: data.region_name,
+      country: data.country_name,
+      latitude: parseFloat(data.latitude),
+      longitude: parseFloat(data.longitude),
+      ip: data.ip
+    })
+
   } catch (error) {
     console.error("IP geolocation error:", error)
-    // Even on complete failure, return a fallback city instead of an error
-    return NextResponse.json({
-      city: "Indore",
-      fallback: true,
-      error: "Failed to get location from IP",
-      message: "Using fallback city due to API failure"
-    })
+
+    // Fallback to a default location
+    return NextResponse.json(
+      { city: "Indore", fallback: true, message: "Using fallback location due to API error" },
+      { status: 200 }
+    )
   }
 }
