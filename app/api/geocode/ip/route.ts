@@ -46,12 +46,11 @@ export async function GET() {
       cityName = "Indore"
     }
 
-    // Format the response with full address
+    // Format the response
     return NextResponse.json({
       city: cityName,
       latitude: latitude,
-      longitude: longitude,
-      fullAddress: data.features && data.features.length > 0 ? data.features[0].properties?.formatted : `${cityName}`
+      longitude: longitude
     })
   } catch (error) {
     console.error("IP geolocation error:", error)
