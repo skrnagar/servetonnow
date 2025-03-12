@@ -36,10 +36,31 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     return null
   }
 
-  // Helper function to extract location data (This function is assumed to exist elsewhere and is not defined here)
+  // Helper function to extract location data
   const extractLocationData = (data: any): { city: string; state: string } | null => {
-    // This is a placeholder, replace with your actual implementation
-    return { city: data.address_components?.find(c => c.types.includes('locality'))?.long_name || "Indore", state: "MP" };
+    try {
+      // Check if we have address_components
+      if (data.address_components && Array.isArray(data.address_components)) {
+        const cityComponent = data.address_components.find((c: any) => 
+          c.types && Array.isArray(c.types) && c.types.includes('locality')
+        );
+        
+        const stateComponent = data.address_components.find((c: any) => 
+          c.types && Array.isArray(c.types) && c.types.includes('administrative_area_level_1')
+        );
+        
+        return { 
+          city: cityComponent?.long_name || "Indore", 
+          state: stateComponent?.long_name || "MP" 
+        };
+      }
+      
+      // Fallback
+      return { city: "Indore", state: "MP" };
+    } catch (error) {
+      console.error("Error extracting location data:", error);
+      return { city: "Indore", state: "MP" };
+    }
   }
 
   const detectLocation = async (): Promise<boolean> => {
@@ -120,31 +141,46 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     const autoDetectLocation = async () => {
       try {
         // Try IP-based geolocation for initial location detection using API route
-        const response = await fetch("/api/geocode/ip")
+        // Set a timeout to prevent hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch("/api/geocode/ip", {
+          signal: controller.signal
+        }).finally(() => clearTimeout(timeoutId));
 
-        if (!response.ok) {
-          throw new Error("Auto IP location detection failed")
-        }
-
-        const data = await response.json()
+        // Even if response is not OK, we'll try to use the data
+        // as our API is designed to return fallback data
+        const data = await response.json();
+        
         if (data && data.results && data.results.length > 0) {
-          const locationData = extractLocationData(data.results[0])
+          const locationData = extractLocationData(data.results[0]);
           if (locationData) {
             setUserLocation({
-              ...locationData,
-              coords: data.results[0].geometry?.location || null
-            })
-            setUserCity(locationData.city); //Added to set the city name from the locationData
+              lat: data.results[0].geometry?.location?.lat || 22.7196,
+              lng: data.results[0].geometry?.location?.lng || 75.8577
+            });
+            setUserCity(locationData.city || "Indore");
+          } else {
+            // Fallback if locationData couldn't be extracted
+            setUserLocation({ lat: 22.7196, lng: 75.8577 });
+            setUserCity("Indore");
           }
+        } else {
+          // Fallback if no results
+          setUserLocation({ lat: 22.7196, lng: 75.8577 });
+          setUserCity("Indore");
         }
       } catch (error) {
-        console.error("Auto IP location detection error:", error)
-        // Don't set error message for auto-detection failure
+        console.error("Auto IP location detection error:", error);
+        // Set fallback values for auto-detection failure
+        setUserLocation({ lat: 22.7196, lng: 75.8577 });
+        setUserCity("Indore");
       }
-    }
+    };
 
-    autoDetectLocation()
-  }, [])
+    autoDetectLocation();
+  }, []);
 
   return (
     <GeolocationContext.Provider
