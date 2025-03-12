@@ -1,53 +1,67 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Menu, X, MapPin, Search, User, ShoppingCart, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Input } from "@/components/ui/input"
-import { useGeolocation } from "@/context/geolocation-context"
-import LocationSearch from "@/components/location-search"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+  Menu,
+  X,
+  MapPin,
+  Search,
+  User,
+  ShoppingCart,
+  ChevronDown,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { useGeolocation } from "@/context/geolocation-context";
+import LocationSearch from "@/components/location-search";
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isLocationSearchOpen, setIsLocationSearchOpen] = useState(false)
-  const pathname = usePathname()
-  const { userCity, detectLocation, isLoading } = useGeolocation()
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isLocationSearchOpen, setIsLocationSearchOpen] = useState(false);
+  const pathname = usePathname();
+  const { userCity, detectLocation, isLoading } = useGeolocation();
 
   // Handle scroll effect for header
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Extract city from URL path if it exists
-  const pathSegments = pathname.split("/").filter(Boolean)
-  const cityFromPath = pathSegments.length > 0 ? pathSegments[0] : null
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const cityFromPath = pathSegments.length > 0 ? pathSegments[0] : null;
 
   // Display city name with proper capitalization
-  const displayCity = userCity || cityFromPath
+  const displayCity = userCity || cityFromPath;
   const formattedCity = displayCity
     ? displayCity.charAt(0).toUpperCase() + displayCity.slice(1).toLowerCase()
-    : "Select Location"
+    : "Select Location";
 
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
-        isScrolled ? "bg-white shadow-md dark:bg-gray-900" : "bg-white dark:bg-gray-900"
+        isScrolled
+          ? "bg-white shadow-md dark:bg-gray-900"
+          : "bg-white dark:bg-gray-900"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link 
-              href={pathSegments.length === 1 && pathSegments[0] !== '' ? `/${pathSegments[0]}` : "/"} 
+            <Link
+              href={
+                pathSegments.length === 1 && pathSegments[0] !== ""
+                  ? `/${pathSegments[0]}`
+                  : "/"
+              }
               className="flex items-center"
             >
               <Image
@@ -61,31 +75,39 @@ export default function Header() {
           </div>
 
           {/* Main Search Bar (Zomato Style) */}
-          <div className="hidden md:flex flex-1 max-w-3xl mx-4 h-12 rounded-lg border border-gray-300 overflow-hidden">
-            <div 
+          <div className="hidden md:flex flex-1 max-w-xl mx-4 h-11 rounded-lg border border-gray-300 overflow-hidden">
+            <div
               className="flex items-center gap-1 px-4 cursor-pointer border-r border-gray-300 bg-white hover:bg-gray-50"
               onClick={() => setIsLocationSearchOpen(true)}
             >
-              <MapPin className="h-5 w-5 text-primary" />
-              <span className="font-medium max-w-[120px] truncate">{formattedCity}</span>
-              <ChevronDown className="h-4 w-4 text-gray-500" />
+              <MapPin className="h-5 w-5 text-gray-400" />
+              <span className="font-medium max-w-[120px] text-gray-400 truncate">
+                {formattedCity}
+              </span>
+              <ChevronDown className="h-4 w-4 text-gray-400" />
             </div>
             <div className="flex flex-1 items-center px-3 bg-white">
               <Search className="h-5 w-5 text-gray-400 mr-2" />
               <Input
                 type="search"
-                placeholder="Search for services, cuisine or a dish"
-                className="border-none shadow-none focus-visible:ring-0 pl-0 h-full"
+                placeholder="Search for services"
+                className="border-none shadow-none placeholder-gray-400 focus-visible:ring-0 pl-0 h-full"
               />
             </div>
           </div>
 
           {/* Desktop Right Side Actions */}
           <div className="hidden md:flex items-center space-x-5">
-            <Link href="/how-it-works" className="text-sm font-medium text-gray-700 hover:text-primary">
+            <Link
+              href="/how-it-works"
+              className="text-sm font-medium text-gray-700 hover:text-primary"
+            >
               How It Works
             </Link>
-            <Link href="/services" className="text-sm font-medium text-gray-700 hover:text-primary">
+            <Link
+              href="/services"
+              className="text-sm font-medium text-gray-700 hover:text-primary"
+            >
               Services
             </Link>
             <Link href="/cart">
@@ -99,13 +121,20 @@ export default function Header() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="sm" className="rounded-lg">Login</Button>
+              <Button size="sm" className="rounded-lg">
+                Login
+              </Button>
             </Link>
           </div>
 
           {/* Mobile Header */}
           <div className="flex md:hidden items-center space-x-3">
-            <Button variant="outline" size="icon" className="border-gray-300" onClick={() => setIsLocationSearchOpen(true)}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-gray-300"
+              onClick={() => setIsLocationSearchOpen(true)}
+            >
               <MapPin className="h-5 w-5 text-primary" />
             </Button>
             <Button variant="outline" size="icon" className="border-gray-300">
@@ -133,16 +162,26 @@ export default function Header() {
                     </SheetTrigger>
                   </div>
                   <nav className="flex flex-col space-y-4 mt-4">
-                    <Link 
-                      href={pathSegments.length === 1 && pathSegments[0] !== '' ? `/${pathSegments[0]}` : "/"} 
+                    <Link
+                      href={
+                        pathSegments.length === 1 && pathSegments[0] !== ""
+                          ? `/${pathSegments[0]}`
+                          : "/"
+                      }
                       className="text-base font-medium py-2"
                     >
                       Home
                     </Link>
-                    <Link href="/services" className="text-base font-medium py-2">
+                    <Link
+                      href="/services"
+                      className="text-base font-medium py-2"
+                    >
                       Services
                     </Link>
-                    <Link href="/how-it-works" className="text-base font-medium py-2">
+                    <Link
+                      href="/how-it-works"
+                      className="text-base font-medium py-2"
+                    >
                       How It Works
                     </Link>
                     <Link href="/about" className="text-base font-medium py-2">
@@ -170,9 +209,11 @@ export default function Header() {
 
       {/* Location Search Modal */}
       {isLocationSearchOpen && (
-        <LocationSearch isOpen={isLocationSearchOpen} onClose={() => setIsLocationSearchOpen(false)} />
+        <LocationSearch
+          isOpen={isLocationSearchOpen}
+          onClose={() => setIsLocationSearchOpen(false)}
+        />
       )}
     </header>
-  )
+  );
 }
-
