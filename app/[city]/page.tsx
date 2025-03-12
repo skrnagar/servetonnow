@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { FaList, FaSearch, FaTh } from "react-icons/fa"
+import { FaList, FaSearch, FaTh, FaArrowRight } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGeolocation } from "@/context/geolocation-context"
@@ -19,6 +19,8 @@ export default function CityPage() {
   // Get city name from URL parameter
   const cityName = typeof params.city === 'string' ? params.city : params.city?.[0] || ''
   const formattedCityName = cityName.charAt(0).toUpperCase() + cityName.slice(1)
+  const citySlug = cityName.toLowerCase(); // Assumed definition for citySlug
+
 
   useEffect(() => {
     // We don't need to set the city here as we're getting it from the URL
@@ -131,6 +133,38 @@ export default function CityPage() {
                 </div>
               </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Service Categories Section */}
+      <section className="mb-10">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Service Categories</h2>
+          <Link href="/services" className="text-primary hover:underline flex items-center">
+            View All
+            <FaArrowRight className="ml-1 h-3 w-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {[
+            { name: "Cleaning", icon: "🧹", slug: "cleaning" },
+            { name: "Plumbing", icon: "🚿", slug: "plumbing" },
+            { name: "Electrical", icon: "💡", slug: "electrical" },
+            { name: "Appliance Repair", icon: "🔧", slug: "appliance-repair" },
+            { name: "Pest Control", icon: "🐜", slug: "pest-control" },
+            { name: "Painting", icon: "🎨", slug: "painting" },
+            { name: "Carpentry", icon: "🪚", slug: "carpentry" },
+            { name: "Home Moving", icon: "📦", slug: "home-moving" }
+          ].map((category) => (
+            <Link 
+              key={category.slug}
+              href={`/${citySlug}/${category.slug}`}
+              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
+            >
+              <span className="text-3xl mb-3">{category.icon}</span>
+              <h3 className="font-semibold">{category.name}</h3>
+            </Link>
           ))}
         </div>
       </section>
