@@ -16,8 +16,7 @@ type GeolocationContextType = {
 
 const GeolocationContext = createContext<GeolocationContextType | undefined>(undefined)
 
-// Olakrutrim API key (This is not used after the changes)
-const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
+import { getLocationFromIP, reverseGeocode } from "@/lib/olakrutrim";
 
 export function GeolocationProvider({ children }: { children: React.ReactNode }) {
   const [userCity, setUserCity] = useState<string | null>(null)
@@ -80,26 +79,16 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
 
         const { latitude, longitude } = position.coords
 
-        // Use Next.js API route to proxy the request (avoids CORS issues)
-        const response = await fetch(
-          `/api/geocode/reverse?lat=${latitude}&lon=${longitude}`
-        )
-
-        if (!response.ok) {
-          throw new Error("Reverse geocoding failed")
-        }
-
-        const data = await response.json()
-        if (data && data.results && data.results.length > 0) {
-          const locationData = extractLocationData(data.results[0])
-          if (locationData) {
-            setUserLocation({
-              ...locationData,
-              coords: { lat: latitude, lng: longitude }
-            })
-            setUserCity(locationData.city); //Added to set the city name from the locationData
-            return true; //Return true to indicate success
-          }
+        // Use our utility for reverse geocoding
+        const locationData = await reverseGeocode(latitude, longitude)
+        
+        if (locationData) {
+          setUserLocation({
+            lat: latitude,
+            lng: longitude
+          })
+          setUserCity(locationData.city);
+          return true;
         }
       }
     } catch (error) {
@@ -107,33 +96,28 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     }
 
     try {
-      // Fall back to IP-based geolocation (using API route)
-      const response = await fetch("/api/geocode/ip")
-
-      if (!response.ok) {
-        throw new Error("IP geolocation failed")
-      }
-
-      const data = await response.json()
-      if (data && data.results && data.results.length > 0) {
-        const locationData = extractLocationData(data.results[0])
-        if (locationData) {
-          setUserLocation({
-            ...locationData,
-            coords: data.results[0].geometry?.location || null
-          })
-          setUserCity(locationData.city); //Added to set the city name from the locationData
-          return true; //Return true to indicate success
-        }
+      // Fall back to IP-based geolocation using our utility
+      const locationData = await getLocationFromIP();
+      
+      if (locationData) {
+        setUserLocation({
+          lat: locationData.location.lat,
+          lng: locationData.location.lng
+        });
+        setUserCity(locationData.city);
+        return true;
       }
     } catch (error) {
       console.error("IP geolocation failed:", error)
       setError("Could not detect your location automatically. Please enter it manually.")
-      return false; //Return false to indicate failure
     } finally {
       setIsLoading(false)
     }
-    return false; //Return false if both methods fail
+    
+    // Set fallback values
+    setUserLocation({ lat: 22.7196, lng: 75.8577 });
+    setUserCity("Indore");
+    return false;
   }
 
   useEffect(() => {

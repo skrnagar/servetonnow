@@ -10,19 +10,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGeolocation } from "@/context/geolocation-context"
 import { useToast } from "@/components/ui/use-toast"
+import { searchPlaces, PlaceSuggestion } from "@/lib/olakrutrim"
 
 interface LocationSearchProps {
   isOpen: boolean
   onClose: () => void
-}
-
-interface PlaceSuggestion {
-  id: string
-  name: string
-  city: string
-  state?: string
-  country?: string
-  fullAddress?: string
 }
 
 const popularCities = [
@@ -37,9 +29,6 @@ const popularCities = [
   { id: "kolkata", name: "Kolkata" },
   { id: "ahmedabad", name: "Ahmedabad" },
 ]
-
-// Olakrutrim API key
-const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
 
 export default function LocationSearch({ isOpen, onClose }: LocationSearchProps) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -76,41 +65,22 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
 
     setIsSearching(true)
     try {
-      // Call our proxy API
-      const response = await fetch(
-        `/api/geocode/search?query=${encodeURIComponent(query)}&limit=5`
-      )
+      // Use our utility function to search places
+      const results = await searchPlaces(query, 5);
+      setSuggestions(results);
       
-      if (!response.ok) throw new Error("Search failed")
-
-      const data = await response.json()
-      
-      // Process the response from Olakrutrim API
-      if (data.features && data.features.length > 0) {
-        const processedSuggestions = data.features.map((feature: any, index: number) => {
-          const properties = feature.properties || {}
-          const address = properties.formatted || properties.name || ""
-          const cityMatch = address.match(/([^,]+)(?:,|$)/)
-          const city = cityMatch ? cityMatch[1].trim() : "Unknown"
-          
-          // Extract state and country
-          const addressParts = address.split(',').map((part: string) => part.trim())
-          const state = addressParts.length > 1 ? addressParts[1] : undefined
-          const country = addressParts.length > 2 ? addressParts[addressParts.length - 1] : undefined
-          
-          return {
-            id: `place-${index}-${feature.id || Date.now()}`,
-            name: properties.name || address,
-            city: city,
-            state: state,
-            country: country,
-            fullAddress: address
-          }
-        })
+      if (results.length === 0) {
+        // Fallback to popular cities matching the query
+        const filteredCities = popularCities
+          .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+          .map(city => ({
+            id: city.id,
+            name: city.name,
+            city: city.name,
+            fullAddress: city.name
+          }));
         
-        setSuggestions(processedSuggestions)
-      } else {
-        setSuggestions([])
+        setSuggestions(filteredCities);
       }
     } catch (error) {
       console.error("Search error:", error)
@@ -121,16 +91,16 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       })
       
       // Fallback to popular cities matching the query
-      const query = searchQuery.toLowerCase()
-      const filteredCities = popularCities.filter(city => 
-        city.name.toLowerCase().includes(query)
-      ).map(city => ({
-        ...city,
-        city: city.name,
-        fullAddress: city.name
-      }))
+      const filteredCities = popularCities
+        .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+        .map(city => ({
+          id: city.id,
+          name: city.name,
+          city: city.name,
+          fullAddress: city.name
+        }));
       
-      setSuggestions(filteredCities)
+      setSuggestions(filteredCities);
     } finally {
       setIsSearching(false)
     }

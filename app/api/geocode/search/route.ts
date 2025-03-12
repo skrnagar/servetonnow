@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
@@ -15,13 +16,13 @@ export async function GET(request: Request) {
       `https://maps.olakrutrim.com/v1/api/places/geocode/search?text=${encodeURIComponent(query)}&limit=${limit}`,
       {
         headers: {
-          "x-api-key": process.env.OLAKRUTRIM_API_KEY || "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
+          "x-api-key": "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
         }
       }
     )
 
     if (!response.ok) {
-      throw new Error("Failed to search locations")
+      throw new Error(`Failed to search locations: ${response.status}`)
     }
 
     const data = await response.json()
@@ -42,24 +43,22 @@ export async function GET(request: Request) {
       { id: "kolkata", name: "Kolkata" },
       { id: "ahmedabad", name: "Ahmedabad" },
     ]
-
-    const query_lower = query.toLowerCase()
-    const filteredCities = popularCities.filter(city => 
-      city.name.toLowerCase().includes(query_lower)
-    )
-
-    const results = filteredCities.map(city => ({
-      id: city.id,
-      properties: {
-        name: city.name,
-        formatted: city.name + ", India"
-      }
-    }))
-
-    return NextResponse.json({ 
-      features: results.map(result => ({
-        id: result.id,
-        properties: result.properties
+    
+    const filteredCities = popularCities
+      .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, parseInt(limit))
+    
+    return NextResponse.json({
+      features: filteredCities.map(city => ({
+        id: city.id,
+        properties: {
+          name: city.name,
+          formatted: city.name
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [0, 0] // Default coordinates
+        }
       }))
     })
   }
