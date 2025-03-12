@@ -155,6 +155,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   // Handle suggestion selection
   const handleSelectSuggestion = (suggestion: PlaceSuggestion) => {
     if (suggestion.city) {
+      // Store the full address if available
+      if (suggestion.fullAddress) {
+        localStorage.setItem('userSelectedAddress', suggestion.fullAddress);
+      }
       router.push(`/${suggestion.city.toLowerCase()}`)
       onClose()
     }

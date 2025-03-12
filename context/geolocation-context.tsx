@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 type GeolocationContextType = {
   userCity: string | null
   userLocation: { lat: number; lng: number } | null
+  userAddress: string | null
   isLoading: boolean
   error: string | null
   detectLocation: () => Promise<boolean>
@@ -22,6 +23,7 @@ const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
 export function GeolocationProvider({ children }: { children: React.ReactNode }) {
   const [userCity, setUserCity] = useState<string | null>(null)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [userAddress, setUserAddress] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
@@ -75,6 +77,8 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           if (data.features && data.features.length > 0) {
             const address = data.features[0].properties?.formatted || ""
             cityName = extractCityFromAddress(address)
+            // Store the full address
+            setUserAddress(address)
           }
 
           if (cityName) {
@@ -113,10 +117,11 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         let cityName = data.city || null
         let latitude = data.latitude || null
         let longitude = data.longitude || null
-
+        let fullAddress = data.fullAddress || `${cityName}, ${data.region || ''}`
 
         if (cityName) {
           setUserCity(cityName)
+          setUserAddress(fullAddress)
           if (latitude !== null && longitude !== null) {
             setUserLocation({ lat: latitude, lng: longitude })
           }
@@ -212,6 +217,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
       value={{
         userCity,
         userLocation,
+        userAddress,
         isLoading,
         error,
         detectLocation,

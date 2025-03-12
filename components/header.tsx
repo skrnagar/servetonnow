@@ -15,7 +15,21 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLocationSearchOpen, setIsLocationSearchOpen] = useState(false)
   const pathname = usePathname()
-  const { userCity, detectLocation, isLoading } = useGeolocation()
+  const { userCity, userAddress, userLocation, detectLocation, isLoading } = useGeolocation()
+  const [displayAddress, setDisplayAddress] = useState<string | null>(null)
+  
+  // Get the most detailed address to display
+  useEffect(() => {
+    // Check for user selected address from localStorage first
+    const savedAddress = localStorage.getItem('userSelectedAddress');
+    if (savedAddress) {
+      setDisplayAddress(savedAddress);
+    } else if (userAddress) {
+      setDisplayAddress(userAddress);
+    } else if (userCity) {
+      setDisplayAddress(userCity);
+    }
+  }, [userAddress, userCity]);
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -57,22 +71,29 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Main Search Bar (Zomato Style) */}
-          <div className="hidden md:flex flex-1 max-w-3xl mx-4 h-12 rounded-lg border border-gray-300 overflow-hidden">
+          {/* Main Search Bar (Compact style) */}
+          <div className="hidden md:flex space-x-3 flex-1 max-w-3xl mx-4">
+            {/* Address selection button */}
             <div 
-              className="flex items-center gap-1 px-4 cursor-pointer border-r border-gray-300 bg-white hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-3 cursor-pointer bg-white hover:bg-gray-50 border border-gray-200 rounded-lg w-[450px]"
               onClick={() => setIsLocationSearchOpen(true)}
             >
-              <MapPin className="h-5 w-5 text-primary" />
-              <span className="font-medium max-w-[120px] truncate">{formattedCity}</span>
+              <MapPin className="h-5 w-5 text-gray-500" />
+              <div className="flex-1 truncate pr-2">
+                <span className="font-medium text-gray-700 text-sm">
+                  {displayAddress || formattedCity}
+                </span>
+              </div>
               <ChevronDown className="h-4 w-4 text-gray-500" />
             </div>
-            <div className="flex flex-1 items-center px-3 bg-white">
+            
+            {/* Search box */}
+            <div className="flex flex-1 items-center px-4 py-3 bg-white border border-gray-200 rounded-lg">
               <Search className="h-5 w-5 text-gray-400 mr-2" />
               <Input
                 type="search"
-                placeholder="Search for services, cuisine or a dish"
-                className="border-none shadow-none focus-visible:ring-0 pl-0 h-full"
+                placeholder="Search for 'AC service'"
+                className="border-none shadow-none focus-visible:ring-0 pl-0 h-full bg-transparent text-sm"
               />
             </div>
           </div>
