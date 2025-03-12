@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -35,7 +34,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const { detectLocation, isLoading } = useGeolocation()
+  const { detectLocation, isLoading, userLocation } = useGeolocation()
   const { toast } = useToast()
   const router = useRouter()
 
@@ -68,7 +67,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       // Use our utility function to search places
       const results = await searchPlaces(query, 5);
       setSuggestions(results);
-      
+
       if (results.length === 0) {
         // Fallback to popular cities matching the query
         const filteredCities = popularCities
@@ -79,7 +78,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             city: city.name,
             fullAddress: city.name
           }));
-        
+
         setSuggestions(filteredCities);
       }
     } catch (error) {
@@ -89,7 +88,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         description: "Failed to get location suggestions. Please try again.",
         variant: "destructive",
       })
-      
+
       // Fallback to popular cities matching the query
       const filteredCities = popularCities
         .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
@@ -99,7 +98,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
           city: city.name,
           fullAddress: city.name
         }));
-      
+
       setSuggestions(filteredCities);
     } finally {
       setIsSearching(false)
@@ -130,9 +129,25 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   }
 
   // Handle city selection
-  const handleSelectCity = (cityName: string) => {
-    router.push(`/${cityName.toLowerCase()}`)
-    onClose()
+  const handleSelectCity = (city: string) => {
+    if (city) {
+      setUserCity(city);
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const locationData = {
+            city,
+            location: userLocation || { lat: 22.7196, lng: 75.8577 }, // Use current location or default
+            timestamp: Date.now()
+          };
+          localStorage.setItem('serveto_user_location', JSON.stringify(locationData));
+        } catch (error) {
+          console.error("Error saving location to localStorage:", error);
+        }
+      }
+      onClose();
+      router.push(`/${city.toLowerCase()}`);
+    }
   }
 
   // Handle suggestion selection
@@ -150,6 +165,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     if (searchInputRef.current) {
       searchInputRef.current.focus()
     }
+  }
+
+  const setUserCity = (city:string) => {
+    // Placeholder for setting userCity state.  Implementation depends on the broader application state management.
   }
 
   if (!isOpen) return null

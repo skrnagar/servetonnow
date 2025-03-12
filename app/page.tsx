@@ -15,22 +15,33 @@ export default function HomePage() {
 
   useEffect(() => {
     // If we already have the user's city, redirect to the city page
-    if (userCity) {
-      router.push(`/${userCity.toLowerCase()}`)
+    if (userCity && userCity !== "Indore") {
+      // Check if we need to navigate
+      const currentPath = window.location.pathname;
+      const targetPath = `/${userCity.toLowerCase()}`;
+      
+      if (currentPath === '/' || currentPath === '') {
+        router.push(targetPath);
+      }
     }
   }, [userCity, router])
 
   const handleLocationDetection = async () => {
     // Show loading state
-    const result = await detectLocation()
-    // If we didn't get redirected, show a toast
-    if (!result && !userCity) {
-      const { toast } = await import("@/components/ui/use-toast")
+    const result = await detectLocation();
+    
+    // If we got a result, redirect to the city page
+    if (result && userCity) {
+      router.push(`/${userCity.toLowerCase()}`);
+    } 
+    // If detection failed, show a toast
+    else if (!result) {
+      const { toast } = await import("@/components/ui/use-toast");
       toast({
         title: "Location not found",
         description: "Please select a city manually from the list below.",
         variant: "destructive",
-      })
+      });
     }
   }
 

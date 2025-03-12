@@ -26,14 +26,47 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const { toast } = useToast()
   const router = useRouter()
 
-  // Helper function to extract city from an address string
-  const extractCityFromAddress = (address: string): string | null => {
-    const parts = address.split(',').map(part => part.trim())
-    if (parts.length >= 1) {
-      return parts[0]
+  const LOCATION_STORAGE_KEY = 'serveto_user_location';
+  const LOCATION_TIMESTAMP_KEY = 'serveto_location_timestamp';
+  // Location data expires after 24 hours (in milliseconds)
+  const LOCATION_EXPIRY = 24 * 60 * 60 * 1000;
+
+  // Helper function to save location data to localStorage
+  const saveLocationToStorage = (city: string, location: { lat: number; lng: number }) => {
+    if (typeof window !== 'undefined') {
+      try {
+        const locationData = {
+          city,
+          location,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
+      } catch (error) {
+        console.error("Error saving location to localStorage:", error);
+      }
     }
-    return null
-  }
+  };
+
+  // Helper function to get location data from localStorage
+  const getLocationFromStorage = () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const locationData = localStorage.getItem(LOCATION_STORAGE_KEY);
+        if (locationData) {
+          const parsedData = JSON.parse(locationData);
+          const timestamp = parsedData.timestamp || 0;
+          
+          // Check if the data is still valid (less than 24 hours old)
+          if (Date.now() - timestamp < LOCATION_EXPIRY) {
+            return parsedData;
+          }
+        }
+      } catch (error) {
+        console.error("Error reading location from localStorage:", error);
+      }
+    }
+    return null;
+  };
 
   // Helper function to extract location data
   const extractLocationData = (data: any): { city: string; state: string } | null => {
@@ -69,7 +102,6 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     // Set default values immediately so UI is responsive
     const defaultLocation = { lat: 22.7196, lng: 75.8577 };
     const defaultCity = "Indore";
-    const defaultState = "Madhya Pradesh";
     
     let success = false;
 
@@ -91,11 +123,16 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           const locationData = await reverseGeocode(latitude, longitude);
           
           if (locationData) {
-            setUserLocation({
+            const newLocation = {
               lat: latitude,
               lng: longitude
-            });
+            };
+            setUserLocation(newLocation);
             setUserCity(locationData.city);
+            
+            // Save to localStorage
+            saveLocationToStorage(locationData.city, newLocation);
+            
             success = true;
           }
         } catch (geoError) {
@@ -110,11 +147,16 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           const locationData = await getLocationFromIP();
           
           if (locationData) {
-            setUserLocation({
+            const newLocation = {
               lat: locationData.location.lat,
               lng: locationData.location.lng
-            });
+            };
+            setUserLocation(newLocation);
             setUserCity(locationData.city);
+            
+            // Save to localStorage
+            saveLocationToStorage(locationData.city, newLocation);
+            
             success = true;
           }
         } catch (ipError) {
@@ -129,6 +171,10 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
       if (!success) {
         setUserLocation(defaultLocation);
         setUserCity(defaultCity);
+        
+        // Save default location to localStorage to prevent repeated API calls
+        saveLocationToStorage(defaultCity, defaultLocation);
+        
         setError("Could not detect your location automatically. Using default location.");
       }
       
@@ -139,60 +185,32 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   }
 
   useEffect(() => {
-    // Auto-detect location on initial load - only for default city, not for showing in UI
-    const autoDetectLocation = async () => {
-      try {
-        // Set default fallback location
-        const defaultLocation = { lat: 22.7196, lng: 75.8577 };
-        const defaultCity = "Indore";
-        
-        // We're setting default values first, so the UI doesn't wait
-        setUserLocation(defaultLocation);
-        setUserCity(defaultCity);
-        
-        // Check if we're in a browser environment (client-side)
-        if (typeof window === 'undefined') return;
-        
-        // For page redirect only - use IP-based geolocation as fallback
-        // but don't block the UI rendering
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        
-        fetch("/api/geocode/ip", {
-          signal: controller.signal
-        })
-        .then(response => {
-          if (!response.ok) throw new Error("IP geolocation failed");
-          return response.json();
-        })
-        .then(data => {
-          if (data && data.results && data.results.length > 0) {
-            const locationData = extractLocationData(data.results[0]);
-            if (locationData) {
-              // Update location data silently in the background
-              setUserLocation({
-                lat: data.results[0].geometry?.location?.lat || defaultLocation.lat,
-                lng: data.results[0].geometry?.location?.lng || defaultLocation.lng
-              });
-              setUserCity(locationData.city || defaultCity);
-            }
-          }
-        })
-        .catch(error => {
-          console.error("Auto IP location detection error:", error);
-          // Already set fallback values, so no need to set again
-        })
-        .finally(() => clearTimeout(timeoutId));
-        
-      } catch (error) {
-        console.error("Auto IP location detection error:", error);
-        // Set fallback values for auto-detection failure
-        setUserLocation({ lat: 22.7196, lng: 75.8577 });
-        setUserCity("Indore");
-      }
-    };
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') return;
 
-    autoDetectLocation();
+    // First try to get location from localStorage
+    const storedLocation = getLocationFromStorage();
+    
+    if (storedLocation) {
+      // Use stored location data
+      setUserLocation(storedLocation.location);
+      setUserCity(storedLocation.city);
+    } else {
+      // Set default fallback location initially
+      const defaultLocation = { lat: 22.7196, lng: 75.8577 };
+      const defaultCity = "Indore";
+      
+      setUserLocation(defaultLocation);
+      setUserCity(defaultCity);
+      
+      // Only auto-detect location on home page
+      if (window.location.pathname === '/' || window.location.pathname === '') {
+        // Detect location in the background
+        detectLocation().catch(error => {
+          console.error("Auto location detection error:", error);
+        });
+      }
+    }
   }, []);
 
   return (
