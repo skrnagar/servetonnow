@@ -12,18 +12,24 @@ import {
   User,
   ShoppingCart,
   ChevronDown,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { useGeolocation } from "@/context/geolocation-context";
+import { useAuth } from "@/context/auth-context";
 import LocationSearch from "@/components/location-search";
+import AuthModal from "@/components/auth-modal";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLocationSearchOpen, setIsLocationSearchOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup'>('login');
   const pathname = usePathname();
   const { userCity, detectLocation, isLoading } = useGeolocation();
+  const { user, signOut } = useAuth();
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -111,16 +117,48 @@ export default function Header() {
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </Link>
-            <Link href="/account">
-              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="sm" className="rounded-lg">
-                Login
-              </Button>
-            </Link>
+            
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Link href="/account">
+                  <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hover:bg-gray-100"
+                  onClick={() => signOut()}
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button 
+                  size="sm" 
+                  className="rounded-lg"
+                  onClick={() => {
+                    setAuthModalTab('login');
+                    setIsAuthModalOpen(true);
+                  }}
+                >
+                  Login
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  className="rounded-lg"
+                  onClick={() => {
+                    setAuthModalTab('signup');
+                    setIsAuthModalOpen(true);
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Header */}
@@ -186,14 +224,43 @@ export default function Header() {
                   </nav>
                   <div className="mt-auto pb-6 pt-4 border-t">
                     <div className="flex flex-col space-y-3">
-                      <Link href="/login">
-                        <Button className="w-full">Login</Button>
-                      </Link>
-                      <Link href="/signup">
-                        <Button variant="outline" className="w-full">
-                          Sign Up
-                        </Button>
-                      </Link>
+                      {user ? (
+                        <>
+                          <Link href="/account">
+                            <Button variant="outline" className="w-full">
+                              My Account
+                            </Button>
+                          </Link>
+                          <Button 
+                            className="w-full"
+                            onClick={() => signOut()}
+                          >
+                            Sign Out
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button 
+                            className="w-full"
+                            onClick={() => {
+                              setAuthModalTab('login');
+                              setIsAuthModalOpen(true);
+                            }}
+                          >
+                            Login
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => {
+                              setAuthModalTab('signup');
+                              setIsAuthModalOpen(true);
+                            }}
+                          >
+                            Sign Up
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -210,6 +277,13 @@ export default function Header() {
           onClose={() => setIsLocationSearchOpen(false)}
         />
       )}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultTab={authModalTab}
+      />
     </header>
   );
 }
