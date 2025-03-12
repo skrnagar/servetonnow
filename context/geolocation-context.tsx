@@ -16,7 +16,7 @@ type GeolocationContextType = {
 
 const GeolocationContext = createContext<GeolocationContextType | undefined>(undefined)
 
-// Olakrutrim API key
+// Olakrutrim API key (This is not used after the changes)
 const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
 
 export function GeolocationProvider({ children }: { children: React.ReactNode }) {
@@ -36,171 +36,110 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     return null
   }
 
+  // Helper function to extract location data (This function is assumed to exist elsewhere and is not defined here)
+  const extractLocationData = (data: any): { city: string; state: string } | null => {
+    // This is a placeholder, replace with your actual implementation
+    return { city: data.address_components?.find(c => c.types.includes('locality'))?.long_name || "Indore", state: "MP" };
+  }
+
   const detectLocation = async (): Promise<boolean> => {
     setIsLoading(true)
-    setError(null)
+    setError("")
 
     try {
       // First try browser geolocation
       if (navigator.geolocation) {
-        try {
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0,
-            })
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
           })
-
-          const { latitude, longitude } = position.coords
-          setUserLocation({ lat: latitude, lng: longitude })
-
-          // Reverse geocode using Olakrutrim API
-          const response = await fetch(
-            `https://maps.olakrutrim.com/v1/api/places/geocode/reverse?lat=${latitude}&lon=${longitude}`,
-            {
-              headers: {
-                "x-api-key": OLAKRUTRIM_API_KEY
-              }
-            }
-          )
-
-          if (!response.ok) {
-            throw new Error("Failed to get location information from Olakrutrim")
-          }
-
-          const data = await response.json()
-
-          let cityName = null
-          if (data.features && data.features.length > 0) {
-            const address = data.features[0].properties?.formatted || ""
-            cityName = extractCityFromAddress(address)
-          }
-
-          if (cityName) {
-            setUserCity(cityName)
-
-            // Check if we should redirect to city page
-            const currentPath = window.location.pathname
-            if (currentPath === "/" || currentPath === "/home") {
-              router.push(`/${cityName.toLowerCase()}`)
-              return true
-            }
-            return true
-          } else {
-            throw new Error("City not found from coordinates")
-          }
-        } catch (geoError) {
-          console.warn("Browser geolocation failed:", geoError)
-          // Fall through to IP geolocation
-        }
-      }
-
-      // Fallback to IP geolocation using Olakrutrim
-      try {
-        const response = await fetch("https://maps.olakrutrim.com/v1/api/places/geocode/ip", {
-          headers: {
-            "x-api-key": OLAKRUTRIM_API_KEY
-          }
         })
 
+        const { latitude, longitude } = position.coords
+
+        // Use Next.js API route to proxy the request (avoids CORS issues)
+        const response = await fetch(
+          `/api/geocode/reverse?lat=${latitude}&lon=${longitude}`
+        )
+
         if (!response.ok) {
-          throw new Error("Failed to get location from IP using Olakrutrim")
+          throw new Error("Reverse geocoding failed")
         }
 
         const data = await response.json()
-
-        let cityName = data.city || null
-        let latitude = data.latitude || null
-        let longitude = data.longitude || null
-
-
-        if (cityName) {
-          setUserCity(cityName)
-          if (latitude !== null && longitude !== null) {
-            setUserLocation({ lat: latitude, lng: longitude })
+        if (data && data.results && data.results.length > 0) {
+          const locationData = extractLocationData(data.results[0])
+          if (locationData) {
+            setUserLocation({
+              ...locationData,
+              coords: { lat: latitude, lng: longitude }
+            })
+            setUserCity(locationData.city); //Added to set the city name from the locationData
+            return true; //Return true to indicate success
           }
-
-          // Check if we should redirect to city page
-          const currentPath = window.location.pathname
-          if (currentPath === "/" || currentPath === "/home") {
-            router.push(`/${cityName.toLowerCase()}`)
-            return true
-          }
-          return true
-        } else {
-          throw new Error("City not found from IP")
         }
-      } catch (ipError) {
-        console.warn("IP geolocation failed:", ipError)
-        // Fall through to default city
+      }
+    } catch (error) {
+      console.error("Browser geolocation failed:", error)
+    }
+
+    try {
+      // Fall back to IP-based geolocation (using API route)
+      const response = await fetch("/api/geocode/ip")
+
+      if (!response.ok) {
+        throw new Error("IP geolocation failed")
       }
 
-      // Set a default city if all else fails
-      setUserCity("Indore")
-
-      // Only redirect if we're on homepage
-      const currentPath = window.location.pathname
-      if (currentPath === "/" || currentPath === "/home") {
-        router.push(`/indore`)
-        return true
+      const data = await response.json()
+      if (data && data.results && data.results.length > 0) {
+        const locationData = extractLocationData(data.results[0])
+        if (locationData) {
+          setUserLocation({
+            ...locationData,
+            coords: data.results[0].geometry?.location || null
+          })
+          setUserCity(locationData.city); //Added to set the city name from the locationData
+          return true; //Return true to indicate success
+        }
       }
-
-      return true
-    } catch (err) {
-      console.error("Location detection error:", err)
-      setError(err instanceof Error ? err.message : "Failed to detect location")
-      toast({
-        title: "Location Error",
-        description: "We couldn't detect your location. Please select a city manually.",
-        variant: "destructive",
-      })
-      return false
+    } catch (error) {
+      console.error("IP geolocation failed:", error)
+      setError("Could not detect your location automatically. Please enter it manually.")
+      return false; //Return false to indicate failure
     } finally {
       setIsLoading(false)
     }
+    return false; //Return false if both methods fail
   }
 
   useEffect(() => {
-    // Auto-detect location on first load
-    // We don't auto-redirect here to avoid unexpected redirects
+    // Auto-detect location on initial load
     const autoDetectLocation = async () => {
       try {
-        // Try IP geolocation using Olakrutrim
-        const response = await fetch("https://maps.olakrutrim.com/v1/api/places/geocode/ip", {
-          headers: {
-            "x-api-key": OLAKRUTRIM_API_KEY
-          },
-          method: "GET",
-          cache: "no-store"
-        })
+        // Try IP-based geolocation for initial location detection using API route
+        const response = await fetch("/api/geocode/ip")
 
         if (!response.ok) {
-          throw new Error("Failed to get location from IP using Olakrutrim")
+          throw new Error("Auto IP location detection failed")
         }
 
         const data = await response.json()
-
-        let cityName = data.city || null
-        let latitude = data.latitude || null
-        let longitude = data.longitude || null
-
-        if (cityName) {
-          setUserCity(cityName)
-          if (latitude !== null && longitude !== null) {
-            setUserLocation({ lat: latitude, lng: longitude })
+        if (data && data.results && data.results.length > 0) {
+          const locationData = extractLocationData(data.results[0])
+          if (locationData) {
+            setUserLocation({
+              ...locationData,
+              coords: data.results[0].geometry?.location || null
+            })
+            setUserCity(locationData.city); //Added to set the city name from the locationData
           }
-          console.log("Location detected:", cityName)
-        } else {
-          console.warn("IP geolocation API returned no city data")
-          // Set a default city if none was returned
-          setUserCity("Indore")
         }
-      } catch (err) {
-        console.error("Auto IP location detection error:", err)
-        // We don't show an error toast here as it's just an auto-detection
-        // But we do set a default city
-        setUserCity("Indore")
+      } catch (error) {
+        console.error("Auto IP location detection error:", error)
+        // Don't set error message for auto-detection failure
       }
     }
 

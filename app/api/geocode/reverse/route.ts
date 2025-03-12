@@ -1,45 +1,41 @@
-import { NextResponse } from "next/server"
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const lat = searchParams.get("lat")
-  const lng = searchParams.get("lng")
+import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-  if (!lat || !lng) {
-    return NextResponse.json({ error: "Latitude and longitude are required" }, { status: 400 })
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const lat = searchParams.get('lat');
+  const lon = searchParams.get('lon');
+
+  if (!lat || !lon) {
+    return NextResponse.json(
+      { error: 'Missing coordinates' },
+      { status: 400 }
+    );
   }
 
   try {
-    // Use Olakrutrim API for reverse geocoding
-    const response = await fetch(`https://maps.olakrutrim.com/v1/geocode/reverse?lat=${lat}&lng=${lng}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OLAKRUTRIM_API_KEY}`,
-      },
-    })
+    // Server-side request to avoid CORS issues
+    const response = await fetch(
+      `https://maps.olakrutrim.com/v1/api/places/geocode/reverse?lat=${lat}&lon=${lon}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch reverse geocoding data")
+      throw new Error(`API error: ${response.status}`);
     }
 
-    const data = await response.json()
-
-    // Extract city from the response
-    // Note: Adjust this based on the actual response structure from Olakrutrim
-    let city = null
-    if (data.features && data.features.length > 0) {
-      const properties = data.features[0].properties
-      city = properties.city || properties.town || properties.village || properties.county
-    }
-
-    return NextResponse.json({
-      city,
-      address: data.features?.[0]?.properties?.formatted,
-      raw: data,
-    })
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Reverse geocoding error:", error)
-    return NextResponse.json({ error: "Failed to get location information" }, { status: 500 })
+    console.error('Reverse geocoding proxy error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch location data' },
+      { status: 500 }
+    );
   }
 }
-
