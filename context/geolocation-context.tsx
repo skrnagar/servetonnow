@@ -29,12 +29,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const { toast } = useToast()
   const router = useRouter()
 
-  const LOCATION_STORAGE_KEY = 'serveto_user_location';
-  const LOCATION_TIMESTAMP_KEY = 'serveto_location_timestamp';
-  const IP_LOCATION_KEY = 'serveto_ip_location';
-  const USER_CITY_COOKIE = 'user_city';
-  // Location data expires after 24 hours (in milliseconds)
-  const LOCATION_EXPIRY = 8 * 60 * 60 * 1000; // 8 hours - shorter expiry to refresh IP location more often
+  const USER_CITY_COOKIE = 'user_city'; // Only using cookie, no localStorage
   // Cookie expires after 30 days
   const COOKIE_EXPIRY = 30;
 
@@ -67,50 +62,19 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     console.log(`City set to: ${city} and saved to cookie`);
   };
 
-  // Helper function to save location data to localStorage
-  const saveLocationToStorage = (city: string, location: { lat: number; lng: number }, isIpBased: boolean = false) => {
+  // Helper function to save IP-based location data to cookie only
+  const saveIpBasedLocation = (city: string, location: { lat: number; lng: number }) => {
     if (typeof window !== 'undefined') {
       try {
-        const locationData = {
-          city,
-          location,
-          timestamp: Date.now(),
-          isIpBased
-        };
-        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
-        
-        // If this is IP-based location, save it separately as well
-        if (isIpBased) {
-          localStorage.setItem(IP_LOCATION_KEY, JSON.stringify(locationData));
-        }
+        // Only store IP-based city in cookie
+        // Don't store in localStorage at all
         
         // Update the city state
         setCity(city);
       } catch (error) {
-        console.error("Error saving location to localStorage:", error);
+        console.error("Error saving IP-based location:", error);
       }
     }
-  };
-
-  // Helper function to get location data from localStorage
-  const getLocationFromStorage = () => {
-    if (typeof window !== 'undefined') {
-      try {
-        const locationData = localStorage.getItem(LOCATION_STORAGE_KEY);
-        if (locationData) {
-          const parsedData = JSON.parse(locationData);
-          const timestamp = parsedData.timestamp || 0;
-          
-          // Check if the data is still valid (less than 24 hours old)
-          if (Date.now() - timestamp < LOCATION_EXPIRY) {
-            return parsedData;
-          }
-        }
-      } catch (error) {
-        console.error("Error reading location from localStorage:", error);
-      }
-    }
-    return null;
   };
 
   // Helper function to extract location data
@@ -151,7 +115,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     let success = false;
 
     try {
-      // ALWAYS try IP-based geolocation first
+      // ONLY try IP-based geolocation
       try {
         const locationData = await getLocationFromIP();
         
@@ -161,80 +125,25 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
             lng: locationData.location.lng
           };
           setUserLocation(newLocation);
+          
+          // ONLY use setCity which sets the cookie
           setCity(locationData.city);
           
-          // Save to localStorage with IP-based flag
-          saveLocationToStorage(locationData.city, newLocation, true);
-          
-          // Also set the cookie for future visits
-          Cookies.set(USER_CITY_COOKIE, locationData.city, { expires: COOKIE_EXPIRY });
+          console.log(`Detected IP-based location: ${locationData.city}`);
           
           success = true;
           return success;
         }
       } catch (ipError) {
         console.error("IP geolocation failed:", ipError);
-        // Continue to browser geolocation as fallback
-      }
-
-      // Only if IP geolocation failed, try browser geolocation
-      if (!success && typeof navigator !== 'undefined' && navigator.geolocation) {
-        try {
-          // Set a timeout for the geolocation request
-          const timeoutId = setTimeout(() => {
-            throw new Error("Geolocation request timed out");
-          }, 5000);
-          
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                clearTimeout(timeoutId);
-                resolve(pos);
-              },
-              (err) => {
-                clearTimeout(timeoutId);
-                reject(err);
-              },
-              {
-                enableHighAccuracy: false, // Set to false for faster response
-                timeout: 3000,
-                maximumAge: 60000 // Allow slightly older cached positions
-              }
-            );
-          });
-
-          const { latitude, longitude } = position.coords;
-
-          // Use our utility for reverse geocoding
-          const locationData = await reverseGeocode(latitude, longitude);
-          
-          if (locationData) {
-            const newLocation = {
-              lat: latitude,
-              lng: longitude
-            };
-            setUserLocation(newLocation);
-            setCity(locationData.city);
-            
-            // Save to localStorage but NOT as IP-based
-            saveLocationToStorage(locationData.city, newLocation, false);
-            
-            success = true;
-          }
-        } catch (geoError) {
-          console.log("Browser geolocation unavailable");
-        }
       }
     } catch (error) {
       console.error("Location detection error:", error);
     } finally {
-      // If all detection methods failed, use default values
+      // If IP detection failed, use default values
       if (!success) {
         setUserLocation(defaultLocation);
         setCity(defaultCity);
-        
-        // Save default location to localStorage to prevent repeated API calls
-        saveLocationToStorage(defaultCity, defaultLocation, false);
         
         setError("Could not detect your location automatically. Using default location.");
       }
@@ -264,16 +173,16 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
       }
 
       // For home page visitors, follow this priority:
-      // 1. Check for user_city cookie
-      // 2. Get location from IP API
+      // 1. Check for user_city cookie from IP API
+      // 2. Get fresh location from IP API
       // 3. Fallback to default city
       
-      // Step 1: Check for user_city cookie first
+      // Step 1: Check for user_city cookie from IP API
       const userCityCookie = Cookies.get(USER_CITY_COOKIE);
       if (userCityCookie) {
         // Cookie exists, set city and redirect
         setUserCity(userCityCookie);
-        console.log(`Found city cookie: ${userCityCookie}, redirecting`);
+        console.log(`Found IP-based city cookie: ${userCityCookie}, redirecting`);
         
         // Redirect to city page if it's available
         if (isCityAvailable(userCityCookie)) {
@@ -283,9 +192,9 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         }
       }
       
-      // Step 2: No cookie or city not available, get location from IP API
+      // Step 2: No cookie or city not available, get fresh location from IP API
       try {
-        console.log("No valid city cookie found, getting location from IP");
+        console.log("No valid city cookie found, getting fresh location from IP");
         const ipLocation = await getLocationFromIP();
         
         if (ipLocation && ipLocation.city) {
@@ -293,14 +202,11 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           const location = ipLocation.location;
           
           setUserLocation(location);
-          setCity(city); // This sets the cookie too
           
-          // Save city to cookie
-          Cookies.set(USER_CITY_COOKIE, city, { expires: COOKIE_EXPIRY });
-          console.log(`Set city cookie from IP: ${city}`);
+          // Set city and cookie
+          setCity(city);
           
-          // Also save to storage with IP-based flag
-          saveLocationToStorage(city, location, true);
+          console.log(`Set city cookie from fresh IP: ${city}`);
           
           // Redirect to the IP-based city if it's available
           if (isCityAvailable(city)) {
@@ -314,63 +220,6 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         }
       } catch (error) {
         console.error("IP geolocation error:", error);
-        // Continue to fallback
-      }
-      
-      // If no cookie or city not available, try to get a fresh IP-based location
-      try {
-        const ipLocation = await getLocationFromIP();
-        
-        if (ipLocation && ipLocation.city) {
-          const city = ipLocation.city;
-          const location = ipLocation.location;
-          
-          setUserLocation(location);
-          setCity(city); // This now also sets the cookie
-          
-          // Save to storage with IP-based flag
-          saveLocationToStorage(city, location, true);
-          
-          // Always redirect to the detected city if it's available
-          if (isCityAvailable(city)) {
-            router.replace(`/${city.toLowerCase()}`);
-          } else {
-            // If city is not available, show service not available page
-            router.replace(`/services-unavailable?city=${city.toLowerCase()}`);
-          }
-          
-          setIsInitialized(true);
-          return;
-        }
-      } catch (error) {
-        console.error("IP geolocation error:", error);
-        // Only if IP geolocation fails, try stored location
-      }
-      
-      // Only if IP geolocation fails, try to get stored IP-based location
-      try {
-        const ipStoredLocation = localStorage.getItem(IP_LOCATION_KEY);
-        if (ipStoredLocation) {
-          const parsedData = JSON.parse(ipStoredLocation);
-          
-          // Only use if it's not too old (8 hours)
-          if (Date.now() - parsedData.timestamp < LOCATION_EXPIRY) {
-            setUserLocation(parsedData.location);
-            setCity(parsedData.city);
-            
-            // Redirect to city page if it's available
-            if (isCityAvailable(parsedData.city)) {
-              router.replace(`/${parsedData.city.toLowerCase()}`);
-            } else {
-              router.replace(`/services-unavailable?city=${parsedData.city.toLowerCase()}`);
-            }
-            
-            setIsInitialized(true);
-            return;
-          }
-        }
-      } catch (e) {
-        console.error("Error reading stored IP location:", e);
       }
       
       // Step 3: If all above fails, use default (Indore)
@@ -380,6 +229,8 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
       setUserLocation(defaultLocation);
       setCity(defaultCity);
       
+      // Redirect to default city
+      router.replace(`/${defaultCity.toLowerCase()}`);
       setIsInitialized(true);
     };
     
