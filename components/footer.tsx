@@ -17,7 +17,7 @@ export default function Footer() {
                 height={40}
                 className="h-10 w-auto"
               />
-              <span className="text-2xl font-bold text-primary">Serveto</span>
+             
             </Link>
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-md">
               Serveto is an AI-powered home services platform offering direct bookings, vendor comparison, and task

@@ -47,7 +47,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/serveto_logo_main.png"
+              src="/sarveto.png"
               alt="Serveto Logo"
               width={50}
               height={50}
