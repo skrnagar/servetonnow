@@ -33,9 +33,9 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const LOCATION_TIMESTAMP_KEY = 'serveto_location_timestamp';
   const MOST_RECENT_CITY_COOKIE = 'most_recent_city';
   // Location data expires after 24 hours (in milliseconds)
-  const LOCATION_EXPIRY = 24 * 60 * 60 * 1000;
-  // Cookie expires after 30 days
-  const COOKIE_EXPIRY = 30;
+  const LOCATION_EXPIRY = 72 * 60 * 60 * 1000; // 72 hours
+  // Cookie expires after 7 days (shorter to prioritize IP detection)
+  const COOKIE_EXPIRY = 7;
 
   // List of available cities
   const AVAILABLE_CITIES = [
@@ -252,36 +252,29 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         return;
       }
 
-      // For home page visitors, immediately trigger router replacement
-      // to avoid visible loading of home page
+      // For home page visitors, immediately try to get location
       
-      // Step 1: Check for returning user with most recent city cookie
-      const recentCity = Cookies.get(MOST_RECENT_CITY_COOKIE);
+      // Step 1: Try to get location data from storage first
+      const storedLocation = getLocationFromStorage();
       
-      if (recentCity) {
-        // Returning user - use the most recent city from cookie
-        setUserCity(recentCity);
+      if (storedLocation) {
+        // We have stored location data that's still valid
+        setUserLocation(storedLocation.location);
+        setCity(storedLocation.city);
         
-        // Try to get corresponding location data from storage if available
-        const storedLocation = getLocationFromStorage();
-        if (storedLocation && storedLocation.city.toLowerCase() === recentCity.toLowerCase()) {
-          setUserLocation(storedLocation.location);
-        }
-        
-        // Redirect to city page if it's available using replace instead of push
-        // Replace modifies the current history entry instead of adding a new one
-        if (isCityAvailable(recentCity)) {
-          router.replace(`/${recentCity.toLowerCase()}`);
+        // Redirect to city page if it's available
+        if (isCityAvailable(storedLocation.city)) {
+          router.replace(`/${storedLocation.city.toLowerCase()}`);
         } else {
           // If city is not available, show service not available page
-          router.replace(`/services-unavailable?city=${recentCity.toLowerCase()}`);
+          router.replace(`/services-unavailable?city=${storedLocation.city.toLowerCase()}`);
         }
         
         setIsInitialized(true);
         return;
       }
       
-      // Step 2: New user - try to get IP-based location
+      // Step 2: Always try IP-based location first for new users
       try {
         const ipLocation = await getLocationFromIP();
         
@@ -292,14 +285,16 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           setUserLocation(location);
           setCity(city);
           
-          // Save to storage
+          // Save to storage with longer expiry time (72 hours)
           saveLocationToStorage(city, location);
           
-          // If city is in our list, redirect there
+          // Always redirect to the detected city if it's available
           if (isCityAvailable(city)) {
-            router.push(`/${city.toLowerCase()}`);
+            router.replace(`/${city.toLowerCase()}`);
+          } else {
+            // If city is not available, show service not available page
+            router.replace(`/services-unavailable?city=${city.toLowerCase()}`);
           }
-          // Don't redirect if city is not available - stay on home page
           
           setIsInitialized(true);
           return;
