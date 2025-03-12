@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Logo and description */}
           <div className="lg:col-span-2">
             <Link 
-              href={isCityPage ? `/${pathSegments[0]}` : "/"} 
+              href="/" 
               className="flex items-center space-x-2"
             >
               <Image
@@ -99,7 +99,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               <li>
                 <Link 
-                  href={isCityPage ? `/${pathSegments[0]}` : "/"} 
+                  href="/" 
                   className="text-sm text-gray-600 hover:text-primary dark:text-gray-400"
                 >
                   Home
