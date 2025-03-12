@@ -1,0 +1,132 @@
+Access to fetch at 'https://maps.olakrutrim.com/v1/api/places/geocode/ip' from origin 'https://f0f048ed-3231-4083-9705-2bb4f7632290-00-3741tckn0mm42.pike.replit.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this errorAI
+geolocation-context.tsx:170 
+            
+            
+           GET https://maps.olakrutrim.com/v1/api/places/geocode/ip net::ERR_FAILED
+GeolocationProvider.useEffect.autoDetectLocation @ geolocation-context.tsx:170
+GeolocationProvider.useEffect @ geolocation-context.tsx:207
+react-stack-bottom-frame @ react-dom-client.development.js:23696
+runWithFiberInDEV @ react-dom-client.development.js:544
+commitHookEffectListMount @ react-dom-client.development.js:10764
+commitHookPassiveMountEffects @ react-dom-client.development.js:10884
+commitPassiveMountOnFiber @ react-dom-client.development.js:12669
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12662
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12771
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:12643
+commitPassiveMountOnFiber @ react-dom-client.development.js:12673
+flushPassiveEffects @ react-dom-client.development.js:15483
+performSyncWorkOnRoot @ react-dom-client.development.js:15967
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:15830
+commitRootImpl @ react-dom-client.development.js:15422
+commitRoot @ react-dom-client.development.js:15273
+commitRootWhenReady @ react-dom-client.development.js:14584
+performWorkOnRoot @ react-dom-client.development.js:14505
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:15955
+performWorkUntilDeadline @ scheduler.development.js:44Understand this errorAI
+geolocation-context.tsx:200 Auto IP location detection error: TypeError: Failed to fetch
+    at GeolocationProvider.useEffect.autoDetectLocation (geolocation-context.tsx:170:32)
+    at GeolocationProvider.useEffect (geolocation-context.tsx:207:5)
+    at react-stack-bottom-frame (react-dom-client.development.js:23696:20)
+    at runWithFiberInDEV (react-dom-client.development.js:544:16)
+    at commitHookEffectListMount (react-dom-client.development.js:10764:29)
+    at commitHookPassiveMountEffects (react-dom-client.development.js:10884:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12669:13)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12771:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
+    at commitPassiveMountOnFiber (react-dom-client.development.js:12662:11)
+    at recursivelyTraversePassiveMountEffects (react-dom-client.development.js:12643:11)
