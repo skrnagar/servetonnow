@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -30,7 +29,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
   const [password, setPassword] = useState('')
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const { signIn, signUp } = useAuth()
   const { toast } = useToast()
 
@@ -78,10 +77,10 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
   }
 
   const handleVerifyOtp = async () => {
-    if (!otp || otp.length !== 6) {
+    if (!otp || otp.length !== 4) {
       toast({
         title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP",
+        description: "Please enter a valid 4-digit OTP",
         variant: "destructive"
       })
       return
@@ -210,14 +209,12 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="otp">Enter OTP sent to {phone}</Label>
-                    <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                    <InputOTP maxLength={4} value={otp} onChange={setOtp}>
                       <InputOTPGroup>
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
                         <InputOTPSlot index={2} />
                         <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
@@ -294,14 +291,12 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="otp">Enter OTP sent to {phone}</Label>
-                    <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                    <InputOTP maxLength={4} value={otp} onChange={setOtp}>
                       <InputOTPGroup>
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
                         <InputOTPSlot index={2} />
                         <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
