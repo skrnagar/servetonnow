@@ -37,6 +37,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   const { detectLocation, isLoading, userLocation } = useGeolocation()
   const { toast } = useToast()
   const router = useRouter()
+  const [city, setCity] = useState(""); // Added city state
 
   useEffect(() => {
     // Focus the search input when modal opens
@@ -131,19 +132,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   // Handle city selection
   const handleSelectCity = (city: string) => {
     if (city) {
-      setUserCity(city);
-      // Save to localStorage
+      setCity(city); // Update city state
+      // Save to cookie
       if (typeof window !== 'undefined') {
-        try {
-          const locationData = {
-            city,
-            location: userLocation || { lat: 22.7196, lng: 75.8577 }, // Use current location or default
-            timestamp: Date.now()
-          };
-          localStorage.setItem('serveto_user_location', JSON.stringify(locationData));
-        } catch (error) {
-          console.error("Error saving location to localStorage:", error);
-        }
+        document.cookie = `most_recent_city=${city}; path=/`;
       }
       onClose();
       router.push(`/${city.toLowerCase()}`);
@@ -153,6 +145,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   // Handle suggestion selection
   const handleSelectSuggestion = (suggestion: PlaceSuggestion) => {
     if (suggestion.city) {
+      setCity(suggestion.city); // Update city state and cookie
+      if (typeof window !== 'undefined') {
+        document.cookie = `most_recent_city=${suggestion.city}; path=/`;
+      }
       router.push(`/${suggestion.city.toLowerCase()}`)
       onClose()
     }
@@ -167,9 +163,24 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     }
   }
 
-  const setUserCity = (city:string) => {
-    // Placeholder for setting userCity state.  Implementation depends on the broader application state management.
-  }
+
+  useEffect(() => {
+    // Redirect on initial load if a city is in the cookie
+    const getCookie = (name: string) => {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
+    };
+
+    const mostRecentCity = getCookie('most_recent_city');
+    if (mostRecentCity) {
+      router.push(`/${mostRecentCity.toLowerCase()}`);
+    }
+    //IP based redirection if cookie is not present and location detection fails
+    else if (!mostRecentCity && !userLocation) {
+        router.push('/indore'); //Replace with a more robust IP geolocation service
+    }
+  }, []);
+
 
   if (!isOpen) return null
 

@@ -13,18 +13,8 @@ export default function HomePage() {
   const router = useRouter()
   const { userCity, detectLocation } = useGeolocation()
 
-  useEffect(() => {
-    // If we already have the user's city, redirect to the city page
-    if (userCity && userCity !== "Indore") {
-      // Check if we need to navigate
-      const currentPath = window.location.pathname;
-      const targetPath = `/${userCity.toLowerCase()}`;
-      
-      if (currentPath === '/' || currentPath === '') {
-        router.push(targetPath);
-      }
-    }
-  }, [userCity, router])
+  // Redirection is now handled in the GeolocationContext provider
+  // No need for redirection logic here as it's centralized
 
   const handleLocationDetection = async () => {
     // Show loading state
