@@ -38,13 +38,6 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     return null
   }
 
-  // Helper function to format the address
-  const formatAddress = (address: string): string => {
-    // Implement your address formatting logic here.  This is a placeholder.
-    return address;
-  };
-
-
   const detectLocation = async (): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
@@ -128,9 +121,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
 
         if (cityName) {
           setUserCity(cityName)
-          // Format and store the address in a more readable way
-          const formattedAddr = formatAddress(fullAddress);
-          setUserAddress(formattedAddr)
+          setUserAddress(fullAddress)
           if (latitude !== null && longitude !== null) {
             setUserLocation({ lat: latitude, lng: longitude })
           }

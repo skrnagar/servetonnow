@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -79,11 +80,11 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       const response = await fetch(
         `/api/geocode/search?query=${encodeURIComponent(query)}&limit=5`
       )
-
+      
       if (!response.ok) throw new Error("Search failed")
 
       const data = await response.json()
-
+      
       // Process the response from Olakrutrim API
       if (data.features && data.features.length > 0) {
         const processedSuggestions = data.features.map((feature: any, index: number) => {
@@ -91,12 +92,12 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
           const address = properties.formatted || properties.name || ""
           const cityMatch = address.match(/([^,]+)(?:,|$)/)
           const city = cityMatch ? cityMatch[1].trim() : "Unknown"
-
+          
           // Extract state and country
           const addressParts = address.split(',').map((part: string) => part.trim())
           const state = addressParts.length > 1 ? addressParts[1] : undefined
           const country = addressParts.length > 2 ? addressParts[addressParts.length - 1] : undefined
-
+          
           return {
             id: `place-${index}-${feature.id || Date.now()}`,
             name: properties.name || address,
@@ -106,7 +107,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             fullAddress: address
           }
         })
-
+        
         setSuggestions(processedSuggestions)
       } else {
         setSuggestions([])
@@ -118,7 +119,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         description: "Failed to get location suggestions. Please try again.",
         variant: "destructive",
       })
-
+      
       // Fallback to popular cities matching the query
       const query = searchQuery.toLowerCase()
       const filteredCities = popularCities.filter(city => 
@@ -128,7 +129,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         city: city.name,
         fullAddress: city.name
       }))
-
+      
       setSuggestions(filteredCities)
     } finally {
       setIsSearching(false)
@@ -250,9 +251,9 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
                       onClick={() => handleSelectSuggestion(suggestion)}
                     >
                       <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div className="overflow-hidden">
-                        <div className="font-medium truncate">{suggestion.name}</div>
-                        <div className="text-sm text-gray-500 truncate">
+                      <div>
+                        <div className="font-medium">{suggestion.name}</div>
+                        <div className="text-sm text-gray-500">
                           {suggestion.fullAddress || [suggestion.city, suggestion.state, suggestion.country].filter(Boolean).join(", ")}
                         </div>
                       </div>
