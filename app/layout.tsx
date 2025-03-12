@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Lexend } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/header"
@@ -8,7 +8,7 @@ import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import { GeolocationProvider } from "@/context/geolocation-context"
 
-const inter = Inter({ subsets: ["latin"] })
+const lexend = Lexend({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Serveto - AI-Powered Home Services Platform",
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={lexend.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <GeolocationProvider>
             <div className="flex min-h-screen flex-col">
