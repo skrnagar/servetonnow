@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Menu, X, MapPin, Search, User, ShoppingCart } from "lucide-react"
+import { Menu, X, MapPin, Search, User, ShoppingCart, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
@@ -45,84 +45,68 @@ export default function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <Image
-              src="/sarveto.png"
-              alt="Serveto Logo"
-              width={50}
-              height={50}
-              className="h-8 w-auto"
-            />
-          </Link>
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/sarveto.png"
+                alt="Serveto Logo"
+                width={50}
+                height={50}
+                className="h-8 w-auto"
+              />
+            </Link>
+          </div>
 
-          {/* Location selector */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden md:flex items-center gap-1 ml-4 rounded-full pl-3 pr-4 py-2 border-gray-300 hover:bg-gray-50"
-            onClick={() => setIsLocationSearchOpen(true)}
-          >
-            <MapPin className="h-4 w-4 text-primary" />
-            <span className="max-w-[150px] truncate">{formattedCity}</span>
-          </Button>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/"
-              className={`text-sm font-medium ${pathname === "/" ? "text-primary" : "text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary"}`}
+          {/* Main Search Bar (Zomato Style) */}
+          <div className="hidden md:flex flex-1 max-w-3xl mx-4 h-12 rounded-lg border border-gray-300 overflow-hidden">
+            <div 
+              className="flex items-center gap-1 px-4 cursor-pointer border-r border-gray-300 bg-white hover:bg-gray-50"
+              onClick={() => setIsLocationSearchOpen(true)}
             >
-              Home
-            </Link>
-            <Link
-              href="/services"
-              className={`text-sm font-medium ${pathname === "/services" ? "text-primary" : "text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary"}`}
-            >
-              Services
-            </Link>
-            <Link
-              href="/how-it-works"
-              className={`text-sm font-medium ${pathname === "/how-it-works" ? "text-primary" : "text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary"}`}
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/about"
-              className={`text-sm font-medium ${pathname === "/about" ? "text-primary" : "text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-primary"}`}
-            >
-              About
-            </Link>
-          </nav>
-
-          {/* Desktop Right Side Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <MapPin className="h-5 w-5 text-primary" />
+              <span className="font-medium max-w-[120px] truncate">{formattedCity}</span>
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            </div>
+            <div className="flex flex-1 items-center px-3 bg-white">
+              <Search className="h-5 w-5 text-gray-400 mr-2" />
               <Input
                 type="search"
-                placeholder="Search services..."
-                className="w-[200px] pl-9 rounded-full bg-gray-100 border-none focus-visible:ring-primary dark:bg-gray-800"
+                placeholder="Search for services, cuisine or a dish"
+                className="border-none shadow-none focus-visible:ring-0 pl-0 h-full"
               />
             </div>
+          </div>
+
+          {/* Desktop Right Side Actions */}
+          <div className="hidden md:flex items-center space-x-5">
+            <Link href="/how-it-works" className="text-sm font-medium text-gray-700 hover:text-primary">
+              How It Works
+            </Link>
+            <Link href="/services" className="text-sm font-medium text-gray-700 hover:text-primary">
+              Services
+            </Link>
             <Link href="/cart">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </Link>
             <Link href="/account">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
                 <User className="h-5 w-5" />
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="sm">Login</Button>
+              <Button size="sm" className="rounded-lg">Login</Button>
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-2">
-            <Button variant="outline" size="icon" className="md:hidden" onClick={() => setIsLocationSearchOpen(true)}>
+          {/* Mobile Header */}
+          <div className="flex md:hidden items-center space-x-3">
+            <Button variant="outline" size="icon" className="border-gray-300" onClick={() => setIsLocationSearchOpen(true)}>
               <MapPin className="h-5 w-5 text-primary" />
+            </Button>
+            <Button variant="outline" size="icon" className="border-gray-300">
+              <Search className="h-5 w-5" />
             </Button>
             <Link href="/cart" className="md:hidden">
               <Button variant="ghost" size="icon">
@@ -158,14 +142,6 @@ export default function Header() {
                     <Link href="/about" className="text-base font-medium py-2">
                       About
                     </Link>
-                    <div className="relative py-2">
-                      <Search className="absolute left-2.5 top-5 h-4 w-4 text-gray-500" />
-                      <Input
-                        type="search"
-                        placeholder="Search services..."
-                        className="w-full pl-9 rounded-full bg-gray-100 border-none focus-visible:ring-primary dark:bg-gray-800"
-                      />
-                    </div>
                   </nav>
                   <div className="mt-auto pb-6 pt-4 border-t">
                     <div className="flex flex-col space-y-3">
