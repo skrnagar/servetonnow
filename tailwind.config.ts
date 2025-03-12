@@ -1,23 +1,5 @@
 import type { Config } from "tailwindcss"
 
-const config: Config = {
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        objectivity: ['Objectivity', 'sans-serif'],
-      },
-    },
-  },
-  plugins: [],
-}
-
-export default config
-
 const config = {
   darkMode: ["class"],
   content: [
@@ -37,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        objectivity: ['Objectivity', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -97,4 +82,3 @@ const config = {
 } satisfies Config
 
 export default config
-
