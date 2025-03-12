@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { FaList, FaSearch, FaTh, FaArrowRight } from "react-icons/fa"
+import { FaList, FaSearch, FaTh, FaArrowRight, FaStar } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGeolocation } from "@/context/geolocation-context"
@@ -134,6 +134,84 @@ export default function CityPage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Popular Services in City - Modern UI */}
+      <section className="mb-12 bg-gray-50 dark:bg-gray-800 py-10 rounded-xl">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-3">Popular Services in {formattedCityName}</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Discover the most sought-after home services available in your area
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[
+              { 
+                name: "Home Cleaning", 
+                description: "Professional deep cleaning for your entire home",
+                price: "₹499",
+                rating: "4.8",
+                reviews: "2,134",
+                image: "/placeholder.svg?height=200&width=300",
+                link: `/${citySlug}/cleaning/home-cleaning`
+              },
+              { 
+                name: "AC Service & Repair", 
+                description: "Complete AC maintenance, service and repairs",
+                price: "₹699",
+                rating: "4.7",
+                reviews: "1,892",
+                image: "/placeholder.svg?height=200&width=300",
+                link: `/${citySlug}/appliance-repair/ac`
+              },
+              { 
+                name: "Plumbing Services", 
+                description: "Fix leaks, installations, and plumbing repairs",
+                price: "₹399",
+                rating: "4.6",
+                reviews: "1,653",
+                image: "/placeholder.svg?height=200&width=300",
+                link: `/${citySlug}/plumbing/pipe-leakage`
+              }
+            ].map((service, index) => (
+              <Link key={index} href={service.link} className="block">
+                <div className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
+                  <div className="relative h-48">
+                    <Image 
+                      src={service.image} 
+                      alt={service.name} 
+                      fill 
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                      <span className="text-white font-medium p-4">View Details</span>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-lg font-semibold">{service.name}</h3>
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm font-medium">{service.price}</span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">{service.description}</p>
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        <FaStar />
+                        <span className="font-medium">{service.rating}</span>
+                      </div>
+                      <span className="text-sm text-gray-500 ml-2">({service.reviews})</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Button variant="outline" className="rounded-full px-6">
+              View All Services
+            </Button>
+          </div>
         </div>
       </section>
 
