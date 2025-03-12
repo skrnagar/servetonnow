@@ -76,14 +76,9 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
 
     setIsSearching(true)
     try {
-      // Call Olakrutrim API directly
+      // Call our proxy API
       const response = await fetch(
-        `https://maps.olakrutrim.com/v1/api/places/geocode/search?text=${encodeURIComponent(query)}&limit=5`,
-        {
-          headers: {
-            "x-api-key": OLAKRUTRIM_API_KEY
-          }
-        }
+        `/api/geocode/search?query=${encodeURIComponent(query)}&limit=5`
       )
       
       if (!response.ok) throw new Error("Search failed")

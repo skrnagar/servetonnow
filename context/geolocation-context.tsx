@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -71,7 +70,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           }
 
           const data = await response.json()
-          
+
           let cityName = null
           if (data.features && data.features.length > 0) {
             const address = data.features[0].properties?.formatted || ""
@@ -110,22 +109,11 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         }
 
         const data = await response.json()
-        
-        let cityName = null
-        let latitude = null
-        let longitude = null
-        
-        if (data.features && data.features.length > 0) {
-          const feature = data.features[0]
-          const address = feature.properties?.formatted || ""
-          cityName = extractCityFromAddress(address)
-          
-          if (feature.geometry && feature.geometry.coordinates) {
-            // GeoJSON uses [longitude, latitude] order
-            longitude = feature.geometry.coordinates[0]
-            latitude = feature.geometry.coordinates[1]
-          }
-        }
+
+        let cityName = data.city || null
+        let latitude = data.latitude || null
+        let longitude = data.longitude || null
+
 
         if (cityName) {
           setUserCity(cityName)
@@ -147,17 +135,17 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         console.warn("IP geolocation failed:", ipError)
         // Fall through to default city
       }
-      
+
       // Set a default city if all else fails
       setUserCity("Indore")
-      
+
       // Only redirect if we're on homepage
       const currentPath = window.location.pathname
       if (currentPath === "/" || currentPath === "/home") {
         router.push(`/indore`)
         return true
       }
-      
+
       return true
     } catch (err) {
       console.error("Location detection error:", err)
@@ -192,22 +180,10 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         }
 
         const data = await response.json()
-        
-        let cityName = null
-        let latitude = null
-        let longitude = null
-        
-        if (data.features && data.features.length > 0) {
-          const feature = data.features[0]
-          const address = feature.properties?.formatted || ""
-          cityName = extractCityFromAddress(address)
-          
-          if (feature.geometry && feature.geometry.coordinates) {
-            // GeoJSON uses [longitude, latitude] order
-            longitude = feature.geometry.coordinates[0]
-            latitude = feature.geometry.coordinates[1]
-          }
-        }
+
+        let cityName = data.city || null
+        let latitude = data.latitude || null
+        let longitude = data.longitude || null
 
         if (cityName) {
           setUserCity(cityName)
