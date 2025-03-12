@@ -1,8 +1,22 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 export default function Footer() {
+  const pathname = usePathname()
+  // Extract city from URL path if it exists
+  const pathSegments = pathname.split("/").filter(Boolean)
+  const isCityPage = pathSegments.length === 1 && pathSegments[0] !== ''
+  
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // If we're on a city page, prevent navigation to home
+    if (isCityPage) {
+      e.preventDefault()
+    }
+  }
   return (
     <footer className="bg-gray-50 dark:bg-gray-900 border-t">
       <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -12,14 +26,7 @@ export default function Footer() {
             <Link 
               href="/" 
               className="flex items-center space-x-2"
-              onClick={(e) => {
-                // Get current path segments to check if we're on a city page
-                const pathSegments = window.location.pathname.split("/").filter(Boolean);
-                // If we're on a city page, prevent navigation to home
-                if (pathSegments.length === 1 && pathSegments[0] !== '') {
-                  e.preventDefault();
-                }
-              }}
+              onClick={handleLinkClick}
             >
               <Image
                 src="/serveto_logo_main.png"
@@ -100,14 +107,7 @@ export default function Footer() {
                 <Link 
                   href="/" 
                   className="text-sm text-gray-600 hover:text-primary dark:text-gray-400"
-                  onClick={(e) => {
-                    // Get current path segments to check if we're on a city page
-                    const pathSegments = window.location.pathname.split("/").filter(Boolean);
-                    // If we're on a city page, prevent navigation to home
-                    if (pathSegments.length === 1 && pathSegments[0] !== '') {
-                      e.preventDefault();
-                    }
-                  }}
+                  onClick={handleLinkClick}
                 >
                   Home
                 </Link>
