@@ -78,16 +78,34 @@ export async function getLocationFromIP(): Promise<{
   state?: string;
 } | null> {
   try {
-    // Provide fallback values first
+    // Check for cached IP data to avoid unnecessary API calls
+    if (typeof window !== 'undefined') {
+      const cachedData = sessionStorage.getItem('ip_location_data');
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData);
+        // Check if cache is less than 1 hour old
+        if (parsedData.timestamp && (Date.now() - parsedData.timestamp < 60 * 60 * 1000)) {
+          return parsedData.data;
+        }
+      }
+    }
+    
+    // Provide fallback values
     const fallback = {
       location: { lat: 22.7196, lng: 75.8577 },
       city: "Indore",
       state: "Madhya Pradesh"
     };
     
+    // Use AbortController to set timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
     const response = await fetch("/api/geocode/ip", {
-      signal: AbortSignal.timeout(3000) // Shorter timeout
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       console.warn("IP geolocation response not OK, using fallback");
@@ -106,7 +124,7 @@ export async function getLocationFromIP(): Promise<{
         c.types?.includes('administrative_area_level_1')
       );
       
-      return {
+      const locationData = {
         location: {
           lat: result.geometry?.location?.lat || fallback.location.lat,
           lng: result.geometry?.location?.lng || fallback.location.lng
@@ -114,6 +132,20 @@ export async function getLocationFromIP(): Promise<{
         city: cityComponent?.long_name || fallback.city,
         state: stateComponent?.long_name || fallback.state
       };
+      
+      // Cache the data in sessionStorage
+      if (typeof window !== 'undefined') {
+        try {
+          sessionStorage.setItem('ip_location_data', JSON.stringify({
+            data: locationData,
+            timestamp: Date.now()
+          }));
+        } catch (e) {
+          console.warn('Failed to cache IP location data');
+        }
+      }
+      
+      return locationData;
     }
     
     return fallback;

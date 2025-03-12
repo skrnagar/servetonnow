@@ -37,6 +37,18 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   // Cookie expires after 30 days
   const COOKIE_EXPIRY = 30;
 
+  // List of available cities
+  const AVAILABLE_CITIES = [
+    "indore", "mumbai", "delhi", "bangalore", "pune", 
+    "jaipur", "hyderabad", "chennai", "kolkata", "ahmedabad"
+  ];
+  
+  // Helper function to check if city is available
+  const isCityAvailable = (city: string): boolean => {
+    if (!city) return false;
+    return AVAILABLE_CITIES.includes(city.toLowerCase());
+  };
+  
   // Helper function to set city and update cookie
   const setCity = (city: string) => {
     if (!city) return;
@@ -215,13 +227,21 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     if (isInitialized) return;
     
     const initializeLocation = async () => {
-      // First check for cookie (most recent city)
+      // Check if we're on the home page
+      const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
+      
+      // If not on home page, just set initialized and exit
+      if (!isHomePage) {
+        setIsInitialized(true);
+        return;
+      }
+      
+      // Step 1: Check for returning user with most recent city cookie
       const recentCity = Cookies.get(MOST_RECENT_CITY_COOKIE);
       
       if (recentCity) {
-        // Use the most recent city from cookie
+        // Returning user - use the most recent city from cookie
         setUserCity(recentCity);
-        setIsInitialized(true);
         
         // Try to get corresponding location data from storage if available
         const storedLocation = getLocationFromStorage();
@@ -229,56 +249,58 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           setUserLocation(storedLocation.location);
         }
         
-        return;
-      }
-      
-      // Next try to get location from localStorage
-      const storedLocation = getLocationFromStorage();
-      
-      if (storedLocation) {
-        // Use stored location data
-        setUserLocation(storedLocation.location);
-        setCity(storedLocation.city);
+        // Redirect to city page if it's available
+        if (isCityAvailable(recentCity)) {
+          router.push(`/${recentCity.toLowerCase()}`);
+        } else {
+          // If city is not available, show service not available page
+          router.push(`/services-unavailable?city=${recentCity.toLowerCase()}`);
+        }
+        
         setIsInitialized(true);
         return;
       }
       
-      // Set default fallback location initially
+      // Step 2: New user - try to get IP-based location
+      try {
+        const ipLocation = await getLocationFromIP();
+        
+        if (ipLocation && ipLocation.city) {
+          const city = ipLocation.city;
+          const location = ipLocation.location;
+          
+          setUserLocation(location);
+          setCity(city);
+          
+          // Save to storage
+          saveLocationToStorage(city, location);
+          
+          // If city is in our list, redirect there
+          if (isCityAvailable(city)) {
+            router.push(`/${city.toLowerCase()}`);
+          }
+          // Don't redirect if city is not available - stay on home page
+          
+          setIsInitialized(true);
+          return;
+        }
+      } catch (error) {
+        console.error("IP geolocation error:", error);
+        // Continue to fallback if IP geolocation fails
+      }
+      
+      // Step 3: If all above fails, use default (Indore)
       const defaultLocation = { lat: 22.7196, lng: 75.8577 };
       const defaultCity = "Indore";
       
       setUserLocation(defaultLocation);
       setCity(defaultCity);
       
-      // Only auto-detect location on home page
-      const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
-      if (isHomePage) {
-        // Detect location in the background for first-time users
-        try {
-          await detectLocation();
-        } catch (error) {
-          console.error("Auto location detection error:", error);
-        }
-      }
-      
       setIsInitialized(true);
     };
     
     initializeLocation();
-  }, []);
-
-  // Effect to handle city changes and redirect for home page
-  useEffect(() => {
-    // Don't run on server side or if not initialized
-    if (typeof window === 'undefined' || !isInitialized || !userCity) return;
-    
-    // Only redirect if we're on the home page
-    const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
-    if (isHomePage && userCity && userCity.toLowerCase() !== 'indore') {
-      // Use the router to navigate to the city page
-      router.push(`/${userCity.toLowerCase()}`);
-    }
-  }, [userCity, isInitialized, router]);
+  }, [router]);
 
   return (
     <GeolocationContext.Provider

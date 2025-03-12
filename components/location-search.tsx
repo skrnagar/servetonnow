@@ -129,28 +129,53 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     }
   }
 
+  // List of available cities
+  const availableCities = [
+    "indore", "mumbai", "delhi", "bangalore", "pune", 
+    "jaipur", "hyderabad", "chennai", "kolkata", "ahmedabad"
+  ];
+
+  // Check if city is available
+  const isCityAvailable = (city: string): boolean => {
+    if (!city) return false;
+    return availableCities.includes(city.toLowerCase());
+  };
+
   // Handle city selection
   const handleSelectCity = (city: string) => {
     if (city) {
-      setCity(city); // Update city state
-      // Save to cookie
-      if (typeof window !== 'undefined') {
-        document.cookie = `most_recent_city=${city}; path=/`;
-      }
+      // Use the context's setCity function
+      const { setCity } = useGeolocation();
+      setCity(city);
+      
       onClose();
-      router.push(`/${city.toLowerCase()}`);
+      
+      // Check if city is available
+      if (isCityAvailable(city)) {
+        router.push(`/${city.toLowerCase()}`);
+      } else {
+        // Redirect to services unavailable page
+        router.push(`/services-unavailable?city=${city.toLowerCase()}`);
+      }
     }
   }
 
   // Handle suggestion selection
   const handleSelectSuggestion = (suggestion: PlaceSuggestion) => {
     if (suggestion.city) {
-      setCity(suggestion.city); // Update city state and cookie
-      if (typeof window !== 'undefined') {
-        document.cookie = `most_recent_city=${suggestion.city}; path=/`;
+      // Use the context's setCity function
+      const { setCity } = useGeolocation();
+      setCity(suggestion.city);
+      
+      onClose();
+      
+      // Check if city is available
+      if (isCityAvailable(suggestion.city)) {
+        router.push(`/${suggestion.city.toLowerCase()}`);
+      } else {
+        // Redirect to services unavailable page
+        router.push(`/services-unavailable?city=${suggestion.city.toLowerCase()}`);
       }
-      router.push(`/${suggestion.city.toLowerCase()}`)
-      onClose()
     }
   }
 
