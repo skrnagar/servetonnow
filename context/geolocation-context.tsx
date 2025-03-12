@@ -32,8 +32,11 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const LOCATION_STORAGE_KEY = 'serveto_user_location';
   const LOCATION_TIMESTAMP_KEY = 'serveto_location_timestamp';
   const IP_LOCATION_KEY = 'serveto_ip_location';
+  const USER_CITY_COOKIE = 'user_city';
   // Location data expires after 24 hours (in milliseconds)
   const LOCATION_EXPIRY = 8 * 60 * 60 * 1000; // 8 hours - shorter expiry to refresh IP location more often
+  // Cookie expires after 30 days
+  const COOKIE_EXPIRY = 30;
 
   // List of available cities
   const AVAILABLE_CITIES = [
@@ -47,13 +50,13 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     return AVAILABLE_CITIES.includes(city.toLowerCase());
   };
   
-  // Helper function to set city without using cookies
+  // Helper function to set city and store in cookie
   const setCity = (city: string) => {
     if (!city) return;
     setUserCity(city);
     
-    // We don't use cookies anymore, only localStorage
-    // This ensures we always use the IP-based location
+    // Store the city in a cookie so we can redirect to it on next visit
+    Cookies.set(USER_CITY_COOKIE, city, { expires: COOKIE_EXPIRY });
   };
 
   // Helper function to save location data to localStorage
@@ -155,6 +158,9 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           // Save to localStorage with IP-based flag
           saveLocationToStorage(locationData.city, newLocation, true);
           
+          // Also set the cookie for future visits
+          Cookies.set(USER_CITY_COOKIE, locationData.city, { expires: COOKIE_EXPIRY });
+          
           success = true;
           return success;
         }
@@ -251,7 +257,20 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
 
       // For home page visitors, immediately try to get location
       
-      // ALWAYS prioritize getting a fresh IP-based location
+      // First check if we have a cookie with the user's city
+      const userCityCookie = Cookies.get(USER_CITY_COOKIE);
+      if (userCityCookie) {
+        setUserCity(userCityCookie);
+        
+        // Redirect to city page if it's available
+        if (isCityAvailable(userCityCookie)) {
+          router.replace(`/${userCityCookie.toLowerCase()}`);
+          setIsInitialized(true);
+          return;
+        }
+      }
+      
+      // If no cookie or city not available, try to get a fresh IP-based location
       try {
         const ipLocation = await getLocationFromIP();
         
@@ -260,7 +279,7 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           const location = ipLocation.location;
           
           setUserLocation(location);
-          setCity(city);
+          setCity(city); // This now also sets the cookie
           
           // Save to storage with IP-based flag
           saveLocationToStorage(city, location, true);
