@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -21,6 +22,7 @@ interface PlaceSuggestion {
   city: string
   state?: string
   country?: string
+  fullAddress?: string
 }
 
 const popularCities = [
@@ -35,6 +37,9 @@ const popularCities = [
   { id: "kolkata", name: "Kolkata" },
   { id: "ahmedabad", name: "Ahmedabad" },
 ]
+
+// Olakrutrim API key
+const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
 
 export default function LocationSearch({ isOpen, onClose }: LocationSearchProps) {
   const [searchQuery, setSearchQuery] = useState("")
@@ -71,11 +76,47 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
 
     setIsSearching(true)
     try {
-      const response = await fetch(`/api/geocode/search?query=${encodeURIComponent(query)}`)
+      // Call Olakrutrim API directly
+      const response = await fetch(
+        `https://maps.olakrutrim.com/v1/api/places/geocode/search?text=${encodeURIComponent(query)}&limit=5`,
+        {
+          headers: {
+            "x-api-key": OLAKRUTRIM_API_KEY
+          }
+        }
+      )
+      
       if (!response.ok) throw new Error("Search failed")
 
       const data = await response.json()
-      setSuggestions(data.results || [])
+      
+      // Process the response from Olakrutrim API
+      if (data.features && data.features.length > 0) {
+        const processedSuggestions = data.features.map((feature: any, index: number) => {
+          const properties = feature.properties || {}
+          const address = properties.formatted || properties.name || ""
+          const cityMatch = address.match(/([^,]+)(?:,|$)/)
+          const city = cityMatch ? cityMatch[1].trim() : "Unknown"
+          
+          // Extract state and country
+          const addressParts = address.split(',').map((part: string) => part.trim())
+          const state = addressParts.length > 1 ? addressParts[1] : undefined
+          const country = addressParts.length > 2 ? addressParts[addressParts.length - 1] : undefined
+          
+          return {
+            id: `place-${index}-${feature.id || Date.now()}`,
+            name: properties.name || address,
+            city: city,
+            state: state,
+            country: country,
+            fullAddress: address
+          }
+        })
+        
+        setSuggestions(processedSuggestions)
+      } else {
+        setSuggestions([])
+      }
     } catch (error) {
       console.error("Search error:", error)
       toast({
@@ -83,6 +124,18 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         description: "Failed to get location suggestions. Please try again.",
         variant: "destructive",
       })
+      
+      // Fallback to popular cities matching the query
+      const query = searchQuery.toLowerCase()
+      const filteredCities = popularCities.filter(city => 
+        city.name.toLowerCase().includes(query)
+      ).map(city => ({
+        ...city,
+        city: city.name,
+        fullAddress: city.name
+      }))
+      
+      setSuggestions(filteredCities)
     } finally {
       setIsSearching(false)
     }
@@ -112,6 +165,15 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     }
   }
 
+  // Clear search input
+  const handleClearSearch = () => {
+    setSearchQuery("")
+    setSuggestions([])
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }
+
   if (!isOpen) return null
 
   return (
@@ -126,14 +188,16 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         </div>
 
         {/* Search input */}
-        <div className="p-4 border-b">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+        <div className="p-4 border-b relative">
+          <div className="relative flex items-center">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+              <Search className="h-4 w-4 text-gray-500" />
+            </div>
             <Input
               ref={searchInputRef}
               type="text"
               placeholder="Search for your city..."
-              className="pl-10 pr-4 py-2"
+              className="pl-10 pr-10"
               value={searchQuery}
               onChange={handleSearchChange}
               onKeyDown={(e) => {
@@ -142,6 +206,13 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
                 }
               }}
             />
+            {searchQuery && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClearSearch}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex gap-2 mt-3">
             <Button
@@ -184,7 +255,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
                       <div>
                         <div className="font-medium">{suggestion.name}</div>
                         <div className="text-sm text-gray-500">
-                          {[suggestion.city, suggestion.state, suggestion.country].filter(Boolean).join(", ")}
+                          {suggestion.fullAddress || [suggestion.city, suggestion.state, suggestion.country].filter(Boolean).join(", ")}
                         </div>
                       </div>
                     </button>
@@ -217,4 +288,3 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     </div>
   )
 }
-

@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -11,10 +12,13 @@ type GeolocationContextType = {
   userLocation: { lat: number; lng: number } | null
   isLoading: boolean
   error: string | null
-  detectLocation: () => Promise<void>
+  detectLocation: () => Promise<boolean>
 }
 
 const GeolocationContext = createContext<GeolocationContextType | undefined>(undefined)
+
+// Olakrutrim API key
+const OLAKRUTRIM_API_KEY = "jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz"
 
 export function GeolocationProvider({ children }: { children: React.ReactNode }) {
   const [userCity, setUserCity] = useState<string | null>(null)
@@ -23,6 +27,15 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
   const router = useRouter()
+
+  // Helper function to extract city from an address string
+  const extractCityFromAddress = (address: string): string | null => {
+    const parts = address.split(',').map(part => part.trim())
+    if (parts.length >= 1) {
+      return parts[0]
+    }
+    return null
+  }
 
   const detectLocation = async (): Promise<boolean> => {
     setIsLoading(true)
@@ -43,22 +56,35 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           const { latitude, longitude } = position.coords
           setUserLocation({ lat: latitude, lng: longitude })
 
-          // Reverse geocode to get city using Olakrutrim API
-          const response = await fetch(`/api/geocode/reverse?lat=${latitude}&lng=${longitude}`)
+          // Reverse geocode using Olakrutrim API
+          const response = await fetch(
+            `https://maps.olakrutrim.com/v1/api/places/geocode/reverse?lat=${latitude}&lon=${longitude}`,
+            {
+              headers: {
+                "x-api-key": OLAKRUTRIM_API_KEY
+              }
+            }
+          )
 
           if (!response.ok) {
-            throw new Error("Failed to get location information")
+            throw new Error("Failed to get location information from Olakrutrim")
           }
 
           const data = await response.json()
+          
+          let cityName = null
+          if (data.features && data.features.length > 0) {
+            const address = data.features[0].properties?.formatted || ""
+            cityName = extractCityFromAddress(address)
+          }
 
-          if (data.city) {
-            setUserCity(data.city)
+          if (cityName) {
+            setUserCity(cityName)
 
             // Check if we should redirect to city page
             const currentPath = window.location.pathname
             if (currentPath === "/" || currentPath === "/home") {
-              router.push(`/${data.city.toLowerCase()}`)
+              router.push(`/${cityName.toLowerCase()}`)
               return true
             }
             return true
@@ -71,31 +97,68 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         }
       }
 
-      // Fallback to IP geolocation
-      const response = await fetch("/api/geocode/ip")
+      // Fallback to IP geolocation using Olakrutrim
+      try {
+        const response = await fetch("https://maps.olakrutrim.com/v1/api/places/geocode/ip", {
+          headers: {
+            "x-api-key": OLAKRUTRIM_API_KEY
+          }
+        })
 
-      if (!response.ok) {
-        throw new Error("Failed to get location from IP")
-      }
-
-      const data = await response.json()
-
-      if (data.city) {
-        setUserCity(data.city)
-        if (data.latitude && data.longitude) {
-          setUserLocation({ lat: data.latitude, lng: data.longitude })
+        if (!response.ok) {
+          throw new Error("Failed to get location from IP using Olakrutrim")
         }
 
-        // Check if we should redirect to city page
-        const currentPath = window.location.pathname
-        if (currentPath === "/" || currentPath === "/home") {
-          router.push(`/${data.city.toLowerCase()}`)
+        const data = await response.json()
+        
+        let cityName = null
+        let latitude = null
+        let longitude = null
+        
+        if (data.features && data.features.length > 0) {
+          const feature = data.features[0]
+          const address = feature.properties?.formatted || ""
+          cityName = extractCityFromAddress(address)
+          
+          if (feature.geometry && feature.geometry.coordinates) {
+            // GeoJSON uses [longitude, latitude] order
+            longitude = feature.geometry.coordinates[0]
+            latitude = feature.geometry.coordinates[1]
+          }
+        }
+
+        if (cityName) {
+          setUserCity(cityName)
+          if (latitude !== null && longitude !== null) {
+            setUserLocation({ lat: latitude, lng: longitude })
+          }
+
+          // Check if we should redirect to city page
+          const currentPath = window.location.pathname
+          if (currentPath === "/" || currentPath === "/home") {
+            router.push(`/${cityName.toLowerCase()}`)
+            return true
+          }
           return true
+        } else {
+          throw new Error("City not found from IP")
         }
-        return true
-      } else {
-        throw new Error("City not found from IP")
+      } catch (ipError) {
+        console.warn("IP geolocation failed:", ipError)
+        // Fall through to default city
       }
+      
+      // Set a default city if all else fails
+      setUserCity("Indore")
+      
+      // Only redirect if we're on homepage
+      const currentPath = window.location.pathname
+      if (currentPath === "/" || currentPath === "/home") {
+        router.push(`/indore`)
+        return true
+      }
+      
+      return true
     } catch (err) {
       console.error("Location detection error:", err)
       setError(err instanceof Error ? err.message : "Failed to detect location")
@@ -115,28 +178,43 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     // We don't auto-redirect here to avoid unexpected redirects
     const autoDetectLocation = async () => {
       try {
-        // Try IP geolocation first as it's less intrusive
-        const response = await fetch("/api/geocode/ip", {
-          method: "GET",
+        // Try IP geolocation using Olakrutrim
+        const response = await fetch("https://maps.olakrutrim.com/v1/api/places/geocode/ip", {
           headers: {
-            "Cache-Control": "no-cache",
+            "x-api-key": OLAKRUTRIM_API_KEY
           },
+          method: "GET",
+          cache: "no-store"
         })
 
+        if (!response.ok) {
+          throw new Error("Failed to get location from IP using Olakrutrim")
+        }
+
         const data = await response.json()
-
-        if (data.city) {
-          setUserCity(data.city)
-          if (data.latitude && data.longitude) {
-            setUserLocation({ lat: data.latitude, lng: data.longitude })
+        
+        let cityName = null
+        let latitude = null
+        let longitude = null
+        
+        if (data.features && data.features.length > 0) {
+          const feature = data.features[0]
+          const address = feature.properties?.formatted || ""
+          cityName = extractCityFromAddress(address)
+          
+          if (feature.geometry && feature.geometry.coordinates) {
+            // GeoJSON uses [longitude, latitude] order
+            longitude = feature.geometry.coordinates[0]
+            latitude = feature.geometry.coordinates[1]
           }
+        }
 
-          // If this was a fallback city, log it but still use the data
-          if (data.fallback) {
-            console.info("Using fallback city data:", data.city)
+        if (cityName) {
+          setUserCity(cityName)
+          if (latitude !== null && longitude !== null) {
+            setUserLocation({ lat: latitude, lng: longitude })
           }
-
-          console.log("Location detected:", data.city, data.region, data.country)
+          console.log("Location detected:", cityName)
         } else {
           console.warn("IP geolocation API returned no city data")
           // Set a default city if none was returned

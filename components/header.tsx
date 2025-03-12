@@ -59,11 +59,11 @@ export default function Header() {
           <Button
             variant="outline"
             size="sm"
-            className="hidden md:flex items-center gap-1 ml-4"
+            className="hidden md:flex items-center gap-1 ml-4 rounded-full pl-3 pr-4 py-2 border-gray-300 hover:bg-gray-50"
             onClick={() => setIsLocationSearchOpen(true)}
           >
             <MapPin className="h-4 w-4 text-primary" />
-            <span className="max-w-[120px] truncate">{formattedCity}</span>
+            <span className="max-w-[150px] truncate">{formattedCity}</span>
           </Button>
 
           {/* Desktop Navigation */}
