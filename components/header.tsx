@@ -60,19 +60,22 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-1">
-              <div className="bg-black rounded-md w-10 h-10 flex items-center justify-center text-white">
-                <span className="font-bold text-sm">UC</span>
-              </div>
-              <div className="text-sm font-medium ml-1">Urban Company</div>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/sarveto.png"
+                alt="Serveto Logo"
+                width={50}
+                height={50}
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
 
-          {/* Main Search Bar (Urban Company Style) */}
-          <div className="hidden md:flex items-center space-x-4 flex-1 max-w-3xl mx-4">
+          {/* Main Search Bar (Compact style) */}
+          <div className="hidden md:flex space-x-3 flex-1 max-w-3xl mx-4">
             {/* Address selection button */}
             <div 
-              className="flex items-center gap-2 py-2 px-4 cursor-pointer bg-white hover:bg-gray-50 border border-gray-200 rounded-full w-[300px]"
+              className="flex items-center gap-2 px-4 py-3 cursor-pointer bg-white hover:bg-gray-50 border border-gray-200 rounded-lg w-[450px]"
               onClick={() => setIsLocationSearchOpen(true)}
             >
               <MapPin className="h-5 w-5 text-gray-500" />
@@ -85,11 +88,11 @@ export default function Header() {
             </div>
             
             {/* Search box */}
-            <div className="flex flex-1 items-center py-2 px-4 bg-white border border-gray-200 rounded-full">
+            <div className="flex flex-1 items-center px-4 py-3 bg-white border border-gray-200 rounded-lg">
               <Search className="h-5 w-5 text-gray-400 mr-2" />
               <Input
                 type="search"
-                placeholder="Search for 'Facial'"
+                placeholder="Search for 'AC service'"
                 className="border-none shadow-none focus-visible:ring-0 pl-0 h-full bg-transparent text-sm"
               />
             </div>
@@ -120,14 +123,14 @@ export default function Header() {
 
           {/* Mobile Header */}
           <div className="flex md:hidden items-center space-x-3">
-            <Button variant="outline" size="icon" className="rounded-full border-gray-300" onClick={() => setIsLocationSearchOpen(true)}>
+            <Button variant="outline" size="icon" className="border-gray-300" onClick={() => setIsLocationSearchOpen(true)}>
               <MapPin className="h-5 w-5 text-primary" />
             </Button>
-            <Button variant="outline" size="icon" className="rounded-full border-gray-300">
+            <Button variant="outline" size="icon" className="border-gray-300">
               <Search className="h-5 w-5" />
             </Button>
             <Link href="/cart" className="md:hidden">
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </Link>
