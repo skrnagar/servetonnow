@@ -37,7 +37,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   const { detectLocation, isLoading, userLocation, setCity } = useGeolocation()
   const { toast } = useToast()
   const router = useRouter()
-  const [city, setCity] = useState(""); // Added city state
+  const [localCity, setLocalCity] = useState(""); // Renamed to avoid conflict
 
   useEffect(() => {
     // Focus the search input when modal opens
