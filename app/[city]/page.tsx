@@ -77,154 +77,16 @@ export default function CityPage() {
         </div>
       </section>
 
-      {/* Popular Services */}
+      {/* Categories Section */}
       <section className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
-          <div className="flex items-center gap-2">
-            <Button
-              variant={isGridView ? "default" : "outline"}
-              size="icon"
-              className="w-9 h-9"
-              onClick={() => setIsGridView(true)}
-            >
-              <FaTh className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={!isGridView ? "default" : "outline"}
-              size="icon"
-              className="w-9 h-9"
-              onClick={() => setIsGridView(false)}
-            >
-              <FaList className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        <div className={isGridView ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
-          {/* Service Cards */}
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className={
-                isGridView
-                  ? "bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden"
-                  : "bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden flex"
-              }
-            >
-              <div className={isGridView ? "relative h-48" : "relative h-full w-40 md:w-64"}>
-                <Image
-                  src={`/placeholder.svg?height=400&width=600&text=Service${index + 1}`}
-                  alt={`Service ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className={isGridView ? "p-4" : "p-4 flex-1"}>
-                <h3 className="text-lg font-semibold mb-2">Service Name {index + 1}</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
-                  Service description goes here. This is a brief summary of what the service entails.
-                </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-primary font-medium">Starting ₹{499 + index * 100}</span>
-                  <Link href={`/services/service-${index + 1}`}>
-                    <Button size="sm">Book Now</Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Popular Services in City - Modern UI */}
-      <section className="mb-12 bg-gray-50 dark:bg-gray-800 py-10 rounded-xl">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-3">Popular Services in {formattedCityName}</h2>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover the most sought-after home services available in your area
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { 
-                name: "Home Cleaning", 
-                description: "Professional deep cleaning for your entire home",
-                price: "₹499",
-                rating: "4.8",
-                reviews: "2,134",
-                image: "/placeholder.svg?height=200&width=300",
-                link: `/${citySlug}/cleaning/home-cleaning`
-              },
-              { 
-                name: "AC Service & Repair", 
-                description: "Complete AC maintenance, service and repairs",
-                price: "₹699",
-                rating: "4.7",
-                reviews: "1,892",
-                image: "/placeholder.svg?height=200&width=300",
-                link: `/${citySlug}/appliance-repair/ac`
-              },
-              { 
-                name: "Plumbing Services", 
-                description: "Fix leaks, installations, and plumbing repairs",
-                price: "₹399",
-                rating: "4.6",
-                reviews: "1,653",
-                image: "/placeholder.svg?height=200&width=300",
-                link: `/${citySlug}/plumbing/pipe-leakage`
-              }
-            ].map((service, index) => (
-              <Link key={index} href={service.link} className="block">
-                <div className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
-                  <div className="relative h-48">
-                    <Image 
-                      src={service.image} 
-                      alt={service.name} 
-                      fill 
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                      <span className="text-white font-medium p-4">View Details</span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-semibold">{service.name}</h3>
-                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm font-medium">{service.price}</span>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">{service.description}</p>
-                    <div className="flex items-center">
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <FaStar />
-                        <span className="font-medium">{service.rating}</span>
-                      </div>
-                      <span className="text-sm text-gray-500 ml-2">({service.reviews})</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Button variant="outline" className="rounded-full px-6">
-              View All Services
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Service Categories Section */}
-      <section className="mb-10">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Service Categories</h2>
-          <Link href="/services" className="text-primary hover:underline flex items-center">
+          <Link href={`/${citySlug}/services`} className="text-primary hover:underline flex items-center">
             View All
             <FaArrowRight className="ml-1 h-3 w-3" />
           </Link>
         </div>
-        
+
         <div className="relative">
           <div className="flex overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 space-x-4">
             {[
@@ -253,7 +115,7 @@ export default function CityPage() {
               </Link>
             ))}
           </div>
-          
+
           <style jsx global>{`
             .scrollbar-hide::-webkit-scrollbar {
               display: none;
@@ -263,25 +125,116 @@ export default function CityPage() {
               scrollbar-width: none;
             }
           `}</style>
-        </div>t-semibold">{category.name}</h3>
-            </Link>
-          ))}
         </div>
+
+      {/* Popular Services Section */}
+      <section className="mb-12 mt-12">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`p-2 ${isGridView ? "bg-gray-100 dark:bg-gray-800" : ""}`}
+              onClick={() => setIsGridView(true)}
+            >
+              <FaTh className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`p-2 ${!isGridView ? "bg-gray-100 dark:bg-gray-800" : ""}`}
+              onClick={() => setIsGridView(false)}
+            >
+              <FaList className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {isGridView ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+              <div key={item} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+                <div className="relative h-40">
+                  <Image
+                    src={`/placeholder.svg?height=300&width=400&text=Service+${item}`}
+                    alt={`Service ${item}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center mb-2">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="h-4 w-4" />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500 ml-2">(120+ reviews)</span>
+                  </div>
+                  <h3 className="font-semibold mb-1">Home Deep Cleaning</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                    Professional cleaning service for homes
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-primary">₹999</span>
+                    <Button size="sm">Book Now</Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="flex flex-col sm:flex-row gap-4 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700"
+              >
+                <div className="relative w-full sm:w-48 h-40 sm:h-auto">
+                  <Image
+                    src={`/placeholder.svg?height=300&width=400&text=Service+${item}`}
+                    alt={`Service ${item}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4 flex-1">
+                  <div className="flex items-center mb-2">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="h-4 w-4" />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500 ml-2">(120+ reviews)</span>
+                  </div>
+                  <h3 className="font-semibold mb-1">Home Deep Cleaning</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                    Professional cleaning service for homes. Our experts will clean every corner of your house.
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-primary">₹999</span>
+                    <Button size="sm">Book Now</Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* How It Works */}
+      {/* How It Works Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">How It Works in {formattedCityName}</h2>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Step 1 */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
               <span className="text-xl font-bold text-primary">1</span>
             </div>
-            <h3 className="text-xl font-semibold mb-3">Search for Services</h3>
+            <h3 className="text-xl font-semibold mb-3">Select a Service</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Browse through our extensive list of services available in {formattedCityName} or use the search bar to find exactly what you need.
+              Browse through our wide range of professional services available in {formattedCityName} and choose what you need.
             </p>
           </div>
 
@@ -290,9 +243,9 @@ export default function CityPage() {
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
               <span className="text-xl font-bold text-primary">2</span>
             </div>
-            <h3 className="text-xl font-semibold mb-3">Book a Professional</h3>
+            <h3 className="text-xl font-semibold mb-3">Book a Time Slot</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Choose from our verified professionals based on ratings, availability, and pricing. Book instantly or request quotes.
+              Choose a convenient date and time slot for your service in {formattedCityName}, and we'll send a professional to your location.
             </p>
           </div>
 
@@ -312,31 +265,32 @@ export default function CityPage() {
       {/* Featured Professionals */}
       <section>
         <h2 className="text-2xl font-bold mb-6">Top Professionals in {formattedCityName}</h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="flex flex-col items-center text-center">
+                <div className="relative w-20 h-20 mb-4">
                   <Image
                     src="/placeholder-user.jpg"
-                    alt={`Professional ${index + 1}`}
+                    alt="Professional"
                     fill
-                    className="object-cover"
+                    className="rounded-full object-cover"
                   />
                 </div>
-                <div>
-                  <h3 className="font-semibold">Professional {index + 1}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Service Category</p>
-                  <div className="flex items-center text-yellow-500 text-sm mt-1">
-                    {'★'.repeat(4 + (index % 2))}{'☆'.repeat(1 - (index % 2))}
-                    <span className="text-gray-600 dark:text-gray-400 ml-1">(${20 + index * 5} reviews)</span>
-                  </div>
+                <h3 className="font-semibold">John Doe</h3>
+                <p className="text-sm text-gray-500 mb-2">Plumbing Expert</p>
+                <div className="flex text-yellow-400 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <FaStar key={i} className="h-4 w-4" />
+                  ))}
                 </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  5+ years of experience in residential and commercial plumbing services in {formattedCityName}.
+                </p>
+                <Button size="sm" variant="outline" className="w-full">
+                  View Profile
+                </Button>
               </div>
-              <Link href={`/professionals/pro-${index}`}>
-                <Button variant="outline" className="w-full">View Profile</Button>
-              </Link>
             </div>
           ))}
         </div>
