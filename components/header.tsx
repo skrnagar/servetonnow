@@ -46,7 +46,16 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
+            <Link 
+              href="/" 
+              className="flex items-center"
+              onClick={(e) => {
+                // If we're on a city page, prevent navigation to home
+                if (pathSegments.length === 1 && pathSegments[0] !== '') {
+                  e.preventDefault();
+                }
+              }}
+            >
               <Image
                 src="/sarveto.png"
                 alt="Serveto Logo"
@@ -130,7 +139,16 @@ export default function Header() {
                     </SheetTrigger>
                   </div>
                   <nav className="flex flex-col space-y-4 mt-4">
-                    <Link href="/" className="text-base font-medium py-2">
+                    <Link 
+                      href="/" 
+                      className="text-base font-medium py-2"
+                      onClick={(e) => {
+                        // If we're on a city page, prevent navigation to home
+                        if (pathSegments.length === 1 && pathSegments[0] !== '') {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
                       Home
                     </Link>
                     <Link href="/services" className="text-base font-medium py-2">
