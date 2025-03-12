@@ -11,12 +11,7 @@ export default function Footer() {
   const pathSegments = pathname.split("/").filter(Boolean)
   const isCityPage = pathSegments.length === 1 && pathSegments[0] !== ''
   
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // If we're on a city page, prevent navigation to home
-    if (isCityPage) {
-      e.preventDefault()
-    }
-  }
+  // City detection is done - now we'll use it directly in link URLs
   return (
     <footer className="bg-gray-50 dark:bg-gray-900 border-t">
       <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -24,9 +19,8 @@ export default function Footer() {
           {/* Logo and description */}
           <div className="lg:col-span-2">
             <Link 
-              href="/" 
+              href={isCityPage ? `/${pathSegments[0]}` : "/"} 
               className="flex items-center space-x-2"
-              onClick={handleLinkClick}
             >
               <Image
                 src="/serveto_logo_main.png"
@@ -105,9 +99,8 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               <li>
                 <Link 
-                  href="/" 
+                  href={isCityPage ? `/${pathSegments[0]}` : "/"} 
                   className="text-sm text-gray-600 hover:text-primary dark:text-gray-400"
-                  onClick={handleLinkClick}
                 >
                   Home
                 </Link>

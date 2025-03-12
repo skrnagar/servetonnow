@@ -47,14 +47,8 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link 
-              href="/" 
+              href={pathSegments.length === 1 && pathSegments[0] !== '' ? `/${pathSegments[0]}` : "/"} 
               className="flex items-center"
-              onClick={(e) => {
-                // If we're on a city page, prevent navigation to home
-                if (pathSegments.length === 1 && pathSegments[0] !== '') {
-                  e.preventDefault();
-                }
-              }}
             >
               <Image
                 src="/sarveto.png"
@@ -140,14 +134,8 @@ export default function Header() {
                   </div>
                   <nav className="flex flex-col space-y-4 mt-4">
                     <Link 
-                      href="/" 
+                      href={pathSegments.length === 1 && pathSegments[0] !== '' ? `/${pathSegments[0]}` : "/"} 
                       className="text-base font-medium py-2"
-                      onClick={(e) => {
-                        // If we're on a city page, prevent navigation to home
-                        if (pathSegments.length === 1 && pathSegments[0] !== '') {
-                          e.preventDefault();
-                        }
-                      }}
                     >
                       Home
                     </Link>
