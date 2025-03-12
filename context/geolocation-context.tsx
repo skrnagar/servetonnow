@@ -63,61 +63,79 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   }
 
   const detectLocation = async (): Promise<boolean> => {
-    setIsLoading(true)
-    setError("")
+    setIsLoading(true);
+    setError("");
+    
+    // Set default values immediately so UI is responsive
+    const defaultLocation = { lat: 22.7196, lng: 75.8577 };
+    const defaultCity = "Indore";
+    const defaultState = "Madhya Pradesh";
+    
+    let success = false;
 
     try {
-      // First try browser geolocation
-      if (navigator.geolocation) {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          })
-        })
+      // First try browser geolocation if available
+      if (typeof navigator !== 'undefined' && navigator.geolocation) {
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 3000, // Shorter timeout
+              maximumAge: 0
+            });
+          });
 
-        const { latitude, longitude } = position.coords
+          const { latitude, longitude } = position.coords;
 
-        // Use our utility for reverse geocoding
-        const locationData = await reverseGeocode(latitude, longitude)
-        
-        if (locationData) {
-          setUserLocation({
-            lat: latitude,
-            lng: longitude
-          })
-          setUserCity(locationData.city);
-          return true;
+          // Use our utility for reverse geocoding
+          const locationData = await reverseGeocode(latitude, longitude);
+          
+          if (locationData) {
+            setUserLocation({
+              lat: latitude,
+              lng: longitude
+            });
+            setUserCity(locationData.city);
+            success = true;
+          }
+        } catch (geoError) {
+          console.error("Browser geolocation failed:", geoError);
+          // Continue to fallback
+        }
+      }
+
+      // If browser geolocation failed, try IP-based geolocation
+      if (!success) {
+        try {
+          const locationData = await getLocationFromIP();
+          
+          if (locationData) {
+            setUserLocation({
+              lat: locationData.location.lat,
+              lng: locationData.location.lng
+            });
+            setUserCity(locationData.city);
+            success = true;
+          }
+        } catch (ipError) {
+          console.error("IP geolocation failed:", ipError);
+          // Continue to fallback
         }
       }
     } catch (error) {
-      console.error("Browser geolocation failed:", error)
-    }
-
-    try {
-      // Fall back to IP-based geolocation using our utility
-      const locationData = await getLocationFromIP();
-      
-      if (locationData) {
-        setUserLocation({
-          lat: locationData.location.lat,
-          lng: locationData.location.lng
-        });
-        setUserCity(locationData.city);
-        return true;
-      }
-    } catch (error) {
-      console.error("IP geolocation failed:", error)
-      setError("Could not detect your location automatically. Please enter it manually.")
+      console.error("Location detection error:", error);
     } finally {
-      setIsLoading(false)
+      // If all detection methods failed, use default values
+      if (!success) {
+        setUserLocation(defaultLocation);
+        setUserCity(defaultCity);
+        setError("Could not detect your location automatically. Using default location.");
+      }
+      
+      setIsLoading(false);
     }
     
-    // Set fallback values
-    setUserLocation({ lat: 22.7196, lng: 75.8577 });
-    setUserCity("Indore");
-    return false;
+    return success;
   }
 
   useEffect(() => {

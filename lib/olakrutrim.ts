@@ -78,10 +78,20 @@ export async function getLocationFromIP(): Promise<{
   state?: string;
 } | null> {
   try {
-    const response = await fetch("/api/geocode/ip");
+    // Provide fallback values first
+    const fallback = {
+      location: { lat: 22.7196, lng: 75.8577 },
+      city: "Indore",
+      state: "Madhya Pradesh"
+    };
+    
+    const response = await fetch("/api/geocode/ip", {
+      signal: AbortSignal.timeout(3000) // Shorter timeout
+    });
     
     if (!response.ok) {
-      throw new Error("IP geolocation failed");
+      console.warn("IP geolocation response not OK, using fallback");
+      return fallback;
     }
     
     const data = await response.json();
@@ -98,18 +108,23 @@ export async function getLocationFromIP(): Promise<{
       
       return {
         location: {
-          lat: result.geometry?.location?.lat || 22.7196,
-          lng: result.geometry?.location?.lng || 75.8577
+          lat: result.geometry?.location?.lat || fallback.location.lat,
+          lng: result.geometry?.location?.lng || fallback.location.lng
         },
-        city: cityComponent?.long_name || "Indore",
-        state: stateComponent?.long_name
+        city: cityComponent?.long_name || fallback.city,
+        state: stateComponent?.long_name || fallback.state
       };
     }
     
-    return null;
+    return fallback;
   } catch (error) {
     console.error("Error getting location from IP:", error);
-    return null;
+    // Return fallback instead of null
+    return {
+      location: { lat: 22.7196, lng: 75.8577 },
+      city: "Indore",
+      state: "Madhya Pradesh"
+    };
   }
 }
 
@@ -122,10 +137,20 @@ export async function reverseGeocode(lat: number, lng: number): Promise<{
   state?: string;
 } | null> {
   try {
-    const response = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`);
+    // Provide fallback values first
+    const fallback = {
+      location: { lat, lng },
+      city: "Indore",
+      state: "Madhya Pradesh"
+    };
+    
+    const response = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`, {
+      signal: AbortSignal.timeout(3000) // Shorter timeout
+    });
     
     if (!response.ok) {
-      throw new Error("Reverse geocoding failed");
+      console.warn("Reverse geocoding response not OK, using fallback");
+      return fallback;
     }
     
     const data = await response.json();
@@ -141,18 +166,20 @@ export async function reverseGeocode(lat: number, lng: number): Promise<{
       );
       
       return {
-        location: {
-          lat: lat,
-          lng: lng
-        },
-        city: cityComponent?.long_name || "Indore",
-        state: stateComponent?.long_name
+        location: { lat, lng },
+        city: cityComponent?.long_name || fallback.city,
+        state: stateComponent?.long_name || fallback.state
       };
     }
     
-    return null;
+    return fallback;
   } catch (error) {
     console.error("Error reverse geocoding:", error);
-    return null;
+    // Return fallback instead of null
+    return {
+      location: { lat, lng },
+      city: "Indore",
+      state: "Madhya Pradesh"
+    };
   }
 }

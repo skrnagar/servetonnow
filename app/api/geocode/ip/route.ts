@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -24,63 +25,59 @@ export async function GET() {
       const coords = feature.geometry?.coordinates || [75.8577, 22.7196]; // [lng, lat]
 
       // Extract city and state from address components
-      const addressComponents = feature.properties?.address_components || [];
-      const cityComponent = {
+      const addressComponents = [];
+      
+      // Add city component
+      addressComponents.push({
         long_name: feature.properties?.city || "Indore",
         types: ["locality"]
-      };
-
-      const stateComponent = {
+      });
+      
+      // Add state component
+      addressComponents.push({
         long_name: feature.properties?.state || "Madhya Pradesh",
         types: ["administrative_area_level_1"]
-      };
+      });
 
       return NextResponse.json({
-        results: [
-          {
-            geometry: {
-              location: {
-                lat: coords[1], // lat is second in GeoJSON
-                lng: coords[0]  // lng is first in GeoJSON
-              }
-            },
-            address_components: [
-              cityComponent,
-              stateComponent
-            ],
-            formatted_address: feature.properties?.formatted || "Indore, Madhya Pradesh"
-          }
-        ]
-      });
-    }
-
-    throw new Error("No location data found");
-  } catch (error) {
-    console.error("IP geolocation error:", error);
-
-    // Fallback data for Indore
-    return NextResponse.json({
-      results: [
-        {
+        results: [{
+          address_components: addressComponents,
           geometry: {
             location: {
-              lat: 22.7196,
-              lng: 75.8577
+              lat: coords[1],
+              lng: coords[0]
             }
-          },
+          }
+        }]
+      });
+    } else {
+      // Return default data if no results
+      return NextResponse.json({
+        results: [{
           address_components: [
-            {
-              long_name: "Indore",
-              types: ["locality"]
-            },
-            {
-              long_name: "Madhya Pradesh",
-              types: ["administrative_area_level_1"]
-            }
+            { long_name: 'Indore', types: ['locality'] },
+            { long_name: 'Madhya Pradesh', types: ['administrative_area_level_1'] }
           ],
-          formatted_address: "Indore, Madhya Pradesh"
+          geometry: {
+            location: { lat: 22.7196, lng: 75.8577 }
+          }
+        }]
+      });
+    }
+  } catch (error: any) {
+    console.error('IP geolocation error:', error.message);
+    
+    // Return a fallback response with default data
+    return NextResponse.json({
+      results: [{
+        address_components: [
+          { long_name: 'Indore', types: ['locality'] },
+          { long_name: 'Madhya Pradesh', types: ['administrative_area_level_1'] }
+        ],
+        geometry: {
+          location: { lat: 22.7196, lng: 75.8577 }
         }
-      ]
-    });
+      }]
+    }, { status: 200 });
   }
 }

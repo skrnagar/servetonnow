@@ -109,10 +109,23 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   // Handle location detection
   const handleDetectLocation = async () => {
     try {
-      await detectLocation()
-      onClose()
+      const success = await detectLocation();
+      if (success) {
+        onClose();
+      } else {
+        toast({
+          title: "Location Detection",
+          description: "Using default location: Indore. You can search for a different city.",
+          variant: "default",
+        });
+      }
     } catch (error) {
-      console.error("Location detection error:", error)
+      console.error("Location detection error:", error);
+      toast({
+        title: "Location Detection Failed",
+        description: "Using default location: Indore. You can search for a different city.",
+        variant: "destructive",
+      });
     }
   }
 

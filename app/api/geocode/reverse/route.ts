@@ -32,57 +32,21 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error: any) {
+    console.error('Reverse geocoding error:', error.message);
 
-    // Format the response to match the expected structure
+    // Return a fallback response with default data
     return NextResponse.json({
-      results: [
-        {
-          geometry: {
-            location: {
-              lat: parseFloat(lat),
-              lng: parseFloat(lon)
-            }
-          },
-          address_components: data.features?.[0]?.properties?.address_components || [
-            {
-              long_name: "Indore",
-              types: ["locality"]
-            },
-            {
-              long_name: "Madhya Pradesh",
-              types: ["administrative_area_level_1"]
-            }
-          ],
-          formatted_address: data.features?.[0]?.properties?.formatted || "Indore, Madhya Pradesh"
+      results: [{
+        address_components: [
+          { long_name: 'Indore', types: ['locality'] },
+          { long_name: 'Madhya Pradesh', types: ['administrative_area_level_1'] }
+        ],
+        geometry: {
+          location: { lat: 22.7196, lng: 75.8577 }
         }
-      ]
-    });
-  } catch (error) {
-    console.error("Reverse geocoding error:", error);
-
-    // Fallback data
-    return NextResponse.json({
-      results: [
-        {
-          geometry: {
-            location: {
-              lat: parseFloat(lat),
-              lng: parseFloat(lon)
-            }
-          },
-          address_components: [
-            {
-              long_name: "Indore",
-              types: ["locality"]
-            },
-            {
-              long_name: "Madhya Pradesh",
-              types: ["administrative_area_level_1"]
-            }
-          ],
-          formatted_address: "Indore, Madhya Pradesh"
-        }
-      ]
-    });
+      }]
+    }, { status: 200 });
   }
 }
