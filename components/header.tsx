@@ -57,11 +57,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link
-              href={
-                pathSegments.length === 1 && pathSegments[0] !== ""
-                  ? `/${pathSegments[0]}`
-                  : "/"
-              }
+              href="/"
               className="flex items-center"
             >
               <Image
