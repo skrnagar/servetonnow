@@ -145,7 +145,8 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   const handleSelectCity = (city: string) => {
     if (city) {
       // Use the context's setCity that we already have from the component level
-      setCity(city);
+      // Pass isIpBased=false to not save to cookie when manually selecting
+      setCity(city, false);
       
       onClose();
       
