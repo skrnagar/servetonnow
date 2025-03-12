@@ -235,6 +235,9 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
         setIsInitialized(true);
         return;
       }
+
+      // For home page visitors, immediately trigger router replacement
+      // to avoid visible loading of home page
       
       // Step 1: Check for returning user with most recent city cookie
       const recentCity = Cookies.get(MOST_RECENT_CITY_COOKIE);
@@ -249,12 +252,13 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
           setUserLocation(storedLocation.location);
         }
         
-        // Redirect to city page if it's available
+        // Redirect to city page if it's available using replace instead of push
+        // Replace modifies the current history entry instead of adding a new one
         if (isCityAvailable(recentCity)) {
-          router.push(`/${recentCity.toLowerCase()}`);
+          router.replace(`/${recentCity.toLowerCase()}`);
         } else {
           // If city is not available, show service not available page
-          router.push(`/services-unavailable?city=${recentCity.toLowerCase()}`);
+          router.replace(`/services-unavailable?city=${recentCity.toLowerCase()}`);
         }
         
         setIsInitialized(true);

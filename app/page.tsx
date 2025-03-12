@@ -13,8 +13,20 @@ export default function HomePage() {
   const router = useRouter()
   const { userCity, detectLocation } = useGeolocation()
 
-  // Redirection is now handled in the GeolocationContext provider
-  // No need for redirection logic here as it's centralized
+  // Add immediate redirection on first render
+  useEffect(() => {
+    // If we already have a city, redirect immediately without waiting
+    if (userCity) {
+      router.replace(`/${userCity.toLowerCase()}`);
+    } else {
+      // Try to detect location immediately on first page render
+      detectLocation().then(success => {
+        if (success && userCity) {
+          router.replace(`/${userCity.toLowerCase()}`);
+        }
+      });
+    }
+  }, []);
 
   const handleLocationDetection = async () => {
     // Show loading state
