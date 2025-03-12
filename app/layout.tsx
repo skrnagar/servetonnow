@@ -1,6 +1,5 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Montserrat } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/header"
@@ -8,7 +7,7 @@ import Footer from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 import { GeolocationProvider } from "@/context/geolocation-context"
 
-const montserrat = Montserrat({ subsets: ["latin"] })
+// Using local font instead of Google Fonts
 
 export const metadata: Metadata = {
   title: "Serveto - AI-Powered Home Services Platform",
@@ -24,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={montserrat.className} suppressHydrationWarning>
+      <body className="font-objectivity" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <GeolocationProvider>
             <div className="flex min-h-screen flex-col">
