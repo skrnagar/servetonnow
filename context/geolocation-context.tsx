@@ -137,40 +137,51 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
   }
 
   useEffect(() => {
-    // Auto-detect location on initial load
+    // Auto-detect location on initial load - only for default city, not for showing in UI
     const autoDetectLocation = async () => {
       try {
-        // Try IP-based geolocation for initial location detection using API route
-        // Set a timeout to prevent hanging requests
+        // Set default fallback location
+        const defaultLocation = { lat: 22.7196, lng: 75.8577 };
+        const defaultCity = "Indore";
+        
+        // We're setting default values first, so the UI doesn't wait
+        setUserLocation(defaultLocation);
+        setUserCity(defaultCity);
+        
+        // Check if we're in a browser environment (client-side)
+        if (typeof window === 'undefined') return;
+        
+        // For page redirect only - use IP-based geolocation as fallback
+        // but don't block the UI rendering
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         
-        const response = await fetch("/api/geocode/ip", {
+        fetch("/api/geocode/ip", {
           signal: controller.signal
-        }).finally(() => clearTimeout(timeoutId));
-
-        // Even if response is not OK, we'll try to use the data
-        // as our API is designed to return fallback data
-        const data = await response.json();
-        
-        if (data && data.results && data.results.length > 0) {
-          const locationData = extractLocationData(data.results[0]);
-          if (locationData) {
-            setUserLocation({
-              lat: data.results[0].geometry?.location?.lat || 22.7196,
-              lng: data.results[0].geometry?.location?.lng || 75.8577
-            });
-            setUserCity(locationData.city || "Indore");
-          } else {
-            // Fallback if locationData couldn't be extracted
-            setUserLocation({ lat: 22.7196, lng: 75.8577 });
-            setUserCity("Indore");
+        })
+        .then(response => {
+          if (!response.ok) throw new Error("IP geolocation failed");
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.results && data.results.length > 0) {
+            const locationData = extractLocationData(data.results[0]);
+            if (locationData) {
+              // Update location data silently in the background
+              setUserLocation({
+                lat: data.results[0].geometry?.location?.lat || defaultLocation.lat,
+                lng: data.results[0].geometry?.location?.lng || defaultLocation.lng
+              });
+              setUserCity(locationData.city || defaultCity);
+            }
           }
-        } else {
-          // Fallback if no results
-          setUserLocation({ lat: 22.7196, lng: 75.8577 });
-          setUserCity("Indore");
-        }
+        })
+        .catch(error => {
+          console.error("Auto IP location detection error:", error);
+          // Already set fallback values, so no need to set again
+        })
+        .finally(() => clearTimeout(timeoutId));
+        
       } catch (error) {
         console.error("Auto IP location detection error:", error);
         // Set fallback values for auto-detection failure
