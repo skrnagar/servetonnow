@@ -162,8 +162,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   // Handle suggestion selection
   const handleSelectSuggestion = (suggestion: PlaceSuggestion) => {
     if (suggestion.city) {
-      // Use the context's setCity function
-      const { setCity } = useGeolocation();
+      // Use the context's setCity that we already have from the component level
       setCity(suggestion.city);
       
       onClose();

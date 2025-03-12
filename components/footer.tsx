@@ -9,7 +9,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {/* Logo and description */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-2">
+            <Link 
+              href="/" 
+              className="flex items-center space-x-2"
+              onClick={(e) => {
+                // Get current path segments to check if we're on a city page
+                const pathSegments = window.location.pathname.split("/").filter(Boolean);
+                // If we're on a city page, prevent navigation to home
+                if (pathSegments.length === 1 && pathSegments[0] !== '') {
+                  e.preventDefault();
+                }
+              }}
+            >
               <Image
                 src="/serveto_logo_main.png"
                 alt="Serveto Logo"
@@ -85,6 +96,22 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-white">Company</h3>
             <ul className="mt-4 space-y-2">
+              <li>
+                <Link 
+                  href="/" 
+                  className="text-sm text-gray-600 hover:text-primary dark:text-gray-400"
+                  onClick={(e) => {
+                    // Get current path segments to check if we're on a city page
+                    const pathSegments = window.location.pathname.split("/").filter(Boolean);
+                    // If we're on a city page, prevent navigation to home
+                    if (pathSegments.length === 1 && pathSegments[0] !== '') {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  Home
+                </Link>
+              </li>
               <li>
                 <Link href="/about" className="text-sm text-gray-600 hover:text-primary dark:text-gray-400">
                   About Us
