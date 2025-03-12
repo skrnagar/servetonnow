@@ -143,12 +143,27 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
       // First try browser geolocation if available
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
         try {
+          // Set a timeout for the geolocation request
+          const timeoutId = setTimeout(() => {
+            throw new Error("Geolocation request timed out");
+          }, 5000);
+          
           const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 3000, // Shorter timeout
-              maximumAge: 0
-            });
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                clearTimeout(timeoutId);
+                resolve(pos);
+              },
+              (err) => {
+                clearTimeout(timeoutId);
+                reject(err);
+              },
+              {
+                enableHighAccuracy: false, // Set to false for faster response
+                timeout: 3000,
+                maximumAge: 60000 // Allow slightly older cached positions
+              }
+            );
           });
 
           const { latitude, longitude } = position.coords;
@@ -170,8 +185,9 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
             success = true;
           }
         } catch (geoError) {
-          console.error("Browser geolocation failed:", geoError);
-          // Continue to fallback
+          console.log("Browser geolocation unavailable, using fallback methods");
+          // Silently continue to fallback - don't show errors to users
+          // as geolocation errors are common and expected
         }
       }
 

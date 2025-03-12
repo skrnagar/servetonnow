@@ -1,4 +1,3 @@
-"use client"
 
 import type React from "react"
 import type { Metadata } from "next"
@@ -18,6 +17,23 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
+// Create a client wrapper component
+function ClientWrapper({ children }: { children: React.ReactNode }) {
+  'use client'
+  return (
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+      <GeolocationProvider>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
+        <Toaster />
+      </GeolocationProvider>
+    </ThemeProvider>
+  )
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,21 +42,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-objectivity" suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <GeolocationProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-            <Toaster />
-          </GeolocationProvider>
-        </ThemeProvider>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   )
 }
-
-
-
-import './globals.css'
