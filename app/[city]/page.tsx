@@ -273,6 +273,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
       </section>
 
       {/* Why Choose Us Section */}
+      <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
           <Link href="/services" className="text-primary hover:underline flex items-center">
