@@ -28,7 +28,11 @@ export async function GET(request: NextRequest) {
     );
 
     if (!response.ok) {
-      throw new Error(`Autocomplete API failed: ${response.status}`);
+      console.error(`OlaKrutrim API error: ${response.status} ${response.statusText}`);
+      // Return a fallback response with empty predictions
+      return NextResponse.json({
+        predictions: []
+      }, { status: 200 });
     }
 
     const data = await response.json();
@@ -36,9 +40,35 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('Autocomplete API error:', error.message);
 
-    // Return empty results with a 200 status
+    // Define some popular cities as fallback
+    const popularCities = [
+      { id: "indore", name: "Indore" },
+      { id: "mumbai", name: "Mumbai" },
+      { id: "delhi", name: "Delhi" },
+      { id: "bangalore", name: "Bangalore" },
+      { id: "pune", name: "Pune" },
+      { id: "jaipur", name: "Jaipur" },
+      { id: "hyderabad", name: "Hyderabad" },
+      { id: "chennai", name: "Chennai" },
+      { id: "kolkata", name: "Kolkata" },
+      { id: "ahmedabad", name: "Ahmedabad" },
+    ];
+    
+    // Filter by the input query
+    const filteredCities = popularCities
+      .filter(city => city.name.toLowerCase().includes(input.toLowerCase()))
+      .slice(0, parseInt(limit));
+
+    // Return the filtered cities in a format matching expectations
     return NextResponse.json({
-      predictions: []
+      predictions: filteredCities.map((city, index) => ({
+        place_id: city.id,
+        description: city.name + ", India",
+        structured_formatting: {
+          main_text: city.name,
+          secondary_text: "India"
+        }
+      }))
     }, { status: 200 });
   }
 }

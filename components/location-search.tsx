@@ -68,11 +68,6 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
     try {
       // Use OlaKrutrim Autocomplete API for better place suggestions
       const response = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`);
-      
-      if (!response.ok) {
-        throw new Error('Autocomplete API failed');
-      }
-      
       const data = await response.json();
       
       // Transform the API response to match our PlaceSuggestion format
@@ -99,7 +94,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
           return {
             id: prediction.place_id || `place-${index}`,
             name: mainText || description.split(',')[0],
-            city: cityName,
+            city: cityName || mainText, // Ensure we always have a city value
             fullAddress: description,
             state: secondaryText ? secondaryText.split(',')[1]?.trim() : undefined,
             country: secondaryText ? secondaryText.split(',').slice(-1)[0]?.trim() : undefined
@@ -108,26 +103,24 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         
         setSuggestions(results);
       } else {
-        // Fallback to popular cities matching the query
+        // Use local popular cities as fallback
         const filteredCities = popularCities
           .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
           .map(city => ({
             id: city.id,
             name: city.name,
             city: city.name,
-            fullAddress: city.name
+            fullAddress: `${city.name}, India`
           }));
 
         setSuggestions(filteredCities);
       }
     } catch (error) {
-      console.error("Search error:", error)
-      toast({
-        title: "Search Error",
-        description: "Failed to get location suggestions. Please try again.",
-        variant: "destructive",
-      })
-
+      console.error("Search error:", error);
+      
+      // Don't show error toast - instead just use the fallback quietly
+      // This provides a better user experience
+      
       // Fallback to popular cities matching the query
       const filteredCities = popularCities
         .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
@@ -135,7 +128,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
           id: city.id,
           name: city.name,
           city: city.name,
-          fullAddress: city.name
+          fullAddress: `${city.name}, India`
         }));
 
       setSuggestions(filteredCities);
