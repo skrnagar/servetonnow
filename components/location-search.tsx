@@ -66,11 +66,48 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
 
     setIsSearching(true)
     try {
-      // Use our utility function to search places
-      const results = await searchPlaces(query, 5);
-      setSuggestions(results);
-
-      if (results.length === 0) {
+      // Use OlaKrutrim Autocomplete API for better place suggestions
+      const response = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`);
+      
+      if (!response.ok) {
+        throw new Error('Autocomplete API failed');
+      }
+      
+      const data = await response.json();
+      
+      // Transform the API response to match our PlaceSuggestion format
+      if (data.predictions && Array.isArray(data.predictions)) {
+        const results = data.predictions.map((prediction: any, index: number) => {
+          // Extract city from structured_formatting or description
+          const mainText = prediction.structured_formatting?.main_text || '';
+          const secondaryText = prediction.structured_formatting?.secondary_text || '';
+          const description = prediction.description || '';
+          
+          // Try to extract city name
+          let cityName = '';
+          if (secondaryText) {
+            // Usually city is the first part of secondary text
+            const parts = secondaryText.split(',');
+            cityName = parts[0]?.trim() || '';
+          }
+          
+          // If we couldn't extract city, use main text as fallback
+          if (!cityName) {
+            cityName = mainText;
+          }
+          
+          return {
+            id: prediction.place_id || `place-${index}`,
+            name: mainText || description.split(',')[0],
+            city: cityName,
+            fullAddress: description,
+            state: secondaryText ? secondaryText.split(',')[1]?.trim() : undefined,
+            country: secondaryText ? secondaryText.split(',').slice(-1)[0]?.trim() : undefined
+          };
+        });
+        
+        setSuggestions(results);
+      } else {
         // Fallback to popular cities matching the query
         const filteredCities = popularCities
           .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
@@ -298,9 +335,9 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
                       onClick={() => handleSelectSuggestion(suggestion)}
                     >
                       <MapPin className="h-5 w-5 text-gray-500 mt-1" />
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium">{suggestion.name}</div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 truncate">
                           {suggestion.fullAddress || [suggestion.city, suggestion.state, suggestion.country].filter(Boolean).join(", ")}
                         </div>
                       </div>
