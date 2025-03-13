@@ -1,0 +1,18 @@
+Autocomplete API Overview
+The Autocomplete API dynamically enhances search functionality within various applications by identifying entities in user queries and suggesting relevant completions in real-time, significantly improving the user experience. Suitable for a broad spectrum of applications including connected cars, micro-mobility services, and delivery apps, this versatile API seamlessly integrates location search capabilities, catering to both interactive location searches and stand-alone queries for addresses, places, and points of interest. Each autocomplete suggestion offers valuable details such as name, position, address, and functional categories, facilitating effortless location discovery for users. Whether searching for a restaurant, EV charging station, airport, or stadium, the Autocomplete API simplifies the process, ensuring a seamless and efficient search experience tailored to the needs of the user.
+Why Autocomplete API?
+Geospatial searches often involve complicated text searches of places. To avoid problems of places being misspelt by users, autocomplete comes in handy to accurately point to the location to be requested. So as the user starts typing, the autocomplete functionality suggests relevant places based on the entered text. This enhances the user experience by providing real-time suggestions, reducing the time and effort to find any specific place.
+What can Autocomplete API help with?
+Autocomplete provides intuitive suggestions of places to be looked up. This helps accurate lookup of places based on the text provided. This solves a lot of use cases like lookup of popular places like restaurants, malls, etc.
+How to use
+Sample request:
+BASH
+
+curl --location "https://api.olamaps.io/places/v1/autocomplete?input=kempe&api_key=${your_api_key}" --header "X-Request-Id: XXX"
+Pro Tip
+Remember to use a debounce function to avoid making multiple requests while the user is typing.
+
+Sample request with location-aware search:
+BASH
+
+curl --location "https://api.olamaps.io/places/v1/autocomplete?location=19.265980587014074,72.96698942923868&input=landmark&api_key=${your_api_key}" --header "X-Request-Id: XXX"
