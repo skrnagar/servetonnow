@@ -332,48 +332,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Why Choose Us in {formattedCityName}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <span className="text-xl">👨‍🔧</span>
-            </div>
-            <h3 className="font-bold mb-2">Verified Professionals</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              All our service providers in {formattedCityName} are background-checked and skill-verified.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <span className="text-xl">💰</span>
-            </div>
-            <h3 className="font-bold mb-2">Transparent Pricing</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              No hidden fees or surprise charges. Know exactly what you pay for.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <span className="text-xl">⭐</span>
-            </div>
-            <h3 className="font-bold mb-2">Quality Guarantee</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Not satisfied with a service? We'll make it right or give you a refund.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <span className="text-xl">🔒</span>
-            </div>
-            <h3 className="font-bold mb-2">Secure Bookings</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Online payments and bookings are protected by industry-standard security measures.
-            </p>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Testimonials Section */}
       <section className="mb-12">
