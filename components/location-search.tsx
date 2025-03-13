@@ -35,7 +35,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const { detectLocation, isLoading, userLocation, setCity } = useGeolocation()
+  const { detectLocation, isLoading, userLocation, userCity, setCity } = useGeolocation()
   const { toast } = useToast()
   const router = useRouter()
   const [localCity, setLocalCity] = useState(""); // Renamed to avoid conflict
