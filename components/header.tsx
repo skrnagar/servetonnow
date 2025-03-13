@@ -146,7 +146,7 @@ export default function Header() {
                 >
                   Login
                 </Button>
-                <Button 
+                {/* <Button 
                   size="sm" 
                   variant="outline"
                   className="rounded-lg"
@@ -156,7 +156,7 @@ export default function Header() {
                   }}
                 >
                   Sign Up
-                </Button>
+                </Button> */}
               </div>
             )}
           </div>
@@ -248,16 +248,6 @@ export default function Header() {
                             }}
                           >
                             Login
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            className="w-full"
-                            onClick={() => {
-                              setAuthModalTab('signup');
-                              setIsAuthModalOpen(true);
-                            }}
-                          >
-                            Sign Up
                           </Button>
                         </>
                       )}
