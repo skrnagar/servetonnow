@@ -82,18 +82,20 @@ export default function Header() {
               className="flex items-center gap-1 px-4 cursor-pointer border-r border-gray-300 bg-white hover:bg-gray-50"
               onClick={() => setIsLocationSearchOpen(true)}
             >
-              <MapPin className="h-5 w-5 text-gray-400" />
-              <span className="font-medium max-w-[120px] text-gray-400 truncate">
+              <MapPin className="h-4 w-4 text-gray-400" />
+              <span className="text-sm max-w-[120px] text-gray-400 truncate">
                 {formattedCity}
               </span>
               <ChevronDown className="h-4 w-4 text-gray-400" />
             </div>
             <div className="flex flex-1 items-center px-3 bg-white">
-              <Search className="h-5 w-5 text-gray-400 mr-2" />
+              <Search className="h-4 w-4 text-sm
+ text-gray-400 mr-2" />
               <Input
                 type="search"
                 placeholder="Search for services"
-                className="border-none shadow-none placeholder-gray-400 focus-visible:ring-0 pl-0 h-full"
+                className="border-none text-xl
+ shadow-none placeholder-gray-400 focus-visible:ring-0 pl-0 h-full"
               />
             </div>
           </div>
