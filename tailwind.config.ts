@@ -20,7 +20,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        objectivity: ['Objectivity', 'sans-serif'],
+        nohemi: ['Nohemi', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

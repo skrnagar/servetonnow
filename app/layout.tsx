@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-objectivity" suppressHydrationWarning>
+      <body className="font-nohemi" suppressHydrationWarning>
         <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
