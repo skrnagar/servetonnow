@@ -43,8 +43,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-nohemi" suppressHydrationWarning>
+    <html lang="en" className="font-nohemi" suppressHydrationWarning>
+      <body className="font-nohemi antialiased" suppressHydrationWarning>
         <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
