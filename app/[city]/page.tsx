@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -9,32 +8,33 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { ChevronRight, Star } from "lucide-react"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 export default function CityPage({ params }: { params: { city: string } }) {
   const citySlug = params.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
-  
+
   // State for window width
   const [windowWidth, setWindowWidth] = useState(0)
-  
+
   // Effect to measure window width
   useEffect(() => {
     // Update the windowWidth state when component mounts
     setWindowWidth(window.innerWidth)
-    
+
     // Update windowWidth state when window is resized
     const handleResize = () => {
       setWindowWidth(window.innerWidth)
     }
-    
+
     window.addEventListener('resize', handleResize)
-    
+
     // Cleanup event listener on unmount
     return () => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-  
+
   // Determine if we're on mobile
   const isMobile = windowWidth < 640
 
@@ -138,7 +138,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold">Choose the booking model that works best for your needs.</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
@@ -235,50 +235,66 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
       </section>
 
-      {/* Popular Services in Indore Section */}
-      <section className="mb-10">
+      {/* Popular Services in Indore */}
+      <section className="mb-10 relative">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
-          <Button variant="outline" size="sm" className="flex items-center gap-1">
-            View All <FaArrowRight className="h-3 w-3" />
-          </Button>
+          <Link href="/services" className="text-primary hover:underline flex items-center">
+            View All
+            <FaArrowRight className="ml-1 h-3 w-3" />
+          </Link>
         </div>
+
         <div className="relative">
-          <div className="flex overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 space-x-4">
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div key={item} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden min-w-[260px] md:min-w-[280px] border border-gray-100 dark:border-gray-700">
-                <div className="relative h-36">
-                  <Image
-                    src={`/placeholder.svg?text=Service${item}`}
-                    alt={`Service ${item}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold mb-1">Service Name {item}</h3>
-                  <div className="flex items-center text-yellow-400 mb-2">
-                    <Star className="h-4 w-4 fill-current" />
-                    <Star className="h-4 w-4 fill-current" />
-                    <Star className="h-4 w-4 fill-current" />
-                    <Star className="h-4 w-4 fill-current" />
-                    <Star className="h-4 w-4" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300 ml-1">(120+ reviews)</span>
+          <Carousel
+            opts={{
+              align: "start",
+              dragFree: true
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {[
+                { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
+                { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
+                { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
+                { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
+                { name: "Pest Control", price: "₹799", image: "/placeholder.svg?height=400&width=600", slug: "pest-control" },
+                { name: "Painting", price: "₹1499", image: "/placeholder.svg?height=400&width=600", slug: "painting" },
+                { name: "Carpentry", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "carpentry" },
+                { name: "Home Moving", price: "₹1999", image: "/placeholder.svg?height=400&width=600", slug: "home-moving" },
+              ].map((service) => (
+                <CarouselItem key={service.slug} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="relative h-40">
+                      <Image
+                        src={service.image}
+                        alt={service.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold">{service.name}</h3>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-primary font-medium">Starting {service.price}</span>
+                        <Link href={`/${citySlug}/${service.slug}`}>
+                          <Button size="sm">Book Now</Button>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
-                    Professional service with guaranteed satisfaction in {formattedCityName}.
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-primary font-medium">Starting $49</span>
-                    <Button size="sm">Book Now</Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden sm:flex items-center justify-end gap-2 mt-4">
+              <CarouselPrevious className="static translate-y-0 translate-x-0 h-8 w-8 rounded-full" />
+              <CarouselNext className="static translate-y-0 translate-x-0 h-8 w-8 rounded-full" />
+            </div>
+          </Carousel>
         </div>
       </section>
-      
+
       {/* Why Choose Us Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">Why Choose Us in {formattedCityName}</h2>
