@@ -10,8 +10,11 @@ import { useRouter } from "next/navigation"
 import { ChevronRight, Star } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
+import { use } from 'react'
+
 export default function CityPage({ params }: { params: { city: string } }) {
-  const citySlug = params.city.toLowerCase()
+  const resolvedParams = use(params)
+  const citySlug = resolvedParams.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
   // State for window width
