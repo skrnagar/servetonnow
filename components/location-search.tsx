@@ -122,8 +122,41 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       // This provides a better user experience
       
       // Fallback to popular cities matching the query
-      const filteredCities = popularCities
-        .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+      // Enhanced search with fuzzy matching and common misspellings
+      const enhancedSearch = (query: string, cityList: typeof popularCities) => {
+        const normalizedQuery = query.toLowerCase().trim();
+        
+        // Common misspellings or alternative spellings map
+        const alternativeSpellings: Record<string, string[]> = {
+          'bangalore': ['bangalor', 'bangalur', 'bengaluru', 'bengalore', 'bangali', 'bengali'],
+          'mumbai': ['bombay', 'mumba', 'bombai'],
+          'delhi': ['dehli', 'dilli', 'new delhi'],
+          'kolkata': ['calcutta', 'kolkatta', 'kolkota', 'calcata'],
+          'chennai': ['madras', 'chenai', 'chenna'],
+          'hyderabad': ['hydrabad', 'hidarabad', 'hyderabad'],
+          'ahmedabad': ['ahmdabad', 'ahmadabad', 'ahemdabad']
+        };
+        
+        // Check for exact matches first
+        const exactMatches = cityList.filter(city => 
+          city.name.toLowerCase().includes(normalizedQuery)
+        );
+        
+        if (exactMatches.length > 0) return exactMatches;
+        
+        // Check for alternative spellings
+        let alternativeMatches: typeof popularCities = [];
+        Object.entries(alternativeSpellings).forEach(([cityName, spellings]) => {
+          if (spellings.some(spelling => spelling.includes(normalizedQuery) || normalizedQuery.includes(spelling))) {
+            const matchedCity = cityList.find(city => city.name.toLowerCase() === cityName);
+            if (matchedCity) alternativeMatches.push(matchedCity);
+          }
+        });
+        
+        return alternativeMatches;
+      };
+      
+      const filteredCities = enhancedSearch(query, popularCities)
         .map(city => ({
           id: city.id,
           name: city.name,

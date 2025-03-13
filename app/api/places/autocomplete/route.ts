@@ -55,8 +55,40 @@ export async function GET(request: NextRequest) {
     ];
     
     // Filter by the input query
-    const filteredCities = popularCities
-      .filter(city => city.name.toLowerCase().includes(input.toLowerCase()))
+    // Enhanced matching function for better results
+    const enhancedFilter = (input: string, cities: typeof popularCities) => {
+      const normalizedInput = input.toLowerCase().trim();
+      
+      // Map of common variations/misspellings
+      const cityVariations: Record<string, string[]> = {
+        'bangalore': ['bangalor', 'bangalur', 'bengaluru', 'bengalore', 'bangali', 'bengali'],
+        'mumbai': ['bombay', 'mumba', 'bombai'],
+        'delhi': ['dehli', 'dilli', 'new delhi'],
+        'kolkata': ['calcutta', 'kolkatta', 'kolkota', 'calcata'],
+        'chennai': ['madras', 'chenai', 'chenna'],
+        'hyderabad': ['hydrabad', 'hidarabad', 'hyderabad'],
+        'ahmedabad': ['ahmdabad', 'ahmadabad', 'ahemdabad']
+      };
+      
+      // Direct matches
+      const directMatches = cities.filter(city => 
+        city.name.toLowerCase().includes(normalizedInput)
+      );
+      
+      if (directMatches.length > 0) return directMatches;
+      
+      // Check variations
+      return cities.filter(city => {
+        const variations = cityVariations[city.name.toLowerCase()];
+        if (!variations) return false;
+        
+        return variations.some(variant => 
+          variant.includes(normalizedInput) || normalizedInput.includes(variant)
+        );
+      });
+    };
+    
+    const filteredCities = enhancedFilter(input, popularCities)
       .slice(0, parseInt(limit));
 
     // Return the filtered cities in a format matching expectations
