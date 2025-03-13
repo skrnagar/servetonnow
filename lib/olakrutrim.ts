@@ -22,37 +22,64 @@ export interface PlaceSuggestion {
  */
 export async function searchPlaces(query: string, limit: number = 5): Promise<PlaceSuggestion[]> {
   try {
-    // Added timeout and retry mechanism
-    const fetchWithTimeout = async (url: string, attempts: number = 3): Promise<Response> => {
-      let lastError;
-      for (let i = 0; i < attempts; i++) {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 3000);
-          const response = await fetch(url, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          return response;
-        } catch (error) {
-          lastError = error;
-          // Wait before retrying (exponential backoff)
-          if (i < attempts - 1) await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)));
-        }
-      }
-      throw lastError;
-    };
-
-    const response = await fetchWithTimeout(
-      `/api/geocode/search?query=${encodeURIComponent(query)}&limit=${limit}`
+    // Try autocomplete API first for better results
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch(
+      `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=${limit}`,
+      { signal: controller.signal }
     );
-
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error('Search failed');
+      throw new Error('Autocomplete API failed');
     }
-
+    
     const data = await response.json();
     
-    if (data.features && data.features.length > 0) {
-      return data.features.map((feature: any, index: number) => {
+    if (data.predictions && Array.isArray(data.predictions) && data.predictions.length > 0) {
+      return data.predictions.map((prediction: any, index: number) => {
+        const mainText = prediction.structured_formatting?.main_text || '';
+        const secondaryText = prediction.structured_formatting?.secondary_text || '';
+        const description = prediction.description || '';
+        
+        let cityName = '';
+        if (secondaryText) {
+          const parts = secondaryText.split(',');
+          cityName = parts[0]?.trim() || '';
+        }
+        
+        if (!cityName) {
+          cityName = mainText;
+        }
+        
+        return {
+          id: prediction.place_id || `place-${index}`,
+          name: mainText || description.split(',')[0],
+          city: cityName || mainText,
+          fullAddress: description,
+          state: secondaryText ? secondaryText.split(',')[1]?.trim() : undefined,
+          country: secondaryText ? secondaryText.split(',').slice(-1)[0]?.trim() : undefined
+        };
+      });
+    }
+    
+    // Fallback to geocode search if autocomplete fails or returns empty
+    const geocodeResponse = await fetch(
+      `/api/geocode/search?query=${encodeURIComponent(query)}&limit=${limit}`,
+      { signal: AbortSignal.timeout(3000) }
+    );
+    
+    if (!geocodeResponse.ok) {
+      throw new Error('Geocode search failed');
+    }
+    
+    const geocodeData = await geocodeResponse.json();
+    
+    if (geocodeData.features && geocodeData.features.length > 0) {
+      return geocodeData.features.map((feature: any, index: number) => {
         const properties = feature.properties || {};
         const geometry = feature.geometry || {};
         const address = properties.formatted || properties.name || "";
@@ -108,8 +135,31 @@ export async function searchPlaces(query: string, limit: number = 5): Promise<Pl
     return filteredCities;
   } catch (error) {
     console.error("Error searching places:", error);
-    // Return empty array instead of throwing
-    return [];
+    
+    // Return fallback cities filtered by query
+    const popularCities = [
+      { id: "indore", name: "Indore" },
+      { id: "mumbai", name: "Mumbai" },
+      { id: "delhi", name: "Delhi" },
+      { id: "bangalore", name: "Bangalore" },
+      { id: "pune", name: "Pune" },
+      { id: "jaipur", name: "Jaipur" },
+      { id: "hyderabad", name: "Hyderabad" },
+      { id: "chennai", name: "Chennai" },
+      { id: "kolkata", name: "Kolkata" },
+      { id: "ahmedabad", name: "Ahmedabad" },
+    ];
+    
+    return popularCities
+      .filter(city => !query || city.name.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, limit)
+      .map(city => ({
+        id: city.id,
+        name: city.name,
+        city: city.name,
+        fullAddress: `${city.name}, India`,
+        country: "India"
+      }));
   }
 }
 

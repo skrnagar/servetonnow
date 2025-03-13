@@ -86,18 +86,14 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
 
     setIsSearching(true)
     try {
-      // Use OlaKrutrim Autocomplete API for better place suggestions
-      const response = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`);
-      const data = await response.json();
-      
-      // First, check for matches in local localities data
+      // First, check for matches in local localities data for immediate feedback
       const localityMatches = popularLocalities.filter(locality => 
         locality.name.toLowerCase().includes(query.toLowerCase()) || 
         locality.fullAddress.toLowerCase().includes(query.toLowerCase())
       ).slice(0, 5);
       
       if (localityMatches.length > 0) {
-        // If we have local matches, prioritize them
+        // If we have local matches, show them immediately for better UX
         setSuggestions(localityMatches.map(locality => ({
           id: locality.id,
           name: locality.name,
@@ -105,11 +101,28 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
           state: locality.state,
           fullAddress: locality.fullAddress
         })));
-        return;
       }
       
-      // If no local matches, proceed with API results
-      if (data.predictions && Array.isArray(data.predictions)) {
+      // Use OlaKrutrim Autocomplete API for better place suggestions
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      
+      const response = await fetch(
+        `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`,
+        { signal: controller.signal }
+      );
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // If no local matches or if we got API results, use API results
+      if ((localityMatches.length === 0 || data.predictions?.length > 0) && 
+          data.predictions && Array.isArray(data.predictions)) {
         const results = data.predictions.map((prediction: any, index: number) => {
           // Extract city from structured_formatting or description
           const mainText = prediction.structured_formatting?.main_text || '';
@@ -140,7 +153,12 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         });
         
         setSuggestions(results);
-      } else {
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      
+      // If we don't already have suggestions from local matches, use fallback
+      if (suggestions.length === 0) {
         // Use combined local cities and localities as fallback
         const filteredCities = popularCities
           .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
@@ -164,58 +182,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             fullAddress: locality.fullAddress
           }));
 
-        setSuggestions([...filteredCities, ...filteredLocalities].slice(0, 5));
+        if (filteredCities.length > 0 || filteredLocalities.length > 0) {
+          setSuggestions([...filteredCities, ...filteredLocalities].slice(0, 5));
+        }
       }
-    } catch (error) {
-      console.error("Search error:", error);
-      
-      // Don't show error toast - instead just use the fallback quietly
-      // This provides a better user experience
-      
-      // Fallback to popular cities matching the query
-      // Enhanced search with fuzzy matching and common misspellings
-      const enhancedSearch = (query: string, cityList: typeof popularCities) => {
-        const normalizedQuery = query.toLowerCase().trim();
-        
-        // Common misspellings or alternative spellings map
-        const alternativeSpellings: Record<string, string[]> = {
-          'bangalore': ['bangalor', 'bangalur', 'bengaluru', 'bengalore', 'bangali', 'bengali'],
-          'mumbai': ['bombay', 'mumba', 'bombai'],
-          'delhi': ['dehli', 'dilli', 'new delhi'],
-          'kolkata': ['calcutta', 'kolkatta', 'kolkota', 'calcata'],
-          'chennai': ['madras', 'chenai', 'chenna'],
-          'hyderabad': ['hydrabad', 'hidarabad', 'hyderabad'],
-          'ahmedabad': ['ahmdabad', 'ahmadabad', 'ahemdabad']
-        };
-        
-        // Check for exact matches first
-        const exactMatches = cityList.filter(city => 
-          city.name.toLowerCase().includes(normalizedQuery)
-        );
-        
-        if (exactMatches.length > 0) return exactMatches;
-        
-        // Check for alternative spellings
-        let alternativeMatches: typeof popularCities = [];
-        Object.entries(alternativeSpellings).forEach(([cityName, spellings]) => {
-          if (spellings.some(spelling => spelling.includes(normalizedQuery) || normalizedQuery.includes(spelling))) {
-            const matchedCity = cityList.find(city => city.name.toLowerCase() === cityName);
-            if (matchedCity) alternativeMatches.push(matchedCity);
-          }
-        });
-        
-        return alternativeMatches;
-      };
-      
-      const filteredCities = enhancedSearch(query, popularCities)
-        .map(city => ({
-          id: city.id,
-          name: city.name,
-          city: city.name,
-          fullAddress: `${city.name}, India`
-        }));
-
-      setSuggestions(filteredCities);
     } finally {
       setIsSearching(false)
     }
