@@ -38,10 +38,26 @@ export async function GET(request: Request) {
       const errorText = await response.text();
       console.error(`OlaKrutrim API error response: ${errorText}`);
       
-      // For external API errors, return a fallback response with empty predictions
-      // This prevents the frontend from breaking on API failures
+      // For external API errors, return a fallback response with popular Indian cities
+      // This ensures users still get useful suggestions even if the API fails
+      const popularCities = [
+        { place_id: "indore-fallback", description: "Indore, Madhya Pradesh, India", structured_formatting: { main_text: "Indore", secondary_text: "Madhya Pradesh, India" } },
+        { place_id: "mumbai-fallback", description: "Mumbai, Maharashtra, India", structured_formatting: { main_text: "Mumbai", secondary_text: "Maharashtra, India" } },
+        { place_id: "delhi-fallback", description: "Delhi, India", structured_formatting: { main_text: "Delhi", secondary_text: "India" } },
+        { place_id: "bangalore-fallback", description: "Bangalore, Karnataka, India", structured_formatting: { main_text: "Bangalore", secondary_text: "Karnataka, India" } },
+        { place_id: "pune-fallback", description: "Pune, Maharashtra, India", structured_formatting: { main_text: "Pune", secondary_text: "Maharashtra, India" } }
+      ];
+      
+      // Filter based on input if provided
+      const filteredCities = input 
+        ? popularCities.filter(city => 
+            city.description.toLowerCase().includes(input.toLowerCase()) ||
+            city.structured_formatting.main_text.toLowerCase().includes(input.toLowerCase())
+          )
+        : popularCities;
+      
       return NextResponse.json({ 
-        predictions: [],
+        predictions: filteredCities,
         status: "FALLBACK_RESPONSE",
         error_details: `External API error: ${response.status} ${response.statusText}`
       });
@@ -52,9 +68,25 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Autocomplete API error:', error);
 
-    // Return a graceful fallback response with empty results
+    // Return a graceful fallback response with popular Indian cities
+    const popularCities = [
+      { place_id: "indore-fallback", description: "Indore, Madhya Pradesh, India", structured_formatting: { main_text: "Indore", secondary_text: "Madhya Pradesh, India" } },
+      { place_id: "mumbai-fallback", description: "Mumbai, Maharashtra, India", structured_formatting: { main_text: "Mumbai", secondary_text: "Maharashtra, India" } },
+      { place_id: "delhi-fallback", description: "Delhi, India", structured_formatting: { main_text: "Delhi", secondary_text: "India" } },
+      { place_id: "bangalore-fallback", description: "Bangalore, Karnataka, India", structured_formatting: { main_text: "Bangalore", secondary_text: "Karnataka, India" } },
+      { place_id: "pune-fallback", description: "Pune, Maharashtra, India", structured_formatting: { main_text: "Pune", secondary_text: "Maharashtra, India" } }
+    ];
+    
+    // Filter based on input if provided
+    const filteredCities = input 
+      ? popularCities.filter(city => 
+          city.description.toLowerCase().includes(input.toLowerCase()) ||
+          city.structured_formatting.main_text.toLowerCase().includes(input.toLowerCase())
+        )
+      : popularCities;
+    
     return NextResponse.json({ 
-      predictions: [], 
+      predictions: filteredCities, 
       status: "FALLBACK_RESPONSE", 
       error_details: error.message || "Unknown error occurred"
     });
