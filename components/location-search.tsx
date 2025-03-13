@@ -17,6 +17,7 @@ interface LocationSearchProps {
   onClose: () => void
 }
 
+// Popular cities for top-level navigation
 const popularCities = [
   { id: "indore", name: "Indore" },
   { id: "mumbai", name: "Mumbai" },
@@ -28,6 +29,24 @@ const popularCities = [
   { id: "chennai", name: "Chennai" },
   { id: "kolkata", name: "Kolkata" },
   { id: "ahmedabad", name: "Ahmedabad" },
+]
+
+// Popular neighborhoods and localities with their parent cities
+const popularLocalities = [
+  { id: "vijay-nagar-indore", name: "Vijay Nagar", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Indore, Madhya Pradesh, India" },
+  { id: "vijay-nagar-scheme-54", name: "Vijay Nagar, Scheme No 54", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Scheme No 54, Indore, Madhya Pradesh, India" },
+  { id: "vijay-nagar-square", name: "Vijay Nagar Square", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Bhagwashree Colony, Indore, Madhya Pradesh, India" },
+  { id: "palasia", name: "Palasia", city: "Indore", state: "Madhya Pradesh", fullAddress: "Palasia, Indore, Madhya Pradesh, India" },
+  { id: "new-palasia", name: "New Palasia", city: "Indore", state: "Madhya Pradesh", fullAddress: "New Palasia, Indore, Madhya Pradesh, India" },
+  { id: "andheri", name: "Andheri", city: "Mumbai", state: "Maharashtra", fullAddress: "Andheri, Mumbai, Maharashtra, India" },
+  { id: "bandra", name: "Bandra", city: "Mumbai", state: "Maharashtra", fullAddress: "Bandra, Mumbai, Maharashtra, India" },
+  { id: "borivali", name: "Borivali", city: "Mumbai", state: "Maharashtra", fullAddress: "Borivali, Mumbai, Maharashtra, India" },
+  { id: "dadar", name: "Dadar", city: "Mumbai", state: "Maharashtra", fullAddress: "Dadar, Mumbai, Maharashtra, India" },
+  { id: "connaught-place", name: "Connaught Place", city: "Delhi", state: "Delhi", fullAddress: "Connaught Place, New Delhi, Delhi, India" },
+  { id: "hauz-khas", name: "Hauz Khas", city: "Delhi", state: "Delhi", fullAddress: "Hauz Khas, New Delhi, Delhi, India" },
+  { id: "koramangala", name: "Koramangala", city: "Bangalore", state: "Karnataka", fullAddress: "Koramangala, Bengaluru, Karnataka, India" },
+  { id: "indiranagar", name: "Indiranagar", city: "Bangalore", state: "Karnataka", fullAddress: "Indiranagar, Bengaluru, Karnataka, India" },
+  { id: "whitefield", name: "Whitefield", city: "Bangalore", state: "Karnataka", fullAddress: "Whitefield, Bengaluru, Karnataka, India" }
 ]
 
 export default function LocationSearch({ isOpen, onClose }: LocationSearchProps) {
@@ -70,7 +89,25 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       const response = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`);
       const data = await response.json();
       
-      // Transform the API response to match our PlaceSuggestion format
+      // First, check for matches in local localities data
+      const localityMatches = popularLocalities.filter(locality => 
+        locality.name.toLowerCase().includes(query.toLowerCase()) || 
+        locality.fullAddress.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 5);
+      
+      if (localityMatches.length > 0) {
+        // If we have local matches, prioritize them
+        setSuggestions(localityMatches.map(locality => ({
+          id: locality.id,
+          name: locality.name,
+          city: locality.city,
+          state: locality.state,
+          fullAddress: locality.fullAddress
+        })));
+        return;
+      }
+      
+      // If no local matches, proceed with API results
       if (data.predictions && Array.isArray(data.predictions)) {
         const results = data.predictions.map((prediction: any, index: number) => {
           // Extract city from structured_formatting or description
@@ -103,7 +140,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         
         setSuggestions(results);
       } else {
-        // Use local popular cities as fallback
+        // Use combined local cities and localities as fallback
         const filteredCities = popularCities
           .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
           .map(city => ({
@@ -112,8 +149,21 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             city: city.name,
             fullAddress: `${city.name}, India`
           }));
+          
+        const filteredLocalities = popularLocalities
+          .filter(locality => 
+            locality.name.toLowerCase().includes(query.toLowerCase()) || 
+            locality.fullAddress.toLowerCase().includes(query.toLowerCase())
+          )
+          .map(locality => ({
+            id: locality.id,
+            name: locality.name,
+            city: locality.city,
+            state: locality.state,
+            fullAddress: locality.fullAddress
+          }));
 
-        setSuggestions(filteredCities);
+        setSuggestions([...filteredCities, ...filteredLocalities].slice(0, 5));
       }
     } catch (error) {
       console.error("Search error:", error);

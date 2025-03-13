@@ -54,6 +54,18 @@ export async function GET(request: NextRequest) {
       { id: "ahmedabad", name: "Ahmedabad" },
     ];
     
+    // Popular neighborhoods and localities with their parent cities
+    const popularLocalities = [
+      { id: "vijay-nagar-indore", name: "Vijay Nagar", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Indore, Madhya Pradesh, India" },
+      { id: "vijay-nagar-scheme-54", name: "Vijay Nagar, Scheme No 54", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Scheme No 54, Indore, Madhya Pradesh, India" },
+      { id: "vijay-nagar-square", name: "Vijay Nagar Square", city: "Indore", state: "Madhya Pradesh", fullAddress: "Vijay Nagar, Bhagwashree Colony, Indore, Madhya Pradesh, India" },
+      { id: "palasia", name: "Palasia", city: "Indore", state: "Madhya Pradesh", fullAddress: "Palasia, Indore, Madhya Pradesh, India" },
+      { id: "andheri", name: "Andheri", city: "Mumbai", state: "Maharashtra", fullAddress: "Andheri, Mumbai, Maharashtra, India" },
+      { id: "bandra", name: "Bandra", city: "Mumbai", state: "Maharashtra", fullAddress: "Bandra, Mumbai, Maharashtra, India" },
+      { id: "hauz-khas", name: "Hauz Khas", city: "Delhi", state: "Delhi", fullAddress: "Hauz Khas, New Delhi, Delhi, India" },
+      { id: "koramangala", name: "Koramangala", city: "Bangalore", state: "Karnataka", fullAddress: "Koramangala, Bengaluru, Karnataka, India" },
+    ];
+    
     // Filter by the input query
     // Enhanced matching function for better results
     const enhancedFilter = (input: string, cities: typeof popularCities) => {
@@ -67,10 +79,26 @@ export async function GET(request: NextRequest) {
         'kolkata': ['calcutta', 'kolkatta', 'kolkota', 'calcata'],
         'chennai': ['madras', 'chenai', 'chenna'],
         'hyderabad': ['hydrabad', 'hidarabad', 'hyderabad'],
-        'ahmedabad': ['ahmdabad', 'ahmadabad', 'ahemdabad']
+        'ahmedabad': ['ahmdabad', 'ahmadabad', 'ahemdabad'],
+        'vijay nagar': ['vijaynagar', 'vijay', 'vijay colony', 'vn']
       };
       
-      // Direct matches
+      // Check localities first for exact matches
+      const localityMatches = popularLocalities.filter(locality => 
+        locality.name.toLowerCase().includes(normalizedInput) || 
+        locality.fullAddress.toLowerCase().includes(normalizedInput)
+      );
+      
+      if (localityMatches.length > 0) {
+        // If we found locality matches, return those
+        return localityMatches.map(locality => ({
+          id: locality.id,
+          name: locality.name,
+          parentCity: locality.city
+        }));
+      }
+      
+      // Direct city matches
       const directMatches = cities.filter(city => 
         city.name.toLowerCase().includes(normalizedInput)
       );
@@ -88,6 +116,28 @@ export async function GET(request: NextRequest) {
       });
     };
     
+    // First check for localities that match
+    const localityMatches = popularLocalities.filter(locality => 
+      locality.name.toLowerCase().includes(input.toLowerCase()) ||
+      locality.fullAddress.toLowerCase().includes(input.toLowerCase())
+    );
+    
+    // If we have locality matches, prioritize them
+    if (localityMatches.length > 0) {
+      const predictions = localityMatches.slice(0, parseInt(limit)).map(locality => ({
+        place_id: locality.id,
+        description: locality.fullAddress,
+        structured_formatting: {
+          main_text: locality.name,
+          secondary_text: `${locality.city}, ${locality.state}, India`,
+          main_text_matched_substrings: []
+        }
+      }));
+      
+      return NextResponse.json({ predictions });
+    }
+    
+    // Fallback to cities if no locality matches
     const filteredCities = enhancedFilter(input, popularCities)
       .slice(0, parseInt(limit));
 
