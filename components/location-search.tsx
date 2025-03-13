@@ -4,12 +4,13 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { X, MapPin, Loader2, Search } from "lucide-react"
+import { X, MapPin, Loader2, Search, ArrowLeft, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGeolocation } from "@/context/geolocation-context"
 import { useToast } from "@/components/ui/use-toast"
 import { searchPlaces, PlaceSuggestion } from "@/lib/olakrutrim"
+import Image from "next/image"
 
 interface LocationSearchProps {
   isOpen: boolean
@@ -209,27 +210,19 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-start justify-center pt-20 px-4">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Select Location</h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Search input */}
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Header with search input */}
         <div className="p-4 border-b relative">
           <div className="relative flex items-center">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-              <Search className="h-4 w-4 text-gray-500" />
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+              <ArrowLeft className="h-5 w-5 text-gray-600 cursor-pointer" onClick={onClose} />
             </div>
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Search for your city..."
-              className="pl-10 pr-10"
+              placeholder="Search for your location/society/apartment"
+              className="pl-10 pr-10 py-5 border-gray-300 rounded-lg"
               value={searchQuery}
               onChange={handleSearchChange}
               onKeyDown={(e) => {
@@ -246,25 +239,47 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
               </div>
             )}
           </div>
-          <div className="flex gap-2 mt-3">
+          
+          {/* Use current location button */}
+          <div className="flex mt-4">
             <Button
-              variant="outline"
-              className="flex-1 flex items-center justify-center gap-2"
+              variant="ghost"
+              className="text-purple-600 font-medium flex items-center justify-start w-full"
               onClick={handleDetectLocation}
               disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
-              {isLoading ? "Detecting..." : "Use current location"}
-            </Button>
-            <Button
-              variant="secondary"
-              className="flex items-center justify-center gap-2"
-              onClick={() => window.open("https://maps.olakrutrim.com", "_blank")}
-            >
-              <MapPin className="h-4 w-4" />
-              Open Map
+              <div className="bg-purple-100 rounded-full p-2 mr-3">
+                {isLoading ? 
+                  <Loader2 className="h-5 w-5 animate-spin text-purple-600" /> : 
+                  <MapPin className="h-5 w-5 text-purple-600" />
+                }
+              </div>
+              {isLoading ? "Detecting location..." : "Use current location"}
             </Button>
           </div>
+        </div>
+
+        {/* Recent Locations section */}
+        <div className="border-b pb-4">
+          <h3 className="text-lg font-semibold px-4 py-3">Recents</h3>
+          {userLocation && userCity ? (
+            <div className="px-4">
+              <button
+                className="w-full text-left py-3 flex items-start gap-3"
+                onClick={() => handleSelectCity(userCity)}
+              >
+                <Clock className="h-5 w-5 text-gray-500 mt-1" />
+                <div>
+                  <div className="font-medium text-base">{userCity} Central</div>
+                  <div className="text-sm text-gray-500">
+                    {userCity}, {userLocation ? "Location detected" : "India"}
+                  </div>
+                </div>
+              </button>
+            </div>
+          ) : (
+            <div className="px-4 py-2 text-gray-500">No recent locations</div>
+          )}
         </div>
 
         {/* Search results */}
@@ -275,15 +290,14 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             </div>
           ) : suggestions.length > 0 ? (
             <div className="p-2">
-              <h3 className="px-2 py-1 text-sm font-medium text-gray-500">Search Results</h3>
               <ul>
                 {suggestions.map((suggestion) => (
                   <li key={suggestion.id}>
                     <button
-                      className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md flex items-center gap-2"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-start gap-3"
                       onClick={() => handleSelectSuggestion(suggestion)}
                     >
-                      <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                      <MapPin className="h-5 w-5 text-gray-500 mt-1" />
                       <div>
                         <div className="font-medium">{suggestion.name}</div>
                         <div className="text-sm text-gray-500">
@@ -299,22 +313,36 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             <div className="p-6 text-center text-gray-500">No results found for "{searchQuery}"</div>
           ) : (
             <div className="p-4">
-              <h3 className="mb-3 text-sm font-medium text-gray-500">Popular Cities</h3>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <h3 className="mb-3 text-md font-medium">Popular Cities</h3>
+              <div className="grid grid-cols-2 gap-4">
                 {popularCities.map((city) => (
                   <Button
                     key={city.id}
                     variant="outline"
-                    className="justify-start"
+                    className="justify-start h-12 border-gray-200"
                     onClick={() => handleSelectCity(city.name)}
                   >
-                    <MapPin className="h-4 w-4 mr-2 text-primary" />
+                    <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                     {city.name}
                   </Button>
                 ))}
               </div>
             </div>
           )}
+        </div>
+        
+        {/* Footer with attribution */}
+        <div className="p-4 flex justify-center border-t">
+          <div className="text-xs text-gray-500 flex items-center">
+            powered by 
+            <Image 
+              src="https://maps.olakrutrim.com/img/logo.png" 
+              alt="OlaKrutrim" 
+              width={80} 
+              height={16} 
+              className="ml-2"
+            />
+          </div>
         </div>
       </div>
     </div>
