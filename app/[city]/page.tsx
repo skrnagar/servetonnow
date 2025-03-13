@@ -54,44 +54,32 @@ export default function CityPage({ params }: { params: { city: string } }) {
               Find reliable professionals for all your home service needs in {formattedCityName}
             </p>
             <div className="mt-6">
-              <div className="relative">
-                <div className="flex overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 space-x-4">
-                  {[
-                    { name: "Cleaning", icon: "🧹", slug: "cleaning" },
-                    { name: "Plumbing", icon: "🚿", slug: "plumbing" },
-                    { name: "Electrical", icon: "💡", slug: "electrical" },
-                    { name: "Appliance Repair", icon: "🔧", slug: "appliance-repair" },
-                    { name: "Pest Control", icon: "🐜", slug: "pest-control" },
-                    { name: "Painting", icon: "🎨", slug: "painting" },
-                    { name: "Carpentry", icon: "🪚", slug: "carpentry" },
-                    { name: "Home Moving", icon: "📦", slug: "home-moving" },
-                    { name: "Gardening", icon: "🌿", slug: "gardening" },
-                    { name: "Heating & AC", icon: "❄️", slug: "hvac" }
-                  ].map((category) => (
-                    <Link 
-                      key={category.slug}
-                      href={`/${citySlug}/${category.slug}`}
-                      className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center min-w-[140px]"
-                    >
-                      <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                        <span className="text-2xl">{category.icon}</span>
-                      </div>
-                      <h3 className="font-medium text-sm">
-                        {category.name}
-                      </h3>
-                    </Link>
-                  ))}
-                </div>
-
-                <style jsx global>{`
-                  .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                  }
-                  .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                  }
-                `}</style>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {[
+                  { name: "Cleaning", icon: "🧹", slug: "cleaning" },
+                  { name: "Plumbing", icon: "🚿", slug: "plumbing" },
+                  { name: "Electrical", icon: "💡", slug: "electrical" },
+                  { name: "Appliance", icon: "🔧", slug: "appliance-repair" },
+                  { name: "Pest Control", icon: "🐜", slug: "pest-control" },
+                  { name: "Painting", icon: "🎨", slug: "painting" },
+                  { name: "Carpentry", icon: "🪚", slug: "carpentry" },
+                  { name: "Moving", icon: "📦", slug: "home-moving" },
+                  { name: "Gardening", icon: "🌿", slug: "gardening" },
+                  { name: "AC Repair", icon: "❄️", slug: "hvac" }
+                ].map((category) => (
+                  <Link 
+                    key={category.slug}
+                    href={`/${citySlug}/${category.slug}`}
+                    className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <span className="text-xl">{category.icon}</span>
+                    </div>
+                    <h3 className="font-medium text-xs sm:text-sm">
+                      {category.name}
+                    </h3>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -106,49 +94,83 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
       </section>
 
-      {/* Service Categories Section - 2 rows layout */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold mb-6">Service Categories</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          {[
-            { name: "Cleaning", icon: "🧹", slug: "cleaning" },
-            { name: "Plumbing", icon: "🚿", slug: "plumbing" },
-            { name: "Electrical", icon: "💡", slug: "electrical" },
-            { name: "Appliance Repair", icon: "🔧", slug: "appliance-repair" },
-            { name: "Pest Control", icon: "🐜", slug: "pest-control" },
-            { name: "Painting", icon: "🎨", slug: "painting" },
-            { name: "Carpentry", icon: "🪚", slug: "carpentry" },
-            { name: "Home Moving", icon: "📦", slug: "home-moving" },
-            { name: "Gardening", icon: "🌿", slug: "gardening" },
-            { name: "Heating & AC", icon: "❄️", slug: "hvac" }
-          ].map((category) => (
-            <Link 
-              key={category.slug}
-              href={`/${citySlug}/${category.slug}`}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
-            >
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                <span className="text-2xl">{category.icon}</span>
-              </div>
-              <h3 className="font-semibold">{category.name}</h3>
-            </Link>
-          ))}
+      {/* Popular Services in Indore */}
+      <section className="mb-10 relative">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
+          <Link href="/services" className="text-primary hover:underline flex items-center">
+            View All
+            <FaArrowRight className="ml-1 h-3 w-3" />
+          </Link>
+        </div>
+
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              dragFree: true
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {[
+                { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
+                { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
+                { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
+                { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
+                { name: "Pest Control", price: "₹799", image: "/placeholder.svg?height=400&width=600", slug: "pest-control" },
+                { name: "Painting", price: "₹1499", image: "/placeholder.svg?height=400&width=600", slug: "painting" },
+                { name: "Carpentry", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "carpentry" },
+                { name: "Home Moving", price: "₹1999", image: "/placeholder.svg?height=400&width=600", slug: "home-moving" },
+              ].map((service) => (
+                <CarouselItem key={service.slug} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="relative h-40">
+                      <Image
+                        src={service.image}
+                        alt={service.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold">{service.name}</h3>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-primary font-medium">Starting {service.price}</span>
+                        <Link href={`/${citySlug}/${service.slug}`}>
+                          <Button size="sm">Book Now</Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden sm:flex items-center justify-end gap-2 mt-4">
+              <CarouselPrevious className="static translate-y-0 translate-x-0 h-8 w-8 rounded-full" />
+              <CarouselNext className="static translate-y-0 translate-x-0 h-8 w-8 rounded-full" />
+            </div>
+          </Carousel>
         </div>
       </section>
 
       {/* Booking Models Section */}
       <section className="mb-12">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold">Choose the booking model that works best for your needs.</h2>
+          <h2 className="text-2xl font-bold">Choose Your Booking Method</h2>
+          <p className="text-gray-600 mt-2 max-w-3xl mx-auto">Select from three flexible ways to hire professionals, each designed for different service needs</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Direct Booking */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-2 border-primary/20 hover:border-primary/50 transition-all">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+              <span className="text-3xl">⚡</span>
+            </div>
+            <div className="mb-4 text-center">
               <h3 className="text-xl font-bold mb-1">Direct Booking</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Book services at fixed prices with our verified professionals. Quick, easy, and reliable.
+                Instant service at fixed prices
               </p>
             </div>
             <ul className="space-y-2 mb-6">
@@ -169,17 +191,22 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 <span>Quality guarantee</span>
               </li>
             </ul>
-            <Link href={`/${citySlug}/services/book-direct`}>
-              <Button className="w-full">Learn More</Button>
-            </Link>
+            <div className="text-center">
+              <Link href={`/${citySlug}/services/book-direct`}>
+                <Button className="px-6">Book Now</Button>
+              </Link>
+            </div>
           </div>
 
           {/* Vendor Aggregation */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="mb-4">
-              <h3 className="text-xl font-bold mb-1">Vendor Aggregation</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-2 border-primary/20 hover:border-primary/50 transition-all">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+              <span className="text-3xl">🔍</span>
+            </div>
+            <div className="mb-4 text-center">
+              <h3 className="text-xl font-bold mb-1">Compare Vendors</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Compare multiple service providers based on ratings, prices, and availability.
+                Choose from multiple providers
               </p>
             </div>
             <ul className="space-y-2 mb-6">
@@ -200,17 +227,22 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 <span>Direct communication</span>
               </li>
             </ul>
-            <Link href={`/${citySlug}/services/compare-vendors`}>
-              <Button className="w-full">Learn More</Button>
-            </Link>
+            <div className="text-center">
+              <Link href={`/${citySlug}/services/compare-vendors`}>
+                <Button className="px-6">Compare</Button>
+              </Link>
+            </div>
           </div>
 
           {/* Task Bidding */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-2 border-primary/20 hover:border-primary/50 transition-all">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+              <span className="text-3xl">📝</span>
+            </div>
+            <div className="mb-4 text-center">
               <h3 className="text-xl font-bold mb-1">Task Bidding</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Post your task and receive competitive bids from interested professionals.
+                Get competitive bids for your project
               </p>
             </div>
             <ul className="space-y-2 mb-6">
@@ -231,15 +263,16 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 <span>Perfect for custom projects</span>
               </li>
             </ul>
-            <Link href={`/${citySlug}/services/post-task`}>
-              <Button className="w-full">Learn More</Button>
-            </Link>
+            <div className="text-center">
+              <Link href={`/${citySlug}/services/post-task`}>
+                <Button className="px-6">Post Task</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Popular Services in Indore */}
-      <section className="mb-10 relative">
+      {/* Why Choose Us Section */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
           <Link href="/services" className="text-primary hover:underline flex items-center">
