@@ -313,20 +313,7 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
             <div className="p-6 text-center text-gray-500">No results found for "{searchQuery}"</div>
           ) : (
             <div className="p-4">
-              <h3 className="mb-3 text-md font-medium">Popular Cities</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {popularCities.map((city) => (
-                  <Button
-                    key={city.id}
-                    variant="outline"
-                    className="justify-start h-12 border-gray-200"
-                    onClick={() => handleSelectCity(city.name)}
-                  >
-                    <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                    {city.name}
-                  </Button>
-                ))}
-              </div>
+              {/* Popular Cities section removed */}
             </div>
           )}
         </div>
