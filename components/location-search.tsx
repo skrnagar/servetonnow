@@ -104,26 +104,23 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       }
       
       // Use OlaKrutrim Autocomplete API for better place suggestions
-      const response = await fetch(
-        `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`,
-        { 
-          signal: AbortSignal.timeout(5000),
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
+      try {
+        const response = await fetch(
+          `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`,
+          { 
+            signal: AbortSignal.timeout(5000),
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache'
+            }
           }
-        }
-      );
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log("Autocomplete API response:", data);
-      
-      // If we have predictions from the API, use them
-      if (data.predictions && Array.isArray(data.predictions) && data.predictions.length > 0) {
+        );
+        
+        const data = await response.json();
+        console.log("Autocomplete API response:", data);
+        
+        // If we have predictions from the API, use them
+        if (data.predictions && Array.isArray(data.predictions) && data.predictions.length > 0) {
         const results = data.predictions.map((prediction: any, index: number) => {
           // Extract city from structured_formatting or description
           const mainText = prediction.structured_formatting?.main_text || '';
@@ -168,6 +165,10 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         if (filteredCities.length > 0) {
           setSuggestions(filteredCities);
         }
+      }
+      } catch (fetchError) {
+        console.warn("API fetch error:", fetchError);
+        // Continue with local data - don't throw exception
       }
     } catch (error) {
       console.error("Search error:", error);
