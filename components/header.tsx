@@ -101,16 +101,15 @@ export default function Header() {
           {/* Desktop Right Side Actions */}
           <div className="hidden md:flex items-center space-x-5">
             <Link
-              href="/how-it-works"
-              className="text-sm font-medium text-gray-700 hover:text-primary"
-            >
-              How It Works
-            </Link>
-            <Link
               href="/services"
               className="text-sm font-medium text-gray-700 hover:text-primary"
             >
               Services
+            </Link>
+            <Link href="/post-task">
+              <Button size="sm" className="rounded-lg">
+                Post a task
+              </Button>
             </Link>
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="hover:bg-gray-100">
@@ -135,28 +134,18 @@ export default function Header() {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center">
                 <Button 
-                  size="sm" 
-                  className="rounded-lg"
+                  variant="ghost" 
+                  size="icon" 
+                  className="hover:bg-gray-100"
                   onClick={() => {
                     setAuthModalTab('login');
                     setIsAuthModalOpen(true);
                   }}
                 >
-                  Login
+                  <User className="h-5 w-5" />
                 </Button>
-                {/* <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="rounded-lg"
-                  onClick={() => {
-                    setAuthModalTab('signup');
-                    setIsAuthModalOpen(true);
-                  }}
-                >
-                  Sign Up
-                </Button> */}
               </div>
             )}
           </div>
@@ -213,10 +202,10 @@ export default function Header() {
                       Services
                     </Link>
                     <Link
-                      href="/how-it-works"
+                      href="/post-task"
                       className="text-base font-medium py-2"
                     >
-                      How It Works
+                      Post a task
                     </Link>
                     <Link href="/about" className="text-base font-medium py-2">
                       About
@@ -247,6 +236,7 @@ export default function Header() {
                               setIsAuthModalOpen(true);
                             }}
                           >
+                            <User className="h-5 w-5 mr-2" />
                             Login
                           </Button>
                         </>
