@@ -4,13 +4,14 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { X, MapPin, Loader2, Search, ArrowLeft, Clock } from "lucide-react"
+import { X, MapPin, Loader2, Search, ArrowLeft, Clock, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useGeolocation } from "@/context/geolocation-context"
 import { useToast } from "@/components/ui/use-toast"
 import { searchPlaces, PlaceSuggestion } from "@/lib/olakrutrim"
 import Image from "next/image"
+import PlaceDetails from "./place-details"
 
 interface LocationSearchProps {
   isOpen: boolean

@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -26,13 +25,13 @@ export async function GET() {
 
       // Extract city and state from address components
       const addressComponents = [];
-      
+
       // Add city component
       addressComponents.push({
         long_name: feature.properties?.city || "Indore",
         types: ["locality"]
       });
-      
+
       // Add state component
       addressComponents.push({
         long_name: feature.properties?.state || "Madhya Pradesh",
@@ -66,7 +65,7 @@ export async function GET() {
     }
   } catch (error: any) {
     console.error('IP geolocation error:', error.message);
-    
+
     // Return a fallback response with default data
     return NextResponse.json({
       results: [{
@@ -106,7 +105,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    
+
     // Return the data with cache control headers
     return NextResponse.json(data, {
       headers: {
@@ -117,7 +116,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('IP geolocation error:', error.message);
-    
+
     // Return a fallback response with default location (Indore)
     return NextResponse.json({
       results: [{

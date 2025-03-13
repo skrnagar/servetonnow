@@ -272,21 +272,57 @@ export async function reverseGeocode(lat: number, lng: number): Promise<{
 
 /**
  * Get place details using OlaKrutrim API
+ * @param placeId The place ID to fetch details for
+ * @param advanced Whether to use the advanced details API
  */
-export async function getPlaceDetails(placeId: string): Promise<any> {
+export async function getPlaceDetails(placeId: string, advanced: boolean = false): Promise<any> {
   try {
-    const response = await fetch(`/api/places/details?place_id=${encodeURIComponent(placeId)}`, {
-      signal: AbortSignal.timeout(3000)
+    // Use cache to avoid repeated API calls for the same place
+    if (typeof window !== 'undefined') {
+      const cacheKey = `place_details_${advanced ? 'advanced_' : ''}${placeId}`;
+      const cachedData = sessionStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          const data = JSON.parse(cachedData);
+          // Check if cache is less than 15 minutes old
+          if (data.timestamp && (Date.now() - data.timestamp < 15 * 60 * 1000)) {
+            return data.details;
+          }
+        } catch (e) {
+          console.warn('Failed to parse cached place details');
+        }
+      }
+    }
+    
+    // Determine which endpoint to use
+    const endpoint = advanced ? 'details/advanced' : 'details';
+    const response = await fetch(`/api/places/${endpoint}?place_id=${encodeURIComponent(placeId)}`, {
+      signal: AbortSignal.timeout(5000) // Increased timeout for details which can be larger
     });
     
     if (!response.ok) {
       throw new Error('Failed to get place details');
     }
     
-    return await response.json();
+    const details = await response.json();
+    
+    // Cache the results
+    if (typeof window !== 'undefined' && details) {
+      try {
+        const cacheKey = `place_details_${advanced ? 'advanced_' : ''}${placeId}`;
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          details,
+          timestamp: Date.now()
+        }));
+      } catch (e) {
+        console.warn('Failed to cache place details');
+      }
+    }
+    
+    return details;
   } catch (error) {
     console.error("Error getting place details:", error);
-    return null;
+    throw error; // Rethrow to allow proper error handling by caller
   }
 }
 
