@@ -22,22 +22,27 @@ export interface PlaceSuggestion {
  */
 export async function searchPlaces(query: string, limit: number = 5): Promise<PlaceSuggestion[]> {
   try {
-    // Try autocomplete API first for better results
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    console.log(`Searching for places with query: ${query}`);
     
+    // Try autocomplete API first for better results
     const response = await fetch(
       `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=${limit}`,
-      { signal: controller.signal }
+      { 
+        signal: AbortSignal.timeout(5000),
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      }
     );
     
-    clearTimeout(timeoutId);
-    
     if (!response.ok) {
+      console.warn(`Autocomplete API response not OK: ${response.status}`);
       throw new Error('Autocomplete API failed');
     }
     
     const data = await response.json();
+    console.log('Autocomplete API response:', data);
     
     if (data.predictions && Array.isArray(data.predictions) && data.predictions.length > 0) {
       return data.predictions.map((prediction: any, index: number) => {

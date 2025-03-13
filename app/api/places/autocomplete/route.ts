@@ -33,67 +33,14 @@ export async function GET(request: Request) {
     }
 
     const data = await response.json();
-
-    // Check if we have predictions in the response
-    if (!data.predictions || !Array.isArray(data.predictions) || data.predictions.length === 0) {
-      // Create fallback data with popular Indian cities
-      const popularCities = [
-        { id: "indore", name: "Indore" },
-        { id: "mumbai", name: "Mumbai" },
-        { id: "delhi", name: "Delhi" },
-        { id: "bangalore", name: "Bangalore" },
-        { id: "pune", name: "Pune" },
-        { id: "jaipur", name: "Jaipur" },
-        { id: "hyderabad", name: "Hyderabad" },
-        { id: "chennai", name: "Chennai" },
-        { id: "kolkata", name: "Kolkata" },
-        { id: "ahmedabad", name: "Ahmedabad" },
-      ];
-
-      const filteredCities = popularCities
-        .filter(city => city.name.toLowerCase().includes(input.toLowerCase()))
-        .slice(0, parseInt(limit, 10));
-
-      // Format as predictions for consistency
-      const fallbackPredictions = filteredCities.map(city => ({
-        place_id: city.id,
-        description: `${city.name}, India`,
-        structured_formatting: {
-          main_text: city.name,
-          secondary_text: "India"
-        }
-      }));
-
-      return NextResponse.json({ predictions: fallbackPredictions });
-    }
-
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error('Autocomplete search error:', error);
+    console.error('Autocomplete API error:', error.message);
 
-    // Provide fallback data instead of an error
-    const popularCities = [
-      { id: "indore", name: "Indore" },
-      { id: "mumbai", name: "Mumbai" },
-      { id: "delhi", name: "Delhi" },
-      { id: "bangalore", name: "Bangalore" },
-      { id: "pune", name: "Pune" },
-    ];
-
-    const filteredCities = popularCities
-      .filter(city => !input || city.name.toLowerCase().includes(input.toLowerCase()))
-      .slice(0, parseInt(limit, 10));
-
-    // Format as predictions for consistency
-    const fallbackPredictions = filteredCities.map(city => ({
-      place_id: city.id,
-      description: `${city.name}, India`,
-      structured_formatting: {
-        main_text: city.name,
-        secondary_text: "India"
-      }
-    }));
-
-    return NextResponse.json({ predictions: fallbackPredictions });
+    // Return a meaningful error response
+    return NextResponse.json(
+      { error: 'Failed to fetch place suggestions', message: error.message },
+      { status: 500 }
+    );
   }
 }

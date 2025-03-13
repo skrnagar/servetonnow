@@ -104,25 +104,26 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
       }
       
       // Use OlaKrutrim Autocomplete API for better place suggestions
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      
       const response = await fetch(
         `/api/places/autocomplete?input=${encodeURIComponent(query)}&limit=5`,
-        { signal: controller.signal }
+        { 
+          signal: AbortSignal.timeout(5000),
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        }
       );
-      
-      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log("Autocomplete API response:", data);
       
-      // If no local matches or if we got API results, use API results
-      if ((localityMatches.length === 0 || data.predictions?.length > 0) && 
-          data.predictions && Array.isArray(data.predictions)) {
+      // If we have predictions from the API, use them
+      if (data.predictions && Array.isArray(data.predictions) && data.predictions.length > 0) {
         const results = data.predictions.map((prediction: any, index: number) => {
           // Extract city from structured_formatting or description
           const mainText = prediction.structured_formatting?.main_text || '';
@@ -153,6 +154,20 @@ export default function LocationSearch({ isOpen, onClose }: LocationSearchProps)
         });
         
         setSuggestions(results);
+      } else if (localityMatches.length === 0) {
+        // If no API results and no local matches, use fallback cities
+        const filteredCities = popularCities
+          .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+          .map(city => ({
+            id: city.id,
+            name: city.name,
+            city: city.name,
+            fullAddress: `${city.name}, India`
+          }));
+        
+        if (filteredCities.length > 0) {
+          setSuggestions(filteredCities);
+        }
       }
     } catch (error) {
       console.error("Search error:", error);
