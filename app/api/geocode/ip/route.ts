@@ -81,3 +81,61 @@ export async function GET() {
     }, { status: 200 });
   }
 }
+import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  try {
+    // Get client IP (in a production app, you might need to handle proxy headers)
+    // For Replit, we'll use a fallback approach since direct IP detection is complex
+
+    // Call OlaKrutrim IP geolocation API
+    const response = await fetch(
+      `https://maps.olakrutrim.com/v1/api/places/geocode/ip`,
+      {
+        headers: {
+          'x-api-key': 'jUC0eYOhzK5Bwg9DVjAZpc2sCUdb9JDLu9gj4hdz',
+          'Accept': 'application/json',
+        },
+        signal: AbortSignal.timeout(3000)
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`OlaKrutrim API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Return the data with cache control headers
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+  } catch (error: any) {
+    console.error('IP geolocation error:', error.message);
+    
+    // Return a fallback response with default location (Indore)
+    return NextResponse.json({
+      results: [{
+        address_components: [
+          { long_name: 'Indore', types: ['locality'] },
+          { long_name: 'Madhya Pradesh', types: ['administrative_area_level_1'] }
+        ],
+        geometry: {
+          location: { lat: 22.7196, lng: 75.8577 }
+        }
+      }]
+    }, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+  }
+}

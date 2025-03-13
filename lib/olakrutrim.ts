@@ -22,7 +22,26 @@ export interface PlaceSuggestion {
  */
 export async function searchPlaces(query: string, limit: number = 5): Promise<PlaceSuggestion[]> {
   try {
-    const response = await fetch(
+    // Added timeout and retry mechanism
+    const fetchWithTimeout = async (url: string, attempts: number = 3): Promise<Response> => {
+      let lastError;
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+          const response = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          return response;
+        } catch (error) {
+          lastError = error;
+          // Wait before retrying (exponential backoff)
+          if (i < attempts - 1) await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)));
+        }
+      }
+      throw lastError;
+    };
+
+    const response = await fetchWithTimeout(
       `/api/geocode/search?query=${encodeURIComponent(query)}&limit=${limit}`
     );
 
@@ -62,9 +81,34 @@ export async function searchPlaces(query: string, limit: number = 5): Promise<Pl
       });
     }
     
-    return [];
+    // Fallback to a client-side filtering of popular Indian cities
+    const popularCities = [
+      { id: "indore", name: "Indore" },
+      { id: "mumbai", name: "Mumbai" },
+      { id: "delhi", name: "Delhi" },
+      { id: "bangalore", name: "Bangalore" },
+      { id: "pune", name: "Pune" },
+      { id: "jaipur", name: "Jaipur" },
+      { id: "hyderabad", name: "Hyderabad" },
+      { id: "chennai", name: "Chennai" },
+      { id: "kolkata", name: "Kolkata" },
+      { id: "ahmedabad", name: "Ahmedabad" },
+    ];
+    
+    const filteredCities = popularCities
+      .filter(city => city.name.toLowerCase().includes(query.toLowerCase()))
+      .map(city => ({
+        id: city.id,
+        name: city.name,
+        city: city.name,
+        fullAddress: `${city.name}, India`,
+        country: "India"
+      }));
+    
+    return filteredCities;
   } catch (error) {
     console.error("Error searching places:", error);
+    // Return empty array instead of throwing
     return [];
   }
 }
@@ -102,7 +146,12 @@ export async function getLocationFromIP(): Promise<{
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     
     const response = await fetch("/api/geocode/ip", {
-      signal: controller.signal
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
     });
     
     clearTimeout(timeoutId);
@@ -177,7 +226,12 @@ export async function reverseGeocode(lat: number, lng: number): Promise<{
     };
     
     const response = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`, {
-      signal: AbortSignal.timeout(3000) // Shorter timeout
+      signal: AbortSignal.timeout(3000), // Shorter timeout
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
     });
     
     if (!response.ok) {
@@ -213,5 +267,54 @@ export async function reverseGeocode(lat: number, lng: number): Promise<{
       city: "Indore",
       state: "Madhya Pradesh"
     };
+  }
+}
+
+/**
+ * Get place details using OlaKrutrim API
+ */
+export async function getPlaceDetails(placeId: string): Promise<any> {
+  try {
+    const response = await fetch(`/api/places/details?place_id=${encodeURIComponent(placeId)}`, {
+      signal: AbortSignal.timeout(3000)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to get place details');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting place details:", error);
+    return null;
+  }
+}
+
+/**
+ * Search for nearby places of interest
+ */
+export async function searchNearbyPlaces(
+  latitude: number,
+  longitude: number,
+  radius: number = 1000,
+  type?: string
+): Promise<any[]> {
+  try {
+    let url = `/api/places/nearby?lat=${latitude}&lng=${longitude}&radius=${radius}`;
+    if (type) url += `&type=${encodeURIComponent(type)}`;
+    
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(5000)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to search nearby places');
+    }
+    
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error("Error searching nearby places:", error);
+    return [];
   }
 }
