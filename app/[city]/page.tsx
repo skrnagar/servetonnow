@@ -1,106 +1,95 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { FaArrowRight } from "react-icons/fa"
-import { Button } from "@/components/ui/button"
-import { CheckCircle, Star } from "lucide-react"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel"
+import { MapPin } from 'lucide-react'
+import { FaArrowRight } from "react-icons/fa";
 
-const ServiceIcons = {
-  "home-cleaning": () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-  "repairs": () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-  // Add more icons here...
-};
 
+const categories = [
+  { id: 'cleaning', name: 'Cleaning Services', icon: '🧹' },
+  { id: 'plumbing', name: 'Plumbing', icon: '🔧' },
+  { id: 'electrical', name: 'Electrical', icon: '⚡' },
+  { id: 'painting', name: 'Painting', icon: '🎨' },
+  { id: 'carpentry', name: 'Carpentry', icon: '🔨' },
+  { id: 'appliance', name: 'Appliance Repair', icon: '🔌' },
+]
 
-import { use } from 'react'
+const slides = [
+  '/placeholder.svg?height=400&width=600',
+  '/placeholder.svg?height=400&width=600',
+  '/placeholder.svg?height=400&width=600',
+]
 
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = use(params)
-  const citySlug = resolvedParams.city.toLowerCase()
+  const citySlug = params.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
-
-  // State for window width
-  const [windowWidth, setWindowWidth] = useState(0)
-
-  // Effect to measure window width
-  useEffect(() => {
-    // Update the windowWidth state when component mounts
-    setWindowWidth(window.innerWidth)
-
-    // Update windowWidth state when window is resized
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth)
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    // Cleanup event listener on unmount
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  // Determine if we're on mobile
-  const isMobile = windowWidth < 640
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Home Services, Your Way – Compare, Book, or Post a Task
-          </h1>
-          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
-          </p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Left side - Categories */}
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold mb-6">Services in {formattedCityName}</h1>
+            <div className="grid gap-4">
+              {categories.map((category) => (
+                <Link 
+                  key={category.id}
+                  href={`/${citySlug}/${category.id}`}
+                  className="block"
+                >
+                  <Card className="p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{category.icon}</span>
+                      <span className="font-medium">{category.name}</span>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
 
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-          {[
-            { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
-            { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
-            { id: "plumbing", name: "Plumbing", icon: "🚰" },
-            { id: "painting", name: "Painting & Renovation", icon: "🎨" },
-            { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
-            { id: "pest-control", name: "Pest Control", icon: "🐜" },
-            { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
-            { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
-            { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
-            { id: "moving", name: "Moving & Relocation", icon: "📦" },
-            { id: "events", name: "Event & Wedding", icon: "🎉" },
-            { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
-            { id: "business", name: "Business & Office", icon: "💼" },
-            { id: "smart-home", name: "Smart Home", icon: "🏠" },
-          ].map((category) => (
-            <Link
-              key={category.id}
-              href={`/${citySlug}/${category.id}`}
-              className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
-            >
-              <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
-                {ServiceIcons[category.id as keyof typeof ServiceIcons] ? (
-                  <div className="w-8 h-8">
-                    {ServiceIcons[category.id as keyof typeof ServiceIcons]({ className: "w-full h-full" })}
-                  </div>
-                ) : (
-                  <span className="text-3xl">{category.icon}</span>
-                )}
+          {/* Right side - Image Slider */}
+          <div className="rounded-xl overflow-hidden shadow-xl">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {slides.map((slide, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative aspect-[16/9]">
+                      <Image
+                        src={slide}
+                        alt={`Slide ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                <CarouselPrevious className="h-8 w-8" />
+                <CarouselNext className="h-8 w-8" />
               </div>
-              <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
-            </Link>
-          ))}
+            </Carousel>
+          </div>
         </div>
-
-        
       </section>
 
-      {/* Categories Section */}
-      <section className="mb-10">
-        
+
+      {/* Categories Section -  moved from original code */}
+      <section className="mb-10">        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
@@ -388,11 +377,11 @@ export default function CityPage({ params }: { params: { city: string } }) {
           {[1, 2, 3].map((item) => (
             <div key={item} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
               <div className="flex items-center text-yellow-400 mb-4">
-                <Star className="h-4 w-4 fill-current" />
-                <Star className="h-4 w-4 fill-current" />
-                <Star className="h-4 w-4 fill-current" />
-                <Star className="h-4 w-4 fill-current" />
-                <Star className="h-4 w-4 fill-current" />
+                <MapPin className="h-4 w-4 fill-current" />
+                <MapPin className="h-4 w-4 fill-current" />
+                <MapPin className="h-4 w-4 fill-current" />
+                <MapPin className="h-4 w-4 fill-current" />
+                <MapPin className="h-4 w-4 fill-current" />
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
                 "The service was excellent! The professional was punctual, skilled, and completed the work efficiently. Would highly recommend!"
