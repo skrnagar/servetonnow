@@ -1,18 +1,12 @@
 "use client"
 
-import { use, useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { FaArrowRight } from 'react-icons/fa'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel"
-import { Star } from "lucide-react"
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { FaArrowRight } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
+import { CheckCircle, Star } from "lucide-react"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 const ServiceIcons = {
   "home-cleaning": () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
@@ -20,108 +14,92 @@ const ServiceIcons = {
   // Add more icons here...
 };
 
+
+import { use } from 'react'
+
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = use(params);
+  const resolvedParams = use(params)
   const citySlug = resolvedParams.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0)
+  // State for window width
+  const [windowWidth, setWindowWidth] = useState(0)
 
+  // Effect to measure window width
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth)
+    // Update the windowWidth state when component mounts
+    setWindowWidth(window.innerWidth)
+
+    // Update windowWidth state when window is resized
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
+
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
+  // Determine if we're on mobile
   const isMobile = windowWidth < 640
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-6">
-              Home Services in {formattedCityName}<br />
-              Compare, Book, or Post a Task
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mb-8">
-              Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold">
+            Home Services, Your Way – Compare, Book, or Post a Task
+          </h1>
+          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Direct Booking */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+            <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
+              Instant service at fixed prices from our in-house professional team
             </p>
+            <Link href={`/${citySlug}/services`}>
+              <Button className="w-full gap-2">
+                Book Serveto Direct
+                <FaArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href={`/${citySlug}/services`} className="flex-1">
-                <Button className="w-full gap-2">
-                  Book Serveto Direct
-                  <FaArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-
-              <Link href={`/${citySlug}/vendors`} className="flex-1">
-                <Button variant="outline" className="w-full gap-2">
-                  Compare Vendors
-                  <FaArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-
-              <Link href={`/${citySlug}/post-task`} className="flex-1">
+          {/* Compare Vendors */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+            <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
+              Choose from multiple providers based on reviews and prices
+            </p>
+            <Link href={`/${citySlug}/vendors`}>
+              <Button variant="outline" className="w-full gap-2">
+                Find a Vendor
+                <FaArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          {/* Task Bidding */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+              <p className="text-gray-600 dark:text-gray-300 text-center font-semibold mb-4 text-sm">
+                Get competitive bids from nearby professionals
+              </p>
+              <Link href={`/${citySlug}/post-task`}>
                 <Button variant="secondary" className="w-full gap-2">
-                  Post a Task
+                  Post a Task & Get Quotes
                   <FaArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </div>
-
-          <div className="relative h-[400px] rounded-xl overflow-hidden">
-            <Carousel className="w-full h-full">
-              <CarouselContent>
-                {[
-                  "/placeholder.svg?height=400&width=600",
-                  "/placeholder.svg?height=400&width=600",
-                  "/placeholder.svg?height=400&width=600"
-                ].map((src, index) => (
-                  <CarouselItem key={index}>
-                    <div className="relative h-[400px]">
-                      <Image
-                        src={src}
-                        alt={`Service ${index + 1}`}
-                        fill
-                        className="object-cover rounded-xl"
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </div>
-        </div>
       </section>
 
-      {/* Compare Vendors */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-        <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
-          Choose from multiple providers based on reviews and prices
-        </p>
-        <Link href={`/${citySlug}/vendors`}>
-          <Button variant="outline" className="w-full gap-2">
-            Find a Vendor
-            <FaArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
-      {/* Task Bidding */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-        <p className="text-gray-600 dark:text-gray-300 text-center font-semibold mb-4 text-sm">
-          Get competitive bids from nearby professionals
-        </p>
-        <Link href={`/${citySlug}/post-task`}>
-          <Button variant="secondary" className="w-full gap-2">
-            Post a Task & Get Quotes
-            <FaArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
       {/* Categories Section */}
       <section className="mb-10">
         <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
@@ -342,7 +320,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
       {/* Why Choose Us Section */}
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Why Choose Us</h2>
+          <h2 className="text-2xl font-bold">Popular Services in {formattedCityName}</h2>
           <Link href="/services" className="text-primary hover:underline flex items-center">
             View All
             <FaArrowRight className="ml-1 h-3 w-3" />
