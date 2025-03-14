@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import LocationSearch from "@/components/location-search"
+
 import { ArrowRight, CheckCircle, MapPin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -63,13 +63,14 @@ export default function HomePage() {
             </h1>
             <div className="relative w-full max-w-2xl mx-auto">
               <div className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 rounded-2xl shadow-xl p-4 border border-white/20">
-                <button
-                onClick={() => setIsLocationSearchOpen(true)}
-                className="w-full flex items-center justify-center gap-2 p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg"
-              >
-                <MapPin className="h-5 w-5 text-primary" />
-                <span className="text-lg font-medium text-gray-500">Find Services in My Location</span>
-              </button>
+                <Link href="/indore">
+                  <button
+                    className="w-full flex items-center justify-center gap-2 p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg"
+                  >
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span className="text-lg font-medium text-gray-500">Find Services in Indore</span>
+                  </button>
+                </Link>
               </div>
             </div>
             <p className="text-lg text-gray-600 dark:text-gray-300 mt-6 font-medium">
@@ -324,11 +325,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    {/* Location Search Modal */}
-      <LocationSearch
-        isOpen={isLocationSearchOpen}
-        onClose={() => setIsLocationSearchOpen(false)}
-      />
+    
     </div>
   )
 }
