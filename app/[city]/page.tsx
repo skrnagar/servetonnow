@@ -131,30 +131,32 @@ export default function CityPage({ params }: { params: { city: string } }) {
       {/* Categories Section */}
       <section className="mb-10">
         {/* <h2 className="text-2xl font-bold mb-6">Browse by Category</h2> */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-4 gap-4 lg:grid-cols-8">
           {[
-            { name: "Cleaning", icon: "🧹", slug: "cleaning" },
-            { name: "Plumbing", icon: "🚿", slug: "plumbing" },
-            { name: "Electrical", icon: "💡", slug: "electrical" },
-            { name: "Appliance", icon: "🔧", slug: "appliance-repair" },
-            { name: "Pest Control", icon: "🐜", slug: "pest-control" },
-            { name: "Painting", icon: "🎨", slug: "painting" },
-            { name: "Carpentry", icon: "🪚", slug: "carpentry" },
-            { name: "Moving", icon: "📦", slug: "home-moving" },
-            { name: "Gardening", icon: "🌿", slug: "gardening" },
-            { name: "AC Repair", icon: "❄️", slug: "hvac" }
+            { name: "Home Cleaning", icon: "/icons/cleaning.svg", slug: "cleaning" },
+            { name: "Women's Salon", icon: "/icons/salon.svg", slug: "salon" },
+            { name: "Pest Control", icon: "/icons/pest.svg", slug: "pest-control" },
+            { name: "AC Repair", icon: "/icons/ac.svg", slug: "hvac" },
+            { name: "Electrical", icon: "/icons/electrical.svg", slug: "electrical" },
+            { name: "Plumbing", icon: "/icons/plumbing.svg", slug: "plumbing" },
+            { name: "Carpentry", icon: "/icons/carpentry.svg", slug: "carpentry" },
+            { name: "Appliance", icon: "/icons/appliance.svg", slug: "appliance-repair" }
           ].map((category) => (
             <Link
               key={category.slug}
               href={`/${citySlug}/${category.slug}`}
               className="flex flex-col items-center"
             >
-              <div className="w-[72px] h-[72px] bg-white rounded-xl border flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
-               
-                  <span className="text-3xl">{category.icon}</span>
-                
+              <div className="w-[72px] h-[72px] bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
+                <Image 
+                  src={category.icon}
+                  alt={category.name}
+                  width={32}
+                  height={32}
+                  className="w-8 h-8"
+                />
               </div>
-              <span className="text-base font-medium text-center text-gray-700">{category.name}</span>
+              <span className="text-sm font-medium text-center text-gray-700">{category.name}</span>
             </Link>
           ))}
         </div>
