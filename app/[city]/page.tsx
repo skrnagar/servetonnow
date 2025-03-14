@@ -3,18 +3,13 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { FaArrowRight, FaSearch } from "react-icons/fa"
+import { FaArrowRight } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useRouter } from "next/navigation"
-import { ChevronRight, Star } from "lucide-react"
+import { CheckCircle } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
-import { use } from 'react'
-
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = use(params)
-  const citySlug = resolvedParams.city.toLowerCase()
+  const citySlug = params.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
   // State for window width
@@ -53,7 +48,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             Choose the booking option that works best for you
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
@@ -122,16 +117,12 @@ export default function CityPage({ params }: { params: { city: string } }) {
           </div>
         </div>
       </section>
-            <Image
-              src="/placeholder.svg"
-              alt={`Home services in ${formattedCityName}`}
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
-        </div>
-      </section>
-
+      <Image
+        src="/placeholder.svg"
+        alt={`Home services in ${formattedCityName}`}
+        fill
+        className="object-cover rounded-lg"
+      />
       {/* Categories Section */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold mb-6">Browse by Category</h2>
@@ -148,7 +139,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             { name: "Gardening", icon: "🌿", slug: "gardening" },
             { name: "AC Repair", icon: "❄️", slug: "hvac" }
           ].map((category) => (
-            <Link 
+            <Link
               key={category.slug}
               href={`/${citySlug}/${category.slug}`}
               className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
@@ -402,7 +393,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
       </section>
 
-      
 
       {/* Testimonials Section */}
       <section className="mb-12">
