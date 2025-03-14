@@ -65,6 +65,17 @@
       hsl(var(--primary) / 0.1) 0%,
       transparent 100%
     );
+
+  .gradient-background {
+        opacity: 0;
+        background: linear-gradient(180deg, #D4EAF6, #F9F9F9 75%, #FFF);
+        transition: opacity 1.83s ease-out;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
   }
 }
 
