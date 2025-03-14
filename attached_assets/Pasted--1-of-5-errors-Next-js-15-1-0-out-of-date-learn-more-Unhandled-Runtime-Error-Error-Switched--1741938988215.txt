@@ -1,0 +1,111 @@
+
+
+1 of 5 errors
+Next.js (15.1.0) out of date (learn more)
+
+Unhandled Runtime Error
+
+Error: Switched to client rendering because the server rendering errored:
+
+Star is not defined
+
+eval
+./app/[city]/page.tsx
+Array.map
+<anonymous>
+CityPage
+./app/[city]/page.tsx
+react-stack-bottom-frame
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:229305)
+renderWithHooks
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:66965)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:81693)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+finishFunctionComponent
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:67975)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:83174)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:135151)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:149261)
+renderChildrenArray
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:146724)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140534)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:128311)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:133464)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+finishFunctionComponent
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:67975)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:83174)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:81144)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+finishFunctionComponent
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:67975)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:83174)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:128311)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+finishFunctionComponent
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:67975)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:83174)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:149261)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:130974)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+finishFunctionComponent
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:67975)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:83174)
+retryNode
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:140140)
+renderNodeDestructive
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:136545)
+renderElement
+/home/runner/workspace/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js (25:128311)
