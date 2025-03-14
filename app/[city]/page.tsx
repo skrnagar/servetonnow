@@ -18,89 +18,101 @@ const ServiceIcons = {
 import { use } from 'react'
 
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = use(params)
+  const resolvedParams = use(params);
   const citySlug = resolvedParams.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
-  // State for window width
-  const [windowWidth, setWindowWidth] = useState(0)
+  const categories = [
+    { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
+    { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
+    { id: "plumbing", name: "Plumbing", icon: "🚰" },
+    { id: "painting", name: "Painting & Renovation", icon: "🎨" },
+    { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
+    { id: "pest-control", name: "Pest Control", icon: "🐜" },
+    { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
+    { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
+    { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
+    { id: "moving", name: "Moving & Relocation", icon: "📦" },
+    { id: "events", name: "Event & Wedding", icon: "🎉" },
+    { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
+    { id: "business", name: "Business & Office", icon: "💼" },
+    { id: "smart-home", name: "Smart Home", icon: "🏠" }
+  ]
 
-  // Effect to measure window width
-  useEffect(() => {
-    // Update the windowWidth state when component mounts
-    setWindowWidth(window.innerWidth)
-
-    // Update windowWidth state when window is resized
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth)
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    // Cleanup event listener on unmount
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  // Determine if we're on mobile
-  const isMobile = windowWidth < 640
+  const services = [
+    { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
+    { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
+    { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
+    { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
+    { name: "Pest Control", price: "₹799", image: "/placeholder.svg?height=400&width=600", slug: "pest-control" }
+  ]
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Home Services, Your Way – Compare, Book, or Post a Task
-          </h1>
-          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
-          </p>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Categories Grid */}
+          <div className="grid grid-cols-5 gap-4">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/${citySlug}/${category.id}`}
+                className="flex flex-col items-center p-2 bg-white/80 backdrop-blur-sm rounded-lg hover:bg-white/90 transition-all"
+              >
+                <div className="w-10 h-10 flex items-center justify-center mb-2 text-xl">
+                  {category.icon}
+                </div>
+                <span className="text-xs text-center font-medium line-clamp-2">
+                  {category.name}
+                </span>
+              </Link>
+            ))}
+          </div>
 
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-          {[
-            { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
-            { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
-            { id: "plumbing", name: "Plumbing", icon: "🚰" },
-            { id: "painting", name: "Painting & Renovation", icon: "🎨" },
-            { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
-            { id: "pest-control", name: "Pest Control", icon: "🐜" },
-            { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
-            { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
-            { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
-            { id: "moving", name: "Moving & Relocation", icon: "📦" },
-            { id: "events", name: "Event & Wedding", icon: "🎉" },
-            { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
-            { id: "business", name: "Business & Office", icon: "💼" },
-            { id: "smart-home", name: "Smart Home", icon: "🏠" },
-          ].map((category) => (
-            <Link
-              key={category.id}
-              href={`/${citySlug}/${category.id}`}
-              className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
+          {/* Service Slider */}
+          <div>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
             >
-              <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
-                {ServiceIcons[category.id as keyof typeof ServiceIcons] ? (
-                  <div className="w-8 h-8">
-                    {ServiceIcons[category.id as keyof typeof ServiceIcons]({ className: "w-full h-full" })}
-                  </div>
-                ) : (
-                  <span className="text-3xl">{category.icon}</span>
-                )}
+              <CarouselContent>
+                {services.map((service) => (
+                  <CarouselItem key={service.slug} className="md:basis-1/2 lg:basis-1/1">
+                    <Link href={`/${citySlug}/${service.slug}`}>
+                      <div className="relative h-64 rounded-lg overflow-hidden">
+                        <Image
+                          src={service.image}
+                          alt={service.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent text-white">
+                          <h3 className="font-semibold">{service.name}</h3>
+                          <p className="text-sm">Starting from {service.price}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex items-center justify-end gap-2 mt-4">
+                <CarouselPrevious className="static translate-y-0" />
+                <CarouselNext className="static translate-y-0" />
               </div>
-              <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
-            </Link>
-          ))}
+            </Carousel>
+          </div>
         </div>
 
-        
+
       </section>
 
       {/* Categories Section */}
       <section className="mb-10">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
