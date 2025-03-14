@@ -23,17 +23,13 @@ export default function CityPage({ params }: { params: { city: string } }) {
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
   const categories = [
-    { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
-    { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
+    { id: "home-cleaning", name: "Home Cleaning & Pest Control", icon: "🧹" },
+    { id: "appliance & repairs", name: "Repairs & Maintenance", icon: "🔧" },
     { id: "plumbing", name: "Plumbing", icon: "🚰" },
     { id: "painting", name: "Painting & Renovation", icon: "🎨" },
     { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
-    { id: "pest-control", name: "Pest Control", icon: "🐜" },
     { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
     { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
-    { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
-    { id: "moving", name: "Moving & Relocation", icon: "📦" },
-    { id: "events", name: "Event & Wedding", icon: "🎉" },
     { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
     { id: "business", name: "Business & Office", icon: "💼" },
     { id: "smart-home", name: "Smart Home", icon: "🏠" }
@@ -91,21 +87,21 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 {[
                 {
                   type: "image",
-                  src: "/attached_assets/sofa-cleaning-services.jpg",
+                  src: "/sofa-cleaning-services.jpg",
                   alt: "Professional Sofa Cleaning",
                   title: "Expert Sofa Cleaning Services",
                   description: "Deep cleaning for your upholstery"
                 },
                 {
                   type: "image",
-                  src: "/attached_assets/image_1741705864543.png",
+                  src: "/sofa-cleaning-services.jpg",
                   alt: "Home Cleaning Services",
                   title: "Professional Home Cleaning",
                   description: "Experienced cleaners at your service"
                 },
                 {
                   type: "image",
-                  src: "/attached_assets/image_1741705882349.png",
+                  src: "/sofa-cleaning-services.jpg",
                   alt: "Quality Cleaning Service",
                   title: "100% Satisfaction Guarantee",
                   description: "Quality service or your money back"
