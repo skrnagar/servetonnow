@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description:
     "Book home services, compare vendors, or post tasks for bidding. Serveto makes home services simple and efficient.",
   generator: "v0.dev",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 // Create a client wrapper component
