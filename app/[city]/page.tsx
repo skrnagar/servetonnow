@@ -50,28 +50,63 @@ export default function CityPage({ params }: { params: { city: string } }) {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Home Services, Your Way <br></br> Compare, Book, or Post a Task
-          </h1>
-          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Direct Booking */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
-              Instant service at fixed prices from our in-house professional team
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-6">
+              Home Services, Your Way <br></br> Compare, Book, or Post a Task
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mb-8">
+              Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
             </p>
-            <Link href={`/${citySlug}/services`}>
-              <Button className="w-full gap-2">
-                Book Serveto Direct
-                <FaArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href={`/${citySlug}/services`} className="flex-1">
+                <Button className="w-full gap-2">
+                  Book Serveto Direct
+                  <FaArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              
+              <Link href={`/${citySlug}/vendors`} className="flex-1">
+                <Button variant="outline" className="w-full gap-2">
+                  Compare Vendors
+                  <FaArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              
+              <Link href={`/${citySlug}/post-task`} className="flex-1">
+                <Button variant="secondary" className="w-full gap-2">
+                  Post a Task
+                  <FaArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
+
+          <div className="relative h-[400px] rounded-xl overflow-hidden">
+            <Carousel className="w-full h-full" autoPlay>
+              <CarouselContent>
+                {[
+                  "/placeholder.svg?height=400&width=600",
+                  "/placeholder.svg?height=400&width=600",
+                  "/placeholder.svg?height=400&width=600"
+                ].map((src, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative h-[400px]">
+                      <Image
+                        src={src}
+                        alt={`Service ${index + 1}`}
+                        fill
+                        className="object-cover rounded-xl"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+        </div>
+      </section>
 
           {/* Compare Vendors */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
