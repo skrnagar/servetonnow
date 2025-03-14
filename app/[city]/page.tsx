@@ -120,7 +120,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
                       className="object-cover"
                       priority={index === 0}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-lg">
                       <div className="absolute bottom-8 left-8 right-8 text-white">
                         <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
                         <p className="text-lg text-white/90">{item.description}</p>
