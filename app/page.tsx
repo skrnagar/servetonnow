@@ -50,27 +50,30 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="hero-gradient py-16 md:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-b from-primary/5 to-transparent">
+        <div className="absolute inset-0 pointer-events-none opacity-30">
+          <div className="absolute inset-0 bg-[linear-gradient(30deg,var(--primary)_12%,transparent_12.5%,transparent_87%,var(--primary)_87.5%)] opacity-10"></div>
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
               On-Demand Professional<br />Home Services
             </h1>
             <div className="relative w-full max-w-2xl mx-auto">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+              <div className="bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 rounded-2xl shadow-xl p-4 border border-white/20">
                 <div className="flex items-center justify-center gap-2">
-                  <MapPin className="h-5 w-5" />
+                  <MapPin className="h-5 w-5 text-primary" />
                   <input
                     type="text"
                     placeholder="Find Services in My Location"
-                    className="w-full p-3 bg-transparent border-none focus:outline-none text-lg"
+                    className="w-full p-4 bg-transparent border-none focus:outline-none text-lg font-medium placeholder:text-gray-500"
                   />
                 </div>
               </div>
             </div>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mt-4">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mt-6 font-medium">
               Find Our Services Popular Cities like: {" "}
-              <Link href="/indore" className="text-primary hover:underline">Indore</Link>
+              <Link href="/indore" className="text-primary hover:underline font-semibold">Indore</Link>
               {" "} 
               <Link href="/pune" className="text-primary hover:underline">Pune</Link>
             </p>
@@ -152,19 +155,25 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Service Card 1 */}
-            <div className="service-card bg-white dark:bg-gray-900 rounded-lg shadow-sm overflow-hidden">
-              <div className="relative h-48">
-                <Image src="/placeholder.svg?height=400&width=600" alt="Home Cleaning" fill className="object-cover" />
+            <div className="group bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="relative h-48 overflow-hidden">
+                <Image 
+                  src="/placeholder.svg?height=400&width=600" 
+                  alt="Home Cleaning" 
+                  fill 
+                  className="object-cover transform group-hover:scale-110 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Home Cleaning</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+              <div className="p-5">
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">Home Cleaning</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                   Professional cleaning services for your home
                 </p>
                 <div className="flex justify-between items-center">
-                  <span className="text-primary font-medium">Starting $49</span>
+                  <span className="text-primary font-semibold text-lg">Starting $49</span>
                   <Link href="/services/cleaning">
-                    <Button size="sm">Book Now</Button>
+                    <Button size="sm" className="rounded-full px-6 hover:shadow-lg transition-shadow">Book Now</Button>
                   </Link>
                 </div>
               </div>
