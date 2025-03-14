@@ -57,21 +57,21 @@ export default function HomePage() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Home Services, <span className="text-primary">Your Way</span> – Compare, Book, or Post a Task
               </h1>
-              <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-md">
+              <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-xl">
                 Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="flex items-center gap-2" onClick={() => router.push('/post-task')}>
-                  <span className="text-xl mr-1">📌</span>
+                <Button size="lg" className="flex items-center gap-2 bg-primary hover:bg-primary/90" onClick={() => router.push('/post-task')}>
+                  <span className="text-xl">📌</span>
                   Post a Task & Get Quotes
                 </Button>
-                <Button size="lg" variant="outline" className="flex items-center gap-2" onClick={handleLocationDetection}>
-                  <span className="text-xl mr-1">⚡</span>
+                <Button size="lg" variant="outline" className="flex items-center gap-2 border-primary text-primary hover:bg-primary/10" onClick={handleLocationDetection}>
+                  <span className="text-xl">⚡</span>
                   Book Serveto Direct
                 </Button>
                 <Link href="/services">
                   <Button size="lg" variant="secondary" className="flex items-center gap-2">
-                    <span className="text-xl mr-1">🔍</span>
+                    <span className="text-xl">🔍</span>
                     Find a Vendor
                   </Button>
                 </Link>
@@ -93,11 +93,12 @@ export default function HomePage() {
             </div>
             <div className="relative hidden lg:block">
               <Image
-                src="/placeholder.svg?height=600&width=600"
-                alt="Home services illustration"
+                src="/placeholder.svg"
+                alt="AI-driven service booking experience"
                 width={600}
                 height={600}
-                className="rounded-lg shadow-xl"
+                className="rounded-lg shadow-xl object-cover"
+                priority
               />
             </div>
           </div>
