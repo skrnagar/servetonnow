@@ -40,12 +40,12 @@ export default function CityPage({ params }: { params: { city: string } }) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
-      <section className="rounded-xl bg-gradient-to-r from-primary/15 to-primary/10 p-6 mb-10">
+      <section className="rounded-xl bg-gradient-to-t from-primary/15 to-primary/10 px-6 py-12 mb-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">
             Home Services, Your Way – Compare, Book, or Post a Task
           </h1>
-          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
           </p>
         </div>
@@ -53,9 +53,9 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">⚡</span>
-            </div>
+            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Instant service at fixed prices from our in-house professional team
@@ -70,9 +70,9 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Compare Vendors */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">🔍</span>
-            </div>
+            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Choose from multiple providers based on reviews and prices
@@ -87,9 +87,9 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Task Bidding */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">📌</span>
-            </div>
+            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Get competitive bids from nearby professionals
@@ -116,8 +116,8 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <span className="text-sm font-medium">Secure Payments</span>
           </div>
         </div>
-        <div className="relative hidden lg:block">
-          <Image
+        {/* <div className="relative hidden lg:block"> */}
+          {/* <Image
             src="/placeholder.svg"
             alt="AI-driven service booking experience"
             width={600}
@@ -125,20 +125,12 @@ export default function CityPage({ params }: { params: { city: string } }) {
             className="rounded-lg shadow-xl"
             priority
           />
-        </div>
+        </div> */}
       </section>
-      <div className="relative w-full h-[400px] mb-10">
-        <Image
-          src="/placeholder.svg"
-          alt={`Home services in ${formattedCityName}`}
-          fill
-          className="object-cover rounded-lg"
-          priority
-        />
-      </div>
+  
       {/* Categories Section */}
       <section className="mb-10">
-        <h2 className="text-2xl font-bold mb-6">Browse by Category</h2>
+        {/* <h2 className="text-2xl font-bold mb-6">Browse by Category</h2> */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {[
             { name: "Cleaning", icon: "🧹", slug: "cleaning" },
