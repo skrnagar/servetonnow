@@ -8,19 +8,6 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Star } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
-// Added LinePattern component (placeholder - needs actual implementation)
-const LinePattern = () => (
-  <svg className="absolute inset-0 w-full h-full pointer-events-none" width="100%" height="100%">
-    <defs>
-      <pattern id="line-pattern" patternUnits="userSpaceOnUse" width="10" height="10">
-        <line x1="0" y1="0" x2="10" y2="10" stroke="grey" strokeWidth="1" />
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#line-pattern)" />
-  </svg>
-);
-
-
 export default function CityPage({ params }: { params: { city: string } }) {
   const resolvedParams = use(params)
   const citySlug = resolvedParams.city.toLowerCase()
@@ -53,8 +40,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
-      <section className="rounded-xl bg-gradient-to-r from-primary/15 to-primary/10 px-6 py-12 mb-10 relative overflow-hidden">
-        <LinePattern />
+      <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">
             Home Services, Your Way – Compare, Book, or Post a Task
