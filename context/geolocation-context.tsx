@@ -119,21 +119,21 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     try {
       // First try browser geolocation
       if ('geolocation' in navigator) {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          });
-        });
-
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-
-        // Use reverse geocoding to get city
         try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+            });
+          });
+
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          // Use reverse geocoding to get city
           const geocodeResult = await reverseGeocode(coords.lat, coords.lng);
           if (geocodeResult?.city) {
             setUserLocation(coords);
@@ -141,8 +141,14 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
             success = true;
             return true;
           }
-        } catch (geocodeError) {
-          console.error("Reverse geocoding failed:", geocodeError);
+        } catch (error: any) {
+          // Handle geolocation permission denied
+          if (error.code === 1) {
+            console.error("Geolocation permission denied");
+            setError("Please enable location access to use this feature");
+          } else {
+            console.error("Geolocation error:", error.message || error);
+          }
         }
       }
 
