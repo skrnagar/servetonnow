@@ -52,21 +52,23 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero-gradient py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-12">
-              On-Demand Professional Home Services
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-8">
+              On-Demand Professional<br />Home Services
             </h1>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-8">
-              <Button 
-                size="lg" 
-                className="w-full flex items-center justify-center gap-2 py-6 text-lg"
-                onClick={handleLocationDetection}
-              >
-                <MapPin className="h-5 w-5" />
-                Find Services in My Location
-              </Button>
+            <div className="relative w-full max-w-2xl mx-auto">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+                <div className="flex items-center justify-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Find Services in My Location"
+                    className="w-full p-3 bg-transparent border-none focus:outline-none text-lg"
+                  />
+                </div>
+              </div>
             </div>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mt-4">
               Find Our Services Popular Cities like: {" "}
               <Link href="/indore" className="text-primary hover:underline">Indore</Link>
               {" "} 
