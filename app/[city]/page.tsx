@@ -59,6 +59,48 @@ export default function CityPage({ params }: { params: { city: string } }) {
           </p>
         </div>
 
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+          {[
+            { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
+            { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
+            { id: "plumbing", name: "Plumbing", icon: "🚰" },
+            { id: "painting", name: "Painting & Renovation", icon: "🎨" },
+            { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
+            { id: "pest-control", name: "Pest Control", icon: "🐜" },
+            { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
+            { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
+            { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
+            { id: "moving", name: "Moving & Relocation", icon: "📦" },
+            { id: "events", name: "Event & Wedding", icon: "🎉" },
+            { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
+            { id: "business", name: "Business & Office", icon: "💼" },
+            { id: "smart-home", name: "Smart Home", icon: "🏠" },
+          ].map((category) => (
+            <Link
+              key={category.id}
+              href={`/${citySlug}/${category.id}`}
+              className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
+            >
+              <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
+                {ServiceIcons[category.id as keyof typeof ServiceIcons] ? (
+                  <div className="w-8 h-8">
+                    {ServiceIcons[category.id as keyof typeof ServiceIcons]({ className: "w-full h-full" })}
+                  </div>
+                ) : (
+                  <span className="text-3xl">{category.icon}</span>
+                )}
+              </div>
+              <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
+            </Link>
+          ))}
+        </div>
+
+        
+      </section>
+
+      {/* Categories Section */}
+      <section className="mb-10">
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
@@ -97,45 +139,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 </Button>
               </Link>
             </div>
-          </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="mb-10">
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-          {[
-            { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
-            { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
-            { id: "plumbing", name: "Plumbing", icon: "🚰" },
-            { id: "painting", name: "Painting & Renovation", icon: "🎨" },
-            { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
-            { id: "pest-control", name: "Pest Control", icon: "🐜" },
-            { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
-            { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
-            { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
-            { id: "moving", name: "Moving & Relocation", icon: "📦" },
-            { id: "events", name: "Event & Wedding", icon: "🎉" },
-            { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
-            { id: "business", name: "Business & Office", icon: "💼" },
-            { id: "smart-home", name: "Smart Home", icon: "🏠" },
-          ].map((category) => (
-            <Link
-              key={category.id}
-              href={`/${citySlug}/${category.id}`}
-              className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
-            >
-              <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
-                {ServiceIcons[category.id as keyof typeof ServiceIcons] ? (
-                  <div className="w-8 h-8">
-                    {ServiceIcons[category.id as keyof typeof ServiceIcons]({ className: "w-full h-full" })}
-                  </div>
-                ) : (
-                  <span className="text-3xl">{category.icon}</span>
-                )}
-              </div>
-              <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
-            </Link>
-          ))}
         </div>
       </section>
 
