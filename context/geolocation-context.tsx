@@ -110,46 +110,62 @@ export function GeolocationProvider({ children }: { children: React.ReactNode })
     setIsLoading(true);
     setError("");
 
-    // Set default values immediately so UI is responsive
+    // Set default values
     const defaultLocation = { lat: 22.7196, lng: 75.8577 };
     const defaultCity = "Indore";
 
     let success = false;
 
     try {
-      // ONLY try IP-based geolocation
-      try {
-        const locationData = await getLocationFromIP();
+      // First try browser geolocation
+      if ('geolocation' in navigator) {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+          });
+        });
 
-        if (locationData) {
-          const newLocation = {
-            lat: locationData.location.lat,
-            lng: locationData.location.lng
-          };
-          setUserLocation(newLocation);
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
 
-          // ONLY use setCity which sets the cookie
-          setCity(locationData.city, true);
-
-          console.log(`Detected IP-based location: ${locationData.city}`);
-
-          success = true;
-          return success;
+        // Use reverse geocoding to get city
+        try {
+          const geocodeResult = await reverseGeocode(coords.lat, coords.lng);
+          if (geocodeResult?.city) {
+            setUserLocation(coords);
+            setCity(geocodeResult.city, true);
+            success = true;
+            return true;
+          }
+        } catch (geocodeError) {
+          console.error("Reverse geocoding failed:", geocodeError);
         }
-      } catch (ipError) {
-        console.error("IP geolocation failed:", ipError);
+      }
+
+      // Fallback to IP-based geolocation
+      const locationData = await getLocationFromIP();
+      if (locationData) {
+        const newLocation = {
+          lat: locationData.location.lat,
+          lng: locationData.location.lng
+        };
+        setUserLocation(newLocation);
+        setCity(locationData.city, true);
+        success = true;
+        return true;
       }
     } catch (error) {
       console.error("Location detection error:", error);
     } finally {
-      // If IP detection failed, use default values
       if (!success) {
         setUserLocation(defaultLocation);
         setCity(defaultCity);
-
-        setError("Could not detect your location automatically. Using default location.");
+        setError("Could not detect your location. Using default location.");
       }
-
       setIsLoading(false);
     }
 
