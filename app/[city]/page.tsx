@@ -5,11 +5,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { FaArrowRight } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
-import { CheckCircle } from "lucide-react"
+import { CheckCircle, Star } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 export default function CityPage({ params }: { params: { city: string } }) {
-  const citySlug = params.city.toLowerCase()
+  const resolvedParams = use(params)
+  const citySlug = resolvedParams.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
   // State for window width
