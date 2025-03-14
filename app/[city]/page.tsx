@@ -45,30 +45,83 @@ export default function CityPage({ params }: { params: { city: string } }) {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-r from-primary/15 to-primary/10 p-6 mb-10">
-        <div className="flex flex-col md:flex-row gap-6 items-center">
-          <div className="w-full md:w-2/3">
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Home Services in {formattedCityName}
-            </h1>
-            <p className="mt-3 text-gray-600 dark:text-gray-300">
-              Find reliable professionals for all your home service needs in {formattedCityName}
-            </p>
-            <div className="mt-6 flex gap-4">
-              <Link href={`/${citySlug}/post-task`}>
-                <Button size="lg" className="gap-2">
-                  <FaArrowRight className="h-4 w-4" />
-                  Post a Task
-                </Button>
-              </Link>
-              <Link href={`/${citySlug}/services`}>
-                <Button size="lg" variant="outline" className="gap-2">
-                  Book Now
-                  <FaArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold">
+            Home Services in {formattedCityName}
+          </h1>
+          <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Choose the booking option that works best for you
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Direct Booking */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <span className="text-2xl">⚡</span>
             </div>
+            <h3 className="text-lg font-semibold text-center mb-2">Direct Booking</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
+              Instant service at fixed prices from our in-house professional team
+            </p>
+            <Link href={`/${citySlug}/services`}>
+              <Button className="w-full gap-2">
+                Book Now
+                <FaArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
-          <div className="relative w-full md:w-1/3 h-44 md:h-64">
+
+          {/* Compare Vendors */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <span className="text-2xl">🔍</span>
+            </div>
+            <h3 className="text-lg font-semibold text-center mb-2">Compare Vendors</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
+              Choose from multiple providers based on reviews and prices
+            </p>
+            <Link href={`/${citySlug}/vendors`}>
+              <Button variant="outline" className="w-full gap-2">
+                Compare
+                <FaArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          {/* Task Bidding */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <span className="text-2xl">📝</span>
+            </div>
+            <h3 className="text-lg font-semibold text-center mb-2">Post a Task</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
+              Get competitive bids from nearby professionals
+            </p>
+            <Link href={`/${citySlug}/post-task`}>
+              <Button variant="secondary" className="w-full gap-2">
+                Post Task
+                <FaArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-6">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <span className="text-sm">Verified Professionals</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <span className="text-sm">100% Satisfaction</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-primary" />
+            <span className="text-sm">Secure Payments</span>
+          </div>
+        </div>
+      </section>
             <Image
               src="/placeholder.svg"
               alt={`Home services in ${formattedCityName}`}
