@@ -102,7 +102,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             </Link>
           </div>
         </div>
-        <div className="mt-8 flex flex-wrap items-center gap-6">
+        {/* <div className="mt-8 flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
             <span className="text-sm font-medium">Verified Professionals</span>
@@ -115,7 +115,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <CheckCircle className="h-5 w-5 text-primary" />
             <span className="text-sm font-medium">Secure Payments</span>
           </div>
-        </div>
+        </div> */}
         {/* <div className="relative hidden lg:block"> */}
           {/* <Image
             src="/placeholder.svg"
@@ -149,12 +149,12 @@ export default function CityPage({ params }: { params: { city: string } }) {
               href={`/${citySlug}/${category.slug}`}
               className="flex flex-col items-center"
             >
-              <div className="w-[72px] h-[72px] bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
-                <div className="w-10 h-10">
-                  <span className="text-xl">{category.icon}</span>
-                </div>
+              <div className="w-[72px] h-[72px] bg-white rounded-xl border flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
+               
+                  <span className="text-3xl">{category.icon}</span>
+                
               </div>
-              <span className="text-sm font-medium text-center text-gray-700">{category.name}</span>
+              <span className="text-base font-medium text-center text-gray-700">{category.name}</span>
             </Link>
           ))}
         </div>
