@@ -15,7 +15,12 @@ const ServiceIcons = {
 };
 
 
-import { use } from 'react'
+"use client"
+
+import { use, useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { FaArrowRight } from 'react-icons/fa'
 
 export default function CityPage({ params }: { params: { city: string } }) {
   const resolvedParams = use(params)
