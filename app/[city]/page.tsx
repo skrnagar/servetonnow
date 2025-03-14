@@ -43,10 +43,10 @@ export default function CityPage({ params }: { params: { city: string } }) {
       <section className="rounded-xl bg-gradient-to-r from-primary/15 to-primary/10 p-6 mb-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">
-            Home Services in {formattedCityName}
+            Home Services, Your Way – Compare, Book, or Post a Task
           </h1>
           <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Choose the booking option that works best for you
+            Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">⚡</span>
             </div>
-            <h3 className="text-lg font-semibold text-center mb-2">Direct Booking</h3>
+            <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Instant service at fixed prices from our in-house professional team
             </p>
@@ -73,7 +73,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">🔍</span>
             </div>
-            <h3 className="text-lg font-semibold text-center mb-2">Compare Vendors</h3>
+            <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Choose from multiple providers based on reviews and prices
             </p>
@@ -88,9 +88,9 @@ export default function CityPage({ params }: { params: { city: string } }) {
           {/* Task Bidding */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <span className="text-2xl">📝</span>
+              <span className="text-2xl">📌</span>
             </div>
-            <h3 className="text-lg font-semibold text-center mb-2">Post a Task</h3>
+            <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Get competitive bids from nearby professionals
             </p>
@@ -102,20 +102,29 @@ export default function CityPage({ params }: { params: { city: string } }) {
             </Link>
           </div>
         </div>
-
-        <div className="flex justify-center gap-6">
+        <div className="mt-8 flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm">Verified Professionals</span>
+            <span className="text-sm font-medium">Verified Professionals</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm">100% Satisfaction</span>
+            <span className="text-sm font-medium">100% Satisfaction</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm">Secure Payments</span>
+            <span className="text-sm font-medium">Secure Payments</span>
           </div>
+        </div>
+        <div className="relative hidden lg:block">
+          <Image
+            src="/placeholder.svg"
+            alt="AI-driven service booking experience"
+            width={600}
+            height={600}
+            className="rounded-lg shadow-xl"
+            priority
+          />
         </div>
       </section>
       <Image
