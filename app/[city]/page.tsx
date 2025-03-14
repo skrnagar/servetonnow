@@ -52,7 +52,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold">
-            Home Services, Your Way – Compare, Book, or Post a Task
+            Home Services, Your Way <br></br> Compare, Book, or Post a Task
           </h1>
           <p className="mt-3 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
