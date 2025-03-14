@@ -52,54 +52,26 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero-gradient py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Home Services, <span className="text-primary">Your Way</span> – Compare, Book, or Post a Task
-              </h1>
-              <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-md">
-                Choose from top-rated vendors, book our in-house experts, or get bids from professionals near you.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="flex items-center gap-2" onClick={() => router.push('/post-task')}>
-                  <span className="text-xl mr-1">📌</span>
-                  Post a Task & Get Quotes
-                </Button>
-                <Button size="lg" variant="outline" className="flex items-center gap-2" onClick={handleLocationDetection}>
-                  <span className="text-xl mr-1">⚡</span>
-                  Book Serveto Direct
-                </Button>
-                <Link href="/services">
-                  <Button size="lg" variant="secondary" className="flex items-center gap-2">
-                    <span className="text-xl mr-1">🔍</span>
-                    Find a Vendor
-                  </Button>
-                </Link>
-              </div>
-              <div className="mt-8 flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">Verified Professionals</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">Secure Payments</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">Satisfaction Guarantee</span>
-                </div>
-              </div>
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-12">
+              On-Demand Professional Home Services
+            </h1>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-8">
+              <Button 
+                size="lg" 
+                className="w-full flex items-center justify-center gap-2 py-6 text-lg"
+                onClick={handleLocationDetection}
+              >
+                <MapPin className="h-5 w-5" />
+                Find Services in My Location
+              </Button>
             </div>
-            <div className="relative hidden lg:block">
-              <Image
-                src="/placeholder.svg?height=600&width=600"
-                alt="Home services illustration"
-                width={600}
-                height={600}
-                className="rounded-lg shadow-xl"
-              />
-            </div>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Find Our Services Popular Cities like: {" "}
+              <Link href="/indore" className="text-primary hover:underline">Indore</Link>
+              {" "} 
+              <Link href="/pune" className="text-primary hover:underline">Pune</Link>
+            </p>
           </div>
         </div>
       </section>
