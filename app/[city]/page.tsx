@@ -53,34 +53,19 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <p className="mt-3 text-gray-600 dark:text-gray-300">
               Find reliable professionals for all your home service needs in {formattedCityName}
             </p>
-            <div className="mt-6">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                {[
-                  { name: "Cleaning", icon: "🧹", slug: "cleaning" },
-                  { name: "Plumbing", icon: "🚿", slug: "plumbing" },
-                  { name: "Electrical", icon: "💡", slug: "electrical" },
-                  { name: "Appliance", icon: "🔧", slug: "appliance-repair" },
-                  { name: "Pest Control", icon: "🐜", slug: "pest-control" },
-                  { name: "Painting", icon: "🎨", slug: "painting" },
-                  { name: "Carpentry", icon: "🪚", slug: "carpentry" },
-                  { name: "Moving", icon: "📦", slug: "home-moving" },
-                  { name: "Gardening", icon: "🌿", slug: "gardening" },
-                  { name: "AC Repair", icon: "❄️", slug: "hvac" }
-                ].map((category) => (
-                  <Link 
-                    key={category.slug}
-                    href={`/${citySlug}/${category.slug}`}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                      <span className="text-xl">{category.icon}</span>
-                    </div>
-                    <h3 className="font-medium text-xs sm:text-sm">
-                      {category.name}
-                    </h3>
-                  </Link>
-                ))}
-              </div>
+            <div className="mt-6 flex gap-4">
+              <Link href={`/${citySlug}/post-task`}>
+                <Button size="lg" className="gap-2">
+                  <FaArrowRight className="h-4 w-4" />
+                  Post a Task
+                </Button>
+              </Link>
+              <Link href={`/${citySlug}/services`}>
+                <Button size="lg" variant="outline" className="gap-2">
+                  Book Now
+                  <FaArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="relative w-full md:w-1/3 h-44 md:h-64">
@@ -91,6 +76,38 @@ export default function CityPage({ params }: { params: { city: string } }) {
               className="object-cover rounded-lg"
             />
           </div>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6">Browse by Category</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {[
+            { name: "Cleaning", icon: "🧹", slug: "cleaning" },
+            { name: "Plumbing", icon: "🚿", slug: "plumbing" },
+            { name: "Electrical", icon: "💡", slug: "electrical" },
+            { name: "Appliance", icon: "🔧", slug: "appliance-repair" },
+            { name: "Pest Control", icon: "🐜", slug: "pest-control" },
+            { name: "Painting", icon: "🎨", slug: "painting" },
+            { name: "Carpentry", icon: "🪚", slug: "carpentry" },
+            { name: "Moving", icon: "📦", slug: "home-moving" },
+            { name: "Gardening", icon: "🌿", slug: "gardening" },
+            { name: "AC Repair", icon: "❄️", slug: "hvac" }
+          ].map((category) => (
+            <Link 
+              key={category.slug}
+              href={`/${citySlug}/${category.slug}`}
+              className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <span className="text-xl">{category.icon}</span>
+              </div>
+              <h3 className="font-medium text-xs sm:text-sm">
+                {category.name}
+              </h3>
+            </Link>
+          ))}
         </div>
       </section>
 
