@@ -57,7 +57,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Categories Grid */}
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
             {categories.map((category) => (
               <Link
                 key={category.id}
