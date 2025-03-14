@@ -19,7 +19,7 @@ const ServiceIcons = {
 };
 
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = params;
+  const resolvedParams = use(params);
   const citySlug = resolvedParams.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
