@@ -80,55 +80,57 @@ export default function CityPage({ params }: { params: { city: string } }) {
               opts={{
                 align: "start",
                 loop: true,
+                autoPlay: true,
+                interval: 5000
               }}
               className="w-full"
             >
               <CarouselContent>
                 {[
-                {
-                  type: "image",
-                  src: "/sofa-cleaning-services.jpg",
-                  alt: "Professional Sofa Cleaning",
-                  title: "Expert Sofa Cleaning Services",
-                  description: "Deep cleaning for your upholstery"
-                },
-                {
-                  type: "image",
-                  src: "/sofa-cleaning-services.jpg",
-                  alt: "Home Cleaning Services",
-                  title: "Professional Home Cleaning",
-                  description: "Experienced cleaners at your service"
-                },
-                {
-                  type: "image",
-                  src: "/sofa-cleaning-services.jpg",
-                  alt: "Quality Cleaning Service",
-                  title: "100% Satisfaction Guarantee",
-                  description: "Quality service or your money back"
-                }
-              ].map((item, index) => (
-                <CarouselItem key={index} className="w-full">
-                  <div className="relative aspect-[16/9]">
-                    <Image
-                      src={item.src}
-                      alt={item.alt}
-                      fill
-                      className="object-cover"
-                      priority={index === 0}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-lg">
-                      <div className="absolute bottom-8 left-8 right-8 text-white">
-                        <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
-                        <p className="text-lg text-white/90">{item.description}</p>
+                  {
+                    type: "image",
+                    src: "/sofa-cleaning-services.jpg",
+                    alt: "Professional Sofa Cleaning",
+                    title: "Expert Sofa Cleaning Services",
+                    description: "Deep cleaning for your upholstery"
+                  },
+                  {
+                    type: "image",
+                    src: "/sofa-cleaning-services.jpg",
+                    alt: "Home Cleaning Services",
+                    title: "Professional Home Cleaning",
+                    description: "Experienced cleaners at your service"
+                  },
+                  {
+                    type: "image",
+                    src: "/sofa-cleaning-services.jpg",
+                    alt: "Quality Cleaning Service",
+                    title: "100% Satisfaction Guarantee",
+                    description: "Quality service or your money back"
+                  }
+                ].map((item, index) => (
+                  <CarouselItem key={index} className="w-full">
+                    <div className="relative aspect-[16/9]">
+                      <Image
+                        src={item.src}
+                        alt={item.alt}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                        <div className="absolute bottom-8 left-8 right-8 text-white">
+                          <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                          <p className="text-lg text-white/90">{item.description}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CarouselItem>
-              ))}
+                  </CarouselItem>
+                ))}
               </CarouselContent>
-              <div className="flex items-center justify-end gap-2 mt-4">
-                <CarouselPrevious className="static translate-y-0" />
-                <CarouselNext className="static translate-y-0" />
+              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 pointer-events-none">
+                <CarouselPrevious className="relative pointer-events-auto bg-white/20 hover:bg-white/40 text-white" />
+                <CarouselNext className="relative pointer-events-auto bg-white/20 hover:bg-white/40 text-white" />
               </div>
             </Carousel>
           </div>
