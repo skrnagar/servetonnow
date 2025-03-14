@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { FaArrowRight } from "react-icons/fa"
@@ -8,9 +8,15 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, Star } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
+const ServiceIcons = {
+  "home-cleaning": () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  "repairs": () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+  // Add more icons here...
+};
+
+
 export default function CityPage({ params }: { params: { city: string } }) {
-  const resolvedParams = use(params)
-  const citySlug = resolvedParams.city.toLowerCase()
+  const citySlug = params.city.toLowerCase()
   const formattedCityName = citySlug.charAt(0).toUpperCase() + citySlug.slice(1)
 
   // State for window width
@@ -53,7 +59,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            {/* <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3> */}
             <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
               Instant service at fixed prices from our in-house professional team
             </p>
@@ -67,7 +72,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Compare Vendors */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            {/* <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3> */}
             <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
               Choose from multiple providers based on reviews and prices
             </p>
@@ -80,7 +84,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
           </div>
           {/* Task Bidding */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-              {/* <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3> */}
               <p className="text-gray-600 dark:text-gray-300 text-center font-semibold mb-4 text-sm">
                 Get competitive bids from nearby professionals
               </p>
@@ -92,10 +95,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
               </Link>
             </div>
           </div>
-
-     
-
-      
       </section>
 
       {/* Categories Section */}
@@ -123,7 +122,13 @@ export default function CityPage({ params }: { params: { city: string } }) {
               className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
             >
               <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
-                <span className="text-3xl">{category.icon}</span>
+                {ServiceIcons[category.id as keyof typeof ServiceIcons] ? (
+                  <div className="w-8 h-8">
+                    {ServiceIcons[category.id as keyof typeof ServiceIcons]({ className: "w-full h-full" })}
+                  </div>
+                ) : (
+                  <span className="text-3xl">{category.icon}</span>
+                )}
               </div>
               <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
             </Link>
