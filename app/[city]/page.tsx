@@ -127,12 +127,15 @@ export default function CityPage({ params }: { params: { city: string } }) {
           />
         </div>
       </section>
-      <Image
-        src="/placeholder.svg"
-        alt={`Home services in ${formattedCityName}`}
-        fill
-        className="object-cover rounded-lg"
-      />
+      <div className="relative w-full h-[400px] mb-10">
+        <Image
+          src="/placeholder.svg"
+          alt={`Home services in ${formattedCityName}`}
+          fill
+          className="object-cover rounded-lg"
+          priority
+        />
+      </div>
       {/* Categories Section */}
       <section className="mb-10">
         <h2 className="text-2xl font-bold mb-6">Browse by Category</h2>
