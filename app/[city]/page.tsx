@@ -88,24 +88,47 @@ export default function CityPage({ params }: { params: { city: string } }) {
               className="w-full"
             >
               <CarouselContent>
-                {services.map((service) => (
-                  <CarouselItem key={service.slug} className="md:basis-1/2 lg:basis-1/1">
-                    <Link href={`/${citySlug}/${service.slug}`}>
-                      <div className="relative h-64 rounded-lg overflow-hidden">
-                        <Image
-                          src={service.image}
-                          alt={service.name}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent text-white">
-                          <h3 className="font-semibold">{service.name}</h3>
-                          <p className="text-sm">Starting from {service.price}</p>
-                        </div>
+                {[
+                {
+                  type: "image",
+                  src: "/placeholder.svg?height=400&width=600",
+                  alt: "Professional Home Services",
+                  title: "Professional Home Services",
+                  description: "Trusted experts at your doorstep"
+                },
+                {
+                  type: "image",
+                  src: "/placeholder.svg?height=400&width=600",
+                  alt: "100% Satisfaction Guarantee",
+                  title: "100% Satisfaction Guarantee",
+                  description: "Quality service or your money back"
+                },
+                {
+                  type: "image",
+                  src: "/placeholder.svg?height=400&width=600",
+                  alt: "Verified Professionals",
+                  title: "Verified Professionals",
+                  description: "Background-checked and skilled experts"
+                }
+              ].map((item, index) => (
+                <CarouselItem key={index} className="w-full">
+                  <div className="relative aspect-[16/9]">
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      className="object-cover"
+                      priority={index === 0}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                      <div className="absolute bottom-8 left-8 right-8 text-white">
+                        <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                        <p className="text-lg text-white/90">{item.description}</p>
                       </div>
-                    </Link>
-                  </CarouselItem>
-                ))}
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
               </CarouselContent>
               <div className="flex items-center justify-end gap-2 mt-4">
                 <CarouselPrevious className="static translate-y-0" />
