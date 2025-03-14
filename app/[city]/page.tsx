@@ -53,9 +53,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <span className="text-2xl">⚡</span>
-            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Instant service at fixed prices from our in-house professional team
@@ -70,9 +67,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Compare Vendors */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <span className="text-2xl">🔍</span>
-            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Choose from multiple providers based on reviews and prices
@@ -87,9 +81,6 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Task Bidding */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            {/* <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-              <span className="text-2xl">📌</span>
-            </div> */}
             <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
               Get competitive bids from nearby professionals
@@ -102,61 +93,36 @@ export default function CityPage({ params }: { params: { city: string } }) {
             </Link>
           </div>
         </div>
-        {/* <div className="mt-8 flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Verified Professionals</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">100% Satisfaction</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Secure Payments</span>
-          </div>
-        </div> */}
-        {/* <div className="relative hidden lg:block"> */}
-          {/* <Image
-            src="/placeholder.svg"
-            alt="AI-driven service booking experience"
-            width={600}
-            height={600}
-            className="rounded-lg shadow-xl"
-            priority
-          />
-        </div> */}
       </section>
 
       {/* Categories Section */}
       <section className="mb-10">
-        {/* <h2 className="text-2xl font-bold mb-6">Browse by Category</h2> */}
-        <div className="grid grid-cols-4 gap-4 lg:grid-cols-8">
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
           {[
-            { name: "Home Cleaning", icon: "/icons/cleaning.svg", slug: "cleaning" },
-            { name: "Women's Salon", icon: "/icons/salon.svg", slug: "salon" },
-            { name: "Pest Control", icon: "/icons/pest.svg", slug: "pest-control" },
-            { name: "AC Repair", icon: "/icons/ac.svg", slug: "hvac" },
-            { name: "Electrical", icon: "/icons/electrical.svg", slug: "electrical" },
-            { name: "Plumbing", icon: "/icons/plumbing.svg", slug: "plumbing" },
-            { name: "Carpentry", icon: "/icons/carpentry.svg", slug: "carpentry" },
-            { name: "Appliance", icon: "/icons/appliance.svg", slug: "appliance-repair" }
+            { id: "home-cleaning", name: "Home Cleaning", icon: "🧹" },
+            { id: "repairs", name: "Repairs & Maintenance", icon: "🔧" },
+            { id: "plumbing", name: "Plumbing", icon: "🚰" },
+            { id: "painting", name: "Painting & Renovation", icon: "🎨" },
+            { id: "furniture", name: "Furniture & Installation", icon: "🪑" },
+            { id: "pest-control", name: "Pest Control", icon: "🐜" },
+            { id: "maid", name: "Maid & Domestic", icon: "👩‍🍳" },
+            { id: "beauty", name: "Beauty & Wellness", icon: "💅" },
+            { id: "appliance", name: "Appliance Repairs", icon: "🔌" },
+            { id: "moving", name: "Moving & Relocation", icon: "📦" },
+            { id: "events", name: "Event & Wedding", icon: "🎉" },
+            { id: "vehicle", name: "Vehicle Services", icon: "🚗" },
+            { id: "business", name: "Business & Office", icon: "💼" },
+            { id: "smart-home", name: "Smart Home", icon: "🏠" },
           ].map((category) => (
             <Link
-              key={category.slug}
-              href={`/${citySlug}/${category.slug}`}
-              className="flex flex-col items-center"
+              key={category.id}
+              href={`/${citySlug}/${category.id}`}
+              className="flex flex-col items-center p-4 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all"
             >
-              <div className="w-[72px] h-[72px] bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
-                <Image 
-                  src={category.icon}
-                  alt={category.name}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8"
-                />
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
+                <span className="text-2xl">{category.icon}</span>
               </div>
-              <span className="text-sm font-medium text-center text-gray-700">{category.name}</span>
+              <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
             </Link>
           ))}
         </div>
