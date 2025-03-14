@@ -40,7 +40,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
-      <section className="rounded-xl bg-gradient-to-t from-primary/15 to-primary/10 px-6 py-12 mb-10">
+      <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">
             Home Services, Your Way – Compare, Book, or Post a Task
@@ -117,10 +117,10 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <Link
               key={category.id}
               href={`/${citySlug}/${category.id}`}
-              className="flex flex-col items-center p-4 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all"
+              className="flex flex-col items-center p-4 bg-white dark:bg-gray-800 transition-all"
             >
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
-                <span className="text-2xl">{category.icon}</span>
+              <div className="w-16 h-16 p-4 bg-gray/10 rounded-lg border border-gray-200 flex items-center justify-center mb-2">
+                <span className="text-3xl">{category.icon}</span>
               </div>
               <span className="text-sm font-medium text-center text-gray-700 dark:text-gray-200">{category.name}</span>
             </Link>
