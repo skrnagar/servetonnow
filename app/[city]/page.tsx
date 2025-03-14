@@ -41,7 +41,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Hero Section */}
       <section className="rounded-xl bg-gradient-to-t from-sky-100 to-indigo-100 px-6 py-12 mb-10">
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold">
             Home Services, Your Way – Compare, Book, or Post a Task
           </h1>
@@ -53,13 +53,13 @@ export default function CityPage({ params }: { params: { city: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Direct Booking */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
+            {/* <h3 className="text-lg font-semibold text-center mb-2">Book Serveto Direct</h3> */}
+            <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
               Instant service at fixed prices from our in-house professional team
             </p>
             <Link href={`/${citySlug}/services`}>
               <Button className="w-full gap-2">
-                Book Now
+                Book Serveto Direct
                 <FaArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -67,32 +67,35 @@ export default function CityPage({ params }: { params: { city: string } }) {
 
           {/* Compare Vendors */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
+            {/* <h3 className="text-lg font-semibold text-center mb-2">Find a Vendor</h3> */}
+            <p className="text-gray-600 dark:text-gray-300 font-semibold text-center mb-4 text-sm">
               Choose from multiple providers based on reviews and prices
             </p>
             <Link href={`/${citySlug}/vendors`}>
               <Button variant="outline" className="w-full gap-2">
-                Compare
+                Find a Vendor
                 <FaArrowRight className="h-4 w-4" />
               </Button>
             </Link>
+          </div>
+          {/* Task Bidding */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
+              {/* <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3> */}
+              <p className="text-gray-600 dark:text-gray-300 text-center font-semibold mb-4 text-sm">
+                Get competitive bids from nearby professionals
+              </p>
+              <Link href={`/${citySlug}/post-task`}>
+                <Button variant="secondary" className="w-full gap-2">
+                  Post a Task & Get Quotes
+                  <FaArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          {/* Task Bidding */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
-            <h3 className="text-lg font-semibold text-center mb-2">Post a Task & Get Quotes</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-center mb-4 text-sm">
-              Get competitive bids from nearby professionals
-            </p>
-            <Link href={`/${citySlug}/post-task`}>
-              <Button variant="secondary" className="w-full gap-2">
-                Post Task
-                <FaArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
+     
+
+      
       </section>
 
       {/* Categories Section */}
