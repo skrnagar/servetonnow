@@ -57,7 +57,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Categories Grid */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
+          <div className="grid grid-cols-4 sm:grid-cols-4 gap-4">
             {categories.map((category) => (
               <Link
                 key={category.id}
@@ -162,7 +162,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
               Choose from multiple providers based on reviews and prices
             </p>
             <Link href={`/${citySlug}/vendors`}>
-              <Button variant="outline" className="w-full gap-2">
+              <Button variant="outline" className="bg-green-600 w-full gap-2 text-white">
                 Find a Vendor
                 <FaArrowRight className="h-4 w-4" />
               </Button>
@@ -171,10 +171,10 @@ export default function CityPage({ params }: { params: { city: string } }) {
           {/* Task Bidding */}
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-primary/20">
               <p className="text-gray-600 dark:text-gray-300 text-center font-semibold mb-4 text-sm">
-                Get competitive bids from nearby professionals
+                Get competitive bids from nearby professionals with best prices
               </p>
               <Link href={`/${citySlug}/post-task`}>
-                <Button variant="secondary" className="w-full gap-2">
+                <Button className="bg-blue-600 w-full gap-2 text-white">
                   Post a Task & Get Quotes
                   <FaArrowRight className="h-4 w-4" />
                 </Button>
