@@ -127,7 +127,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
           />
         </div> */}
       </section>
-  
+
       {/* Categories Section */}
       <section className="mb-10">
         {/* <h2 className="text-2xl font-bold mb-6">Browse by Category</h2> */}
@@ -147,14 +147,14 @@ export default function CityPage({ params }: { params: { city: string } }) {
             <Link
               key={category.slug}
               href={`/${citySlug}/${category.slug}`}
-              className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
+              className="flex flex-col items-center"
             >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                <span className="text-xl">{category.icon}</span>
+              <div className="w-[72px] h-[72px] bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 hover:shadow-md transition-shadow">
+                <div className="w-10 h-10">
+                  <span className="text-xl">{category.icon}</span>
+                </div>
               </div>
-              <h3 className="font-medium text-xs sm:text-sm">
-                {category.name}
-              </h3>
+              <span className="text-sm font-medium text-center text-gray-700">{category.name}</span>
             </Link>
           ))}
         </div>
