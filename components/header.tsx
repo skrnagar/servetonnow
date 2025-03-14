@@ -253,12 +253,10 @@ export default function Header() {
       </div>
 
       {/* Location Search Modal */}
-      {isLocationSearchOpen && (
-        <LocationSearch
-          isOpen={isLocationSearchOpen}
-          onClose={() => setIsLocationSearchOpen(false)}
-        />
-      )}
+      <LocationSearch
+        isOpen={isLocationSearchOpen}
+        onClose={() => setIsLocationSearchOpen(false)}
+      />
 
       {/* Auth Modal */}
       <AuthModal
