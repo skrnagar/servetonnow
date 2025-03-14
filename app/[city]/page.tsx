@@ -91,24 +91,24 @@ export default function CityPage({ params }: { params: { city: string } }) {
                 {[
                 {
                   type: "image",
-                  src: "/placeholder.svg?height=400&width=600",
-                  alt: "Professional Home Services",
-                  title: "Professional Home Services",
-                  description: "Trusted experts at your doorstep"
+                  src: "/attached_assets/sofa-cleaning-services.jpg",
+                  alt: "Professional Sofa Cleaning",
+                  title: "Expert Sofa Cleaning Services",
+                  description: "Deep cleaning for your upholstery"
                 },
                 {
                   type: "image",
-                  src: "/placeholder.svg?height=400&width=600",
-                  alt: "100% Satisfaction Guarantee",
+                  src: "/attached_assets/image_1741705864543.png",
+                  alt: "Home Cleaning Services",
+                  title: "Professional Home Cleaning",
+                  description: "Experienced cleaners at your service"
+                },
+                {
+                  type: "image",
+                  src: "/attached_assets/image_1741705882349.png",
+                  alt: "Quality Cleaning Service",
                   title: "100% Satisfaction Guarantee",
                   description: "Quality service or your money back"
-                },
-                {
-                  type: "image",
-                  src: "/placeholder.svg?height=400&width=600",
-                  alt: "Verified Professionals",
-                  title: "Verified Professionals",
-                  description: "Background-checked and skilled experts"
                 }
               ].map((item, index) => (
                 <CarouselItem key={index} className="w-full">
