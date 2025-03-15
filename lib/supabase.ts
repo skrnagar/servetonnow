@@ -9,15 +9,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Normalize and validate Supabase URL
-const normalizedUrl = supabaseUrl.trim()
-if (!normalizedUrl.startsWith('https://')) {
-  throw new Error('Supabase URL must be a valid HTTPS URL')
-}
+const normalizedUrl = supabaseUrl?.trim() || ''
 
 try {
-  new URL(normalizedUrl)
+  const url = new URL(normalizedUrl)
+  if (url.protocol !== 'https:') {
+    throw new Error('Supabase URL must use HTTPS protocol')
+  }
 } catch (error) {
-  throw new Error('Invalid Supabase URL format')
+  console.error('Supabase URL validation error:', error)
+  throw new Error('Invalid Supabase URL format. Please check your environment variables.')
 }
 
 const supabase = createClient(normalizedUrl, supabaseAnonKey)
