@@ -10,9 +10,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 // Ensure URL is valid by attempting to construct it
 try {
+  if (!supabaseUrl.startsWith('https://')) {
+    throw new Error('Supabase URL must start with https://')
+  }
   new URL(supabaseUrl)
 } catch (error) {
-  throw new Error('Invalid Supabase URL format')
+  throw new Error(`Invalid Supabase URL format: ${error.message}`)
 }
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
