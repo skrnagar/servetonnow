@@ -36,7 +36,7 @@ export default function CityPage({ params }: { params: { city: string } }) {
   ]
 
   const services = [
-    { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
+    { name: "Home Cleaning", price: "₹499", image: "https://xxdzsbycwgncikfvjcpo.supabase.co/storage/v1/object/public/media//home%20cleaning%20services%20Indore.jpg?height=400&width=600", slug: "home-cleaning" },
     { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
     { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
     { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
@@ -203,10 +203,10 @@ export default function CityPage({ params }: { params: { city: string } }) {
           >
             <CarouselContent className="-ml-4">
               {[
-                { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
-                { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
-                { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
-                { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
+                { name: "Home Cleaning", price: "₹499", image: "https://xxdzsbycwgncikfvjcpo.supabase.co/storage/v1/object/public/media//home%20cleaning%20services%20Indore.jpg?height=400&width=600", slug: "home-cleaning" },
+                { name: "Plumbing Service", price: "₹399", image: "https://xxdzsbycwgncikfvjcpo.supabase.co/storage/v1/object/public/media//plumbing%20services%20indore.jpg?height=400&width=600", slug: "plumbing" },
+                { name: "Electrical Repairs", price: "₹449", image: "https://xxdzsbycwgncikfvjcpo.supabase.co/storage/v1/object/public/media//Electrical%20Repairs%20Services%20Indore.jpg?height=400&width=600", slug: "electrical" },
+                { name: "AC Repair & Services", price: "₹599", image: "https://xxdzsbycwgncikfvjcpo.supabase.co/storage/v1/object/public/media//air-conditioner-service-indoors-air-conditioner-cleaning-technician%20services%20indore.avif?height=400&width=600", slug: "appliance-repair" },
                 { name: "Pest Control", price: "₹799", image: "/placeholder.svg?height=400&width=600", slug: "pest-control" },
                 { name: "Painting", price: "₹1499", image: "/placeholder.svg?height=400&width=600", slug: "painting" },
                 { name: "Carpentry", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "carpentry" },
