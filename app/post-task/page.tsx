@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -32,12 +31,24 @@ const categories = [
   "Other"
 ]
 
+// Placeholder for Supabase upload function.  Replace with actual Supabase integration.
+const uploadMedia = async (file: File, bucket: string) => {
+  //Implementation for Supabase upload goes here.  This is a placeholder.
+  console.log("Uploading", file, "to", bucket);
+  return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({url: 'https://example.com/placeholder.jpg'})
+      }, 500)
+  })
+}
+
+
 export default function PostTaskPage() {
   const router = useRouter()
   const { userCity } = useGeolocation()
   const { toast } = useToast()
   const isMobile = useIsMobile()
-  
+
   const [activeTab, setActiveTab] = useState("details")
   const [taskDetails, setTaskDetails] = useState({
     title: "",
@@ -49,30 +60,42 @@ export default function PostTaskPage() {
     date: new Date(),
     images: []
   })
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setTaskDetails(prev => ({ ...prev, [name]: value }))
   }
-  
+
   const handleSelectChange = (name: string, value: string) => {
     setTaskDetails(prev => ({ ...prev, [name]: value }))
   }
-  
+
   const handleDateChange = (date: Date | undefined) => {
     if (date) {
       setTaskDetails(prev => ({ ...prev, date }))
     }
   }
-  
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // This is a placeholder for image upload functionality
-    toast({
-      title: "Image upload",
-      description: "Image upload functionality would be implemented here"
-    })
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files) return
+
+    try {
+      const uploadPromises = Array.from(files).map(file => 
+        uploadMedia(file, 'tasks')
+      )
+
+      const results = await Promise.all(uploadPromises)
+      const uploadedUrls = results.map(result => result.url)
+
+      // Update your state/form with uploaded URLs
+      setTaskDetails(prev => ({...prev, images: [...prev.images, ...uploadedUrls]}))
+      console.log('Uploaded files:', uploadedUrls)
+    } catch (error) {
+      console.error('Error uploading files:', error)
+    }
   }
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Validate form
@@ -84,17 +107,17 @@ export default function PostTaskPage() {
       })
       return
     }
-    
+
     // Submit form logic would go here
     toast({
       title: "Task Posted Successfully!",
       description: "Professionals will start bidding on your task soon."
     })
-    
+
     // Redirect to task details page
     // router.push("/tasks/task-id")
   }
-  
+
   const nextStep = () => {
     if (activeTab === "details") {
       if (!taskDetails.title || !taskDetails.description || !taskDetails.category) {
@@ -118,7 +141,7 @@ export default function PostTaskPage() {
       setActiveTab("budget")
     }
   }
-  
+
   const prevStep = () => {
     if (activeTab === "location") {
       setActiveTab("details")
@@ -126,7 +149,7 @@ export default function PostTaskPage() {
       setActiveTab("location")
     }
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="mb-8">
@@ -135,7 +158,7 @@ export default function PostTaskPage() {
           Describe your task in detail to receive bids from our qualified professionals.
         </p>
       </div>
-      
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="px-6 pt-6">
@@ -145,7 +168,7 @@ export default function PostTaskPage() {
               <TabsTrigger value="budget">Budget & Date</TabsTrigger>
             </TabsList>
           </div>
-          
+
           <form onSubmit={handleSubmit}>
             {/* Task Details Tab */}
             <TabsContent value="details" className="p-6">
@@ -163,7 +186,7 @@ export default function PostTaskPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="category" className="block text-sm font-medium mb-1">
                     Category <span className="text-red-500">*</span>
@@ -184,7 +207,7 @@ export default function PostTaskPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <label htmlFor="description" className="block text-sm font-medium mb-1">
                     Description <span className="text-red-500">*</span>
@@ -199,7 +222,7 @@ export default function PostTaskPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Photos (Optional)
@@ -244,14 +267,14 @@ export default function PostTaskPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex justify-end">
                 <Button type="button" onClick={nextStep}>
                   Next: Location
                 </Button>
               </div>
             </TabsContent>
-            
+
             {/* Location Tab */}
             <TabsContent value="location" className="p-6">
               <div className="space-y-4">
@@ -268,7 +291,7 @@ export default function PostTaskPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium mb-1">
                     City <span className="text-red-500">*</span>
@@ -282,14 +305,14 @@ export default function PostTaskPage() {
                     required
                   />
                 </div>
-                
+
                 <div className="mt-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Your exact address will only be shared with the professional you hire.
                   </p>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex justify-between">
                 <Button
                   type="button"
@@ -303,7 +326,7 @@ export default function PostTaskPage() {
                 </Button>
               </div>
             </TabsContent>
-            
+
             {/* Budget & Date Tab */}
             <TabsContent value="budget" className="p-6">
               <div className="space-y-4">
@@ -321,7 +344,7 @@ export default function PostTaskPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Date <span className="text-red-500">*</span>
@@ -336,7 +359,7 @@ export default function PostTaskPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex justify-between">
                 <Button
                   type="button"
