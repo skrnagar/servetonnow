@@ -189,6 +189,24 @@ const categoryData = {
     ],
   },
   // Add more categories as needed
+  "interior-design": {
+        name: "Interior Design",
+        description: "Professional interior design consultation",
+        image: "/cities/floor-plan.jpg",
+    subCategories: [],
+  },
+  "healthcare": {
+        name: "Healthcare",
+        description: "Professional healthcare services at home",
+        image: "/cities/healthcare.jpg",
+    subCategories: [],
+  },
+    "entertainment": {
+        name: "Entertainment Setup",
+        description: "TV and entertainment system setup",
+        image: "/cities/entertainment.jpg",
+    subCategories: [],
+  },
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
@@ -421,4 +439,3 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     </div>
   )
 }
-
