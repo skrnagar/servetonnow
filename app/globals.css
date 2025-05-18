@@ -105,7 +105,7 @@ html {
 }
 
 .hero-gradient {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  background: linear-gradient(90deg, rgba(16, 67, 226, 0.1) 0%, rgba(16, 67, 226, 0.05) 100%);
 }
 
 .service-card {
