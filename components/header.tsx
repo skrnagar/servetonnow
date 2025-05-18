@@ -67,7 +67,7 @@ export default function Header() {
               className="flex items-center"
             >
               <Image
-                src="/sarveto.png"
+                src="/Serveto_blue.png"
                 alt="Serveto Logo"
                 width={50}
                 height={50}
