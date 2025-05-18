@@ -26,7 +26,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLocationSearchOpen, setIsLocationSearchOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup'>('login');
+  const [authModalTab, setAuthModalTab] = useState<"login" | "signup">("login");
   const pathname = usePathname();
   const { userCity, detectLocation, isLoading } = useGeolocation();
   const { user, signOut } = useAuth();
@@ -62,16 +62,13 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link
-              href="/"
-              className="flex items-center"
-            >
+            <Link href="/" className="flex items-center">
               <Image
-                src="/Serveto_blue.png"
+                src="/ServetoLogo.png"
                 alt="Serveto Logo"
                 width={50}
                 height={50}
-                className="h-8 w-auto"
+                className="h-12 w-auto"
               />
             </Link>
           </div>
@@ -89,8 +86,10 @@ export default function Header() {
               <ChevronDown className="h-4 w-4 text-gray-400" />
             </div>
             <div className="flex flex-1 items-center px-3 bg-white">
-              <Search className="h-4 w-4 text-sm
- text-gray-400 mr-2" />
+              <Search
+                className="h-4 w-4 text-sm
+ text-gray-400 mr-2"
+              />
               <Input
                 type="search"
                 placeholder="Search for services"
@@ -118,17 +117,21 @@ export default function Header() {
                 <ShoppingCart className="h-5 w-5" />
               </Button>
             </Link>
-            
+
             {user ? (
               <div className="flex items-center space-x-2">
                 <Link href="/account">
-                  <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-gray-100"
+                  >
                     <User className="h-5 w-5" />
                   </Button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="hover:bg-gray-100"
                   onClick={() => signOut()}
                 >
@@ -137,12 +140,12 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   className="hover:bg-gray-100"
                   onClick={() => {
-                    setAuthModalTab('login');
+                    setAuthModalTab("login");
                     setIsAuthModalOpen(true);
                   }}
                 >
@@ -222,19 +225,16 @@ export default function Header() {
                               My Account
                             </Button>
                           </Link>
-                          <Button 
-                            className="w-full"
-                            onClick={() => signOut()}
-                          >
+                          <Button className="w-full" onClick={() => signOut()}>
                             Sign Out
                           </Button>
                         </>
                       ) : (
                         <>
-                          <Button 
+                          <Button
                             className="w-full"
                             onClick={() => {
-                              setAuthModalTab('login');
+                              setAuthModalTab("login");
                               setIsAuthModalOpen(true);
                             }}
                           >
