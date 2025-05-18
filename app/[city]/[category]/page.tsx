@@ -16,7 +16,7 @@ const categoryData = {
   cleaning: {
     name: "Cleaning Services",
     description: "Professional cleaning services for your home and office",
-    image: "/placeholder.svg?height=400&width=1200",
+    image: "/cities/pexels-cottonbro-4009401.jpg",
     subCategories: [
       {
         id: "home-cleaning",
@@ -65,7 +65,7 @@ const categoryData = {
   plumbing: {
     name: "Plumbing Services",
     description: "Professional plumbing services for your home",
-    image: "/placeholder.svg?height=400&width=1200",
+    image: "/cities/pexels-cottonbro-4009401.jpg",
     subCategories: [
       {
         id: "pipe-leakage",
@@ -107,7 +107,7 @@ const categoryData = {
   electrical: {
     name: "Electrical Services",
     description: "Professional electrical services for your home",
-    image: "/placeholder.svg?height=400&width=1200",
+    image: "/cities/pexels-cottonbro-4009401.jpg",
     subCategories: [
       {
         id: "switch-socket",
@@ -149,7 +149,7 @@ const categoryData = {
   "appliance-repair": {
     name: "Appliance Repair",
     description: "Professional repair services for home appliances",
-    image: "/placeholder.svg?height=400&width=1200",
+    image: "/cities/pexels-cottonbro-4009401.jpg",
     subCategories: [
       {
         id: "ac",

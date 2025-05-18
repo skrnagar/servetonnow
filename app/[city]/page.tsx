@@ -36,11 +36,11 @@ export default function CityPage({ params }: { params: { city: string } }) {
   ]
 
   const services = [
-    { name: "Home Cleaning", price: "₹499", image: "/placeholder.svg?height=400&width=600", slug: "home-cleaning" },
-    { name: "Plumbing Service", price: "₹399", image: "/placeholder.svg?height=400&width=600", slug: "plumbing" },
-    { name: "Electrical Repairs", price: "₹449", image: "/placeholder.svg?height=400&width=600", slug: "electrical" },
-    { name: "Appliance Repair", price: "₹599", image: "/placeholder.svg?height=400&width=600", slug: "appliance-repair" },
-    { name: "Pest Control", price: "₹799", image: "/placeholder.svg?height=400&width=600", slug: "pest-control" }
+    { name: "Home Cleaning", price: "₹499", image: "/cities/pexels-cottonbro-4009401.jpg", slug: "home-cleaning" },
+    { name: "Plumbing Service", price: "₹399", image: "/cities/pexels-heyho-7045944.jpg", slug: "plumbing" },
+    { name: "Electrical Repairs", price: "₹449", image: "/cities/pexels-shkrabaanthony-7345465.jpg", slug: "electrical" },
+    { name: "Appliance Repair", price: "₹599", image: "/cities/pexels-a-darmel-7641859.jpg", slug: "appliance-repair" },
+    { name: "Pest Control", price: "₹799", image: "/cities/pexels-heyho-11701117.jpg", slug: "pest-control" }ht=400&width=600", slug: "pest-control" }
   ]
 
   return (
